@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class AppService {
 
   //Define la url base del servicio web
-  public URL_BASE:string = 'http://localhost:8080/hibana/auth';
+  public URL_BASE:string = 'http://localhost:8080/hibanaws/auth';
 
   //Constructor
   constructor() { }
