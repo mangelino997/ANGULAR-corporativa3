@@ -13,7 +13,7 @@ export class SubopcionPestaniaService {
     this.url = appService.getUrlBase() + '/subopcionPestania';
   }
   //obtiene el listado de pestañas por rol y subopcion
-  public listarPestaniasPorRolYSubopcion(idRol, idSubopcion) {
-    return this.http.get(this.url + '/' + idRol + '/' + idSubopcion);
+  public listarPestaniasPorSubopcion( idSubopcion) {
+    return this.http.get(this.url + '/listarPorSubopcion/' + idSubopcion);
   }
 }

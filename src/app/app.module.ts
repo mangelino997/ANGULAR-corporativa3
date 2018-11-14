@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { Modulo } from 'src/app/modelos/modulo';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +14,8 @@ import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, Ma
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
 import { ModuloComponent } from './componentes/modulo/modulo.component';
+import { ModuloService } from './servicios/modulo.service';
+
 
 @NgModule({
   declarations: [
@@ -49,7 +52,7 @@ import { ModuloComponent } from './componentes/modulo/modulo.component';
       preventDuplicates: true,
     })
   ],
-  providers: [],
+  providers: [ModuloService, Modulo],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

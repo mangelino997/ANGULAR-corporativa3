@@ -5,16 +5,23 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 
+
 @Component({
   selector: 'app-modulo',
   templateUrl: './modulo.component.html',
   styleUrls: ['./modulo.component.scss']
 })
 export class ModuloComponent implements OnInit {
-
+  // define el formulario
   public formulario: FormGroup;
+  // define una lista 
   public listado: Array<any>;
+  // define la lista de pestañas 
   public pestanias: Array<any>;
+  // define el link que sera activado
+  public activeLink: any;
+  // define el autocompletado como un formControl
+  public autocompletado: FormControl=new FormControl();
 
   constructor(private moduloServicio: ModuloService, private modulo: Modulo, private subopcionPestaniaServicio: SubopcionPestaniaService) { }
 
@@ -22,12 +29,22 @@ export class ModuloComponent implements OnInit {
   ngOnInit() {
     this.formulario= this.modulo.formulario;
 
-    this.subopcionPestaniaServicio.listarPestaniasPorRolYSubopcion(1, 1).subscribe(
+    this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
       res => {
         this.pestanias= res.json();
+        this.activeLink= this.pestanias[0].pestania.nombre;
+        console.log(this.pestanias[0].pestania.nombre);
+
       }
     );
+
+
+
   }
+
+
+
+
 
   private obtenerSiguienteId(){
     this.moduloServicio.obtenerSiguienteId().subscribe(

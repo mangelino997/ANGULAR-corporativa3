@@ -24,7 +24,7 @@ export class ModuloService {
     return this.http.get(this.url + '/obtenerSiguientId');
   }
   //obtiene un listado por nombre
-  public obtenerListadoPorNombre(nombre) {
+  public listarPorNombre(nombre) {
     return this.http.get(this.url + '/listarPorNombre/'+nombre);
   }
   //obtiene el menu por rol
