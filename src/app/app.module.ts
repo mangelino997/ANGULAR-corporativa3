@@ -12,10 +12,12 @@ import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, Ma
   MatProgressBarModule } from '@angular/material';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
+import { ModuloComponent } from './componentes/modulo/modulo.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ModuloComponent
   ],
   imports: [
     BrowserModule,

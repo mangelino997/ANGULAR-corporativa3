@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ModuloService } from './servicios/modulo.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,16 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'hibana';
+
+  public menu: Array<any>;
+  constructor(private moduloServicio: ModuloService) {
+    this.moduloServicio.obtenerMenuPorRol(1).subscribe(
+      res => {
+        this.menu = res.json();
+        console.log(this.menu);
+      }
+    );
+  }
 }
+
+
