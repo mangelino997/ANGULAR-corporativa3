@@ -21,7 +21,7 @@ export class ModuloService {
   }
   //obtiene el siguiente Id
   public obtenerSiguienteId() {
-    return this.http.get(this.url + '/obtenerSiguientId');
+    return this.http.get(this.url + '/obtenerSiguienteId');
   }
   //obtiene un listado por nombre
   public listarPorNombre(nombre) {

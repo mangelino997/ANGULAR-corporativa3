@@ -1,8 +1,30 @@
-<div style="text-align:center">
-  <h1>
-    Hibana - Sistema de Gestión Administrativa!
-  </h1>
-</div>
+
+  <mat-toolbar class="alto-primer-toolbar" color="primary" >
+    <mat-toolbar-row>
+      <span>Gestoría</span>
+      <span class="example-spacer"></span>
+      <span class="example-spacer"></span>
+      <div>
+        <button mat-raised-button [matMenuTriggerFor]="lusuario">Usuario</button>
+        <mat-menu #lusuario="matMenu">
+          <div class="container text-center titulo-menu">usuario</div>
+          <mat-divider></mat-divider>
+          <a href="http://localhost:4200/login" target="_blank"><button mat-menu-item>Nuevo Ingreso</button></a>
+          <button mat-menu-item>Salir</button>
+        </mat-menu>
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+<mat-toolbar class="alto-segundo-toolbar" >
+  <div class="centrar" *ngFor="let modulo of menu">
+    <button mat-menu-item [matMenuTriggerFor]="lmodulo">{{modulo.modulo}}</button>
+    <mat-menu #lmodulo="matMenu">
+      <div *ngFor="let subopcion of modulo.subopciones">
+        <button mat-menu-item   (click)="navegar(subopcion.subopcion, subopcion.id)">{{subopcion.subopcion}}</button>
+      </div>
+    </mat-menu>
+  </div>
+</mat-toolbar>
 
 <router-outlet></router-outlet>
 

@@ -11,6 +11,5 @@ export class Modulo {
             version: new FormControl(),
             nombre: new FormControl('', [Validators.required, Validators.maxLength(20)])
         })
-
     }
 }
