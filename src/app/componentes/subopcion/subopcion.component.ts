@@ -1,20 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { ModuloService } from 'src/app/servicios/modulo.service';
 import { Modulo } from 'src/app/modelos/modulo';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
+import { SubopcionService } from 'src/app/servicios/subopcion.service';
+import { ModuloService } from 'src/app/servicios/modulo.service';
 
 @Component({
-  selector: 'app-modulo',
-  templateUrl: './modulo.component.html',
-  styleUrls: ['./modulo.component.scss']
+  selector: 'app-subopcion',
+  templateUrl: './subopcion.component.html',
+  styleUrls: ['./subopcion.component.scss']
 })
-export class ModuloComponent implements OnInit {
+export class SubopcionComponent implements OnInit {
   // define el formulario
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
+  //Define la lista completa de modulos
+  public listaModulos:Array<any> = [];
   // define la lista de pestañas 
   public pestanias: Array<any>;
   // define el link que sera activado
@@ -34,17 +37,16 @@ export class ModuloComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
 
-  //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
-  constructor(private moduloServicio: ModuloService, private modulo: Modulo, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
+  constructor(private moduloServicio: ModuloService,private subopcionServicio: SubopcionService, private modulo: Modulo, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) {
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.moduloServicio.listarPorNombre(data).subscribe(res => {
+        this.subopcionServicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res.json();
         })
       }
     })
-  }
-  
+   }
+
   ngOnInit() {
     //inicializa el formulario y sus campos desde la clase Modulo.
     this.formulario= this.modulo.formulario;
@@ -63,8 +65,11 @@ export class ModuloComponent implements OnInit {
     );
     //Establece los valores, activando la primera pestania 
     this.seleccionarPestania(1, 'Agregar', 0);
+    // listar los modulos en el campo de tipo select
+    this.listarModulos();
     //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
     this.listar();
+    
   }
 
   //Establece el formulario al seleccionar elemento del autocompletado
@@ -105,7 +110,7 @@ export class ModuloComponent implements OnInit {
   switch (id) {
     case 1:
       this.obtenerSiguienteId();
-      this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+      this.establecerValoresPestania(nombre, true, false, true, 'idNombre');
       break;
     case 2:
       this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
@@ -138,7 +143,7 @@ public accion(indice) {
 }
 //Obtiene el ID del modulo traido desde la base de datos y lo muestra en el campo id del formulario.
   private obtenerSiguienteId(){
-    this.moduloServicio.obtenerSiguienteId().subscribe(
+    this.subopcionServicio.obtenerSiguienteId().subscribe(
       res => {
         console.log(res);
         this.formulario.get('id').setValue(res.json());
@@ -150,7 +155,7 @@ public accion(indice) {
   }
   // Carga en listaCompleta todos los registros de la DB
   private listar(){
-    this.moduloServicio.listar().subscribe(
+    this.subopcionServicio.listar().subscribe(
       res => {
         this.listaCompleta=res.json();
       },
@@ -159,9 +164,20 @@ public accion(indice) {
       }
     );
   }
+  // Carga en el select Modulos, todos los registros
+  private listarModulos(){
+    this.moduloServicio.listar().subscribe(
+      res => {
+        this.listaModulos=res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Agrega un registro 
   private agregar(){
-    this.moduloServicio.agregar(this.formulario.value).subscribe(
+    this.subopcionServicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
@@ -185,7 +201,7 @@ public accion(indice) {
   }
   //Actualiza un registro
   private actualizar(){
-    this.moduloServicio.actualizar(this.formulario.value).subscribe(
+    this.subopcionServicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
@@ -209,7 +225,7 @@ public accion(indice) {
   }
   //Elimina un registro
   private eliminar(){
-    this.moduloServicio.agregar(this.formulario.get('id').value).subscribe(
+    this.subopcionServicio.agregar(this.formulario.get('id').value).subscribe(
       res => {
         console.log(res);
       },
@@ -253,4 +269,5 @@ public accion(indice) {
       }
     }
   }
+  
 }

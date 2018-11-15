@@ -15,12 +15,14 @@ import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
 import { ModuloComponent } from './componentes/modulo/modulo.component';
 import { ModuloService } from './servicios/modulo.service';
+import { SubopcionComponent } from './componentes/subopcion/subopcion.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    ModuloComponent
+    ModuloComponent,
+    SubopcionComponent
   ],
   imports: [
     BrowserModule,
