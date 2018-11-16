@@ -1,0 +1,142 @@
+<div id="area" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+    <div class="row">
+      <div class="container text-center">
+        <nav mat-tab-nav-bar>
+            <a mat-tab-link disabled>Usuario</a>
+            <a mat-tab-link
+               *ngFor="let pestania of pestanias"
+               [active]="activeLink== pestania.pestania.nombre"
+               (click)="seleccionarPestania(pestania.pestania.id, pestania.pestania.nombre)">
+              {{pestania.pestania.nombre}}
+            </a>
+          </nav>
+    </div>
+    </div>
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+      <div class="col-md-6 text-center">
+        <h5>{{pestaniaActual}} Usuario</h5>
+        <form [formGroup]="formulario" class="contenedor">
+          <div class="row ">
+            <div class="col-md-8">
+              <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
+                <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+                <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                  type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                  <mat-option *ngFor="let item of resultados" [value]="item"
+                    (onSelectionChange)="cambioAutocompletado(item)">
+                    {{item.alias}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+            </div>
+          </div>
+          <div class="row ">
+              <div class="col-md-8">
+                <div class="form-group has-float-label ">
+                  <label for="idCodigo" class="tamanio-label">Código</label>
+                  <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
+                </div>
+              </div>
+          </div>
+          <div class="row ">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
+                <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                  class="form-control form-control-sm" [readonly]="soloLectura"
+                  (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
+              </div>
+            </div>
+            <div class="col-md-4">
+            <div class="form-group has-float-label">
+                <label id="" for="apellido" class="tamanio-label">Apellido*</label>
+                <input id="apellido" type="text" formControlName="apellido" autocomplete="off"
+                  class="form-control form-control-sm" >
+            </div>
+            </div>
+          </div>
+          <div class="row ">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="" for="idNombreUsuario" class="tamanio-label">Nombre de usuario*</label>
+                <input id="idNombreUsuario" type="text" formControlName="username" autocomplete="off"
+                class="form-control form-control-sm" >
+              </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                  <label id="" for="idcontrasenia" class="tamanio-label">Contraseña*</label>
+                  <input id="idcontrasenia" type="text" formControlName="password" autocomplete="off"
+                  class="form-control form-control-sm" >
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                  <label id="" for="idcontraseniaRep" class="tamanio-label">Repetir contraseña*</label>
+                  <input id="idcontraseniaRep" type="text" formControlName="passwordRepeat" autocomplete="off"
+                  class="form-control form-control-sm" >
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group ">
+                  <div class="form-group has-float-label">
+                      <label for="idRol" class="tamanio-label">Rol *</label>
+                      <mat-select class="form-control" id="idRol" placeholder="Rol" formControlName="rol" [compareWith]="compareFn">
+                          <mat-option *ngFor="let rol of listaRoles" [value]="rol"> {{rol.nombre }}</mat-option>
+                      </mat-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group ">
+                    <div class="form-group has-float-label">
+                        <label for="idRol" class="tamanio-label">¿Está activo?</label>
+                        <mat-select class="form-control" id="" placeholder="---" formControlName="estaActivo" [compareWith]="compareFn">
+                            <mat-option value="true">Sí</mat-option>
+                            <mat-option value="false">No</mat-option>
+                        </mat-select>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+            formnovalidate (click)="accion(indiceSeleccionado)" >
+            {{pestaniaActual}}
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+      <div class="col-md-6">
+        <table class="table table-bordered table-striped table-sm">
+          <thead>
+            <tr>
+              <th class="text-center" style="width:20%" scope="col">id</th>
+              <th class="text-center" style="width:80%" scope="col">Nombre</th>
+              <th class="text-center" style="width:10%" scope="col">-</th>
+              <th class="text-center" style="width:10%" scope="col">-</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let l of listaCompleta">
+              <td >
+                <span>{{l.id}}</span>
+              </td>
+              <td >
+                <span>{{l.nombre}}</span>
+              </td>
+              <td >
+                <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+              </td>
+              <td >
+                <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

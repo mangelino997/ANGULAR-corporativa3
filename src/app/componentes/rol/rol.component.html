@@ -2,7 +2,7 @@
     <div class="row">
       <div class="container text-center">
         <nav mat-tab-nav-bar>
-            <a mat-tab-link disabled>Pestañas</a>
+            <a mat-tab-link disabled>Rol</a>
             <a mat-tab-link
                *ngFor="let pestania of pestanias"
                [active]="activeLink== pestania.pestania.nombre"
@@ -14,7 +14,7 @@
     </div>
     <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
       <div class="col-md-4 text-center">
-        <h5>{{pestaniaActual}} Pestañas</h5>
+        <h5>{{pestaniaActual}} Rol</h5>
         <form [formGroup]="formulario" class="contenedor">
           <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
             <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
@@ -75,4 +75,3 @@
       </div>
     </div>
   </div>
-  
