@@ -48,12 +48,12 @@ export class ModuloComponent implements OnInit {
   ngOnInit() {
     //inicializa el formulario y sus campos desde la clase Modulo.
     this.formulario= this.modulo.formulario;
-    //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    });
+    // //Define el formulario y validaciones
+    // this.formulario = new FormGroup({
+    //   id: new FormControl(),
+    //   version: new FormControl(),
+    //   nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
+    // });
     //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
     this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
       res => {

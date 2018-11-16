@@ -5,6 +5,7 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { ToastrService } from 'ngx-toastr';
 import { SubopcionService } from 'src/app/servicios/subopcion.service';
 import { ModuloService } from 'src/app/servicios/modulo.service';
+import { Subopcion } from 'src/app/modelos/subopcion';
 
 @Component({
   selector: 'app-subopcion',
@@ -14,7 +15,7 @@ import { ModuloService } from 'src/app/servicios/modulo.service';
 export class SubopcionComponent implements OnInit {
   // define el formulario
   public formulario: FormGroup;
-  //Define la lista completa de registros
+  //Define la lista completa de las suopciones
   public listaCompleta:Array<any> = [];
   //Define la lista completa de modulos
   public listaModulos:Array<any> = [];
@@ -37,7 +38,7 @@ export class SubopcionComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
 
-  constructor(private moduloServicio: ModuloService,private subopcionServicio: SubopcionService, private modulo: Modulo, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) {
+  constructor(private moduloServicio: ModuloService,private subopcionServicio: SubopcionService, private subopcion: Subopcion, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) {
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.subopcionServicio.listarPorNombre(data).subscribe(res => {
@@ -49,13 +50,8 @@ export class SubopcionComponent implements OnInit {
 
   ngOnInit() {
     //inicializa el formulario y sus campos desde la clase Modulo.
-    this.formulario= this.modulo.formulario;
-    //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    });
+    this.formulario= this.subopcion.formulario;
+    
     //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
     this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
       res => {
@@ -94,6 +90,11 @@ export class SubopcionComponent implements OnInit {
       document.getElementById(componente).focus();
     }, 20);
   };
+
+  public mostrar(){
+    console.log(this.formulario.value);
+  }
+
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.formulario.reset();
@@ -110,6 +111,7 @@ export class SubopcionComponent implements OnInit {
   switch (id) {
     case 1:
       this.obtenerSiguienteId();
+      this.establecerEstadoCampos(true);
       this.establecerValoresPestania(nombre, true, false, true, 'idNombre');
       break;
     case 2:
@@ -145,7 +147,7 @@ public accion(indice) {
   private obtenerSiguienteId(){
     this.subopcionServicio.obtenerSiguienteId().subscribe(
       res => {
-        console.log(res);
+        console.log(res.json());
         this.formulario.get('id').setValue(res.json());
       },
       err => {
@@ -158,6 +160,7 @@ public accion(indice) {
     this.subopcionServicio.listar().subscribe(
       res => {
         this.listaCompleta=res.json();
+        console.log(this.listaCompleta);
       },
       err => {
         console.log(err);
@@ -169,6 +172,7 @@ public accion(indice) {
     this.moduloServicio.listar().subscribe(
       res => {
         this.listaModulos=res.json();
+        console.log(this.listaModulos);
       },
       err => {
         console.log(err);
@@ -269,5 +273,21 @@ public accion(indice) {
       }
     }
   }
-  
+   //Define el mostrado de datos y comparacion en campo select
+   public compareFn = this.compararFn.bind(this);
+   private compararFn(a, b) {
+     if(a != null && b != null) {
+       return a.id === b.id;
+     }
+   }
+  //Habilita o deshabilita los campos select dependiendo de la pestania actual
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('esABM').enable();
+      this.formulario.get('modulo').enable();
+    } else {
+      this.formulario.get('rol').disable();
+      this.formulario.get('modulo').disable();
+    }
+  }
 }

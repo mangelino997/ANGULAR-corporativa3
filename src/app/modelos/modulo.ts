@@ -3,13 +3,15 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class Modulo {
     //define un formulario FormGroup
     public formulario: FormGroup;
+    
     //constructor
     constructor() {
-        // crear el formulario
+        // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
             nombre: new FormControl('', [Validators.required, Validators.maxLength(20)])
         })
+        
     }
 }

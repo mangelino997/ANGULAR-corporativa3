@@ -16,6 +16,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { ModuloComponent } from './componentes/modulo/modulo.component';
 import { ModuloService } from './servicios/modulo.service';
 import { SubopcionComponent } from './componentes/subopcion/subopcion.component';
+import { Subopcion } from './modelos/subopcion';
+import { SubopcionService } from './servicios/subopcion.service';
 
 
 @NgModule({
@@ -54,7 +56,7 @@ import { SubopcionComponent } from './componentes/subopcion/subopcion.component'
       preventDuplicates: true,
     })
   ],
-  providers: [ModuloService, Modulo],
+  providers: [ModuloService, Modulo, Subopcion, SubopcionService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
