@@ -18,13 +18,17 @@ import { ModuloService } from './servicios/modulo.service';
 import { SubopcionComponent } from './componentes/subopcion/subopcion.component';
 import { Subopcion } from './modelos/subopcion';
 import { SubopcionService } from './servicios/subopcion.service';
+import { PestaniaComponent } from './componentes/pestania/pestania.component';
+import { PestaniaService } from './servicios/pestania.service';
+import { Pestania } from './modelos/pestania';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     ModuloComponent,
-    SubopcionComponent
+    SubopcionComponent,
+    PestaniaComponent
   ],
   imports: [
     BrowserModule,
@@ -56,7 +60,7 @@ import { SubopcionService } from './servicios/subopcion.service';
       preventDuplicates: true,
     })
   ],
-  providers: [ModuloService, Modulo, Subopcion, SubopcionService],
+  providers: [ModuloService, Modulo, Subopcion, SubopcionService, PestaniaService, Pestania],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
