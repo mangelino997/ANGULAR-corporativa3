@@ -7,9 +7,10 @@ import { RolComponent } from './componentes/rol/rol.component';
 import { UsuarioComponent } from './componentes/usuario/usuario.component';
 import { AutorizadoComponent } from './componentes/autorizado/autorizado.component';
 import { BilleteComponent } from './componentes/billete/billete.component';
+import { GastoComponent } from './componentes/gasto/gasto.component';
 
 const routes: Routes = [
-  {path: '', component: BilleteComponent}
+  {path: '', component: GastoComponent}
 ];
 
 @NgModule({

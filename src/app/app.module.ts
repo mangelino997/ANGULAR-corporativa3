@@ -33,6 +33,9 @@ import { Autorizado } from './modelos/autorizado';
 import { BilleteComponent } from './componentes/billete/billete.component';
 import { BilleteService } from './servicios/billete.service';
 import { Billete } from './modelos/billete';
+import { GastoComponent } from './componentes/gasto/gasto.component';
+import { Gasto } from './modelos/gasto';
+import { GastoService } from './servicios/gasto.service';
 
 
 @NgModule({
@@ -44,7 +47,8 @@ import { Billete } from './modelos/billete';
     RolComponent,
     UsuarioComponent,
     AutorizadoComponent,
-    BilleteComponent
+    BilleteComponent,
+    GastoComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +80,7 @@ import { Billete } from './modelos/billete';
       preventDuplicates: true,
     })
   ],
-  providers: [ModuloService, Modulo, Subopcion, SubopcionService, PestaniaService, Pestania, Rol, RolService, Usuario, UsuarioService, AutorizadoService, Autorizado, BilleteService, Billete],
+  providers: [ModuloService, Modulo, Subopcion, SubopcionService, PestaniaService, Pestania, Rol, RolService, Usuario, UsuarioService, AutorizadoService, Autorizado, BilleteService, Billete, Gasto, GastoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
