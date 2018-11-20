@@ -8,9 +8,10 @@ import { UsuarioComponent } from './componentes/usuario/usuario.component';
 import { AutorizadoComponent } from './componentes/autorizado/autorizado.component';
 import { BilleteComponent } from './componentes/billete/billete.component';
 import { GastoComponent } from './componentes/gasto/gasto.component';
+import { ModalidadPagoComponent } from './componentes/modalidad-pago/modalidad-pago.component';
 
 const routes: Routes = [
-  {path: '', component: GastoComponent}
+  {path: '', component: ModalidadPagoComponent}
 ];
 
 @NgModule({

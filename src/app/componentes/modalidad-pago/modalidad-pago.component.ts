@@ -1,71 +1,84 @@
 import { Component, OnInit } from '@angular/core';
-import { Modulo } from 'src/app/modelos/modulo';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
-import { SubopcionService } from 'src/app/servicios/subopcion.service';
-import { ModuloService } from 'src/app/servicios/modulo.service';
-import { Subopcion } from 'src/app/modelos/subopcion';
+import { PestaniaService } from 'src/app/servicios/pestania.service';
+import { Pestania } from 'src/app/modelos/pestania';
+import { RolService } from 'src/app/servicios/rol.service';
+import { Rol } from 'src/app/modelos/rol';
+import { Usuario } from 'src/app/modelos/usuario';
+import { UsuarioService } from 'src/app/servicios/usuario.service';
+import { Autorizado } from 'src/app/modelos/autorizado';
+import { AutorizadoService } from 'src/app/servicios/autorizado.service';
+import { BilleteService } from 'src/app/servicios/billete.service';
+import { Billete } from 'src/app/modelos/billete';
+import { GastoService } from 'src/app/servicios/gasto.service';
+import { Gasto } from 'src/app/modelos/gasto';
+import { ModalidadPagoService } from 'src/app/servicios/modalidad-pago.service';
+import { ModalidadPago } from 'src/app/modelos/modalidadPago';
 
 @Component({
-  selector: 'app-subopcion',
-  templateUrl: './subopcion.component.html',
-  styleUrls: ['./subopcion.component.scss']
+  selector: 'app-modalidad-pago',
+  templateUrl: './modalidad-pago.component.html',
+  styleUrls: ['./modalidad-pago.component.scss']
 })
-export class SubopcionComponent implements OnInit {
-  // define el formulario
-  public formulario: FormGroup;
-  //Define la lista completa de las suopciones
-  public listaCompleta:Array<any> = [];
-  //Define la lista completa de modulos
-  public listaModulos:Array<any> = [];
-  // define la lista de pestañas 
-  public pestanias: Array<any>;
-  // define el link que sera activado
-  public activeLink: any;
-  // define el autocompletado como un formControl
-  public autocompletado: FormControl=new FormControl();
-  //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
-  //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
-  //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
-  //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
-  //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
-  //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
-
-  constructor(private moduloServicio: ModuloService,private subopcionServicio: SubopcionService, private subopcion: Subopcion, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) {
+export class ModalidadPagoComponent implements OnInit {
+   // define el formulario
+   public formulario: FormGroup;
+   //Define la lista completa de registros
+   public listaCompleta:Array<any> = [];
+   //Define la lista para roles
+   public listaRoles:Array<any> = [];
+   // define la lista de pestañas 
+   public pestanias: Array<any>;
+   // define el link que sera activado
+   public activeLink: any;
+   // define el autocompletado como un formControl
+   public autocompletado: FormControl=new FormControl();
+   //Define la pestania actual seleccionada
+   public pestaniaActual:string = null;
+   //Define si mostrar el autocompletado
+   public mostrarAutocompletado:boolean = null;
+   //Define si el campo es de solo lectura
+   public soloLectura:boolean = false;
+   //Define si mostrar el boton
+   public mostrarBoton:boolean = null;
+   //Define el indice seleccionado de pestania
+   public indiceSeleccionado:number = null;
+   //Define la lista de resultados de busqueda
+   public resultados:Array<any> = [];
+   
+   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
+  constructor(private modalidadPagoService: ModalidadPagoService, private modalidadPago: ModalidadPago, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.subopcionServicio.listarPorNombre(data).subscribe(res => {
+        this.modalidadPagoService.listarPorAlias(data).subscribe(res => {
+          console.log(res.json());
           this.resultados = res.json();
         })
       }
     })
-   }
+  }
 
   ngOnInit() {
-    //inicializa el formulario y sus campos desde la clase Modulo.
-    this.formulario= this.subopcion.formulario;
-    
-    //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
-    this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
-      res => {
-        this.pestanias= res.json();
-        this.activeLink= this.pestanias[0].pestania.nombre;
-      }
-    );
-    //Establece los valores, activando la primera pestania 
-    this.seleccionarPestania(1, 'Agregar', 0);
-    // listar los modulos en el campo de tipo select
-    this.listarModulos();
-    //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
-    this.listar();
-    
+     //inicializa el formulario y sus elementos
+     this.formulario= this.modalidadPago.formulario;
+     //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
+     this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
+       res => {
+         this.pestanias= res.json();
+         this.activeLink= this.pestanias[0].pestania.nombre;
+       }
+     );
+     //Establece los valores, activando la primera pestania 
+     this.seleccionarPestania(1, 'Agregar', 0);
+     //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
+     this.listar();
+  }
+
+  public mostrar(){
+    console.log(this.formulario.value);
   }
 
   //Establece el formulario al seleccionar elemento del autocompletado
@@ -90,11 +103,6 @@ export class SubopcionComponent implements OnInit {
       document.getElementById(componente).focus();
     }, 20);
   };
-
-  public mostrar(){
-    console.log(this.formulario.value);
-  }
-
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.formulario.reset();
@@ -111,18 +119,19 @@ export class SubopcionComponent implements OnInit {
   switch (id) {
     case 1:
       this.obtenerSiguienteId();
-      // this.establecerEstadoCampos(true);
-      this.establecerValoresPestania(nombre, true, false, true, 'idNombre');
+      this.establecerSoloLectura(true);
+      this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
       break;
     case 2:
-      this.establecerEstadoCampos(false);
+      this.establecerSoloLectura(false);
       this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
       break;
     case 3:
-      this.establecerEstadoCampos(true);
+      this.establecerSoloLectura(true);
       this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
       break;
     case 4:
+      this.establecerSoloLectura(false);
       this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
       break;
     default:
@@ -147,9 +156,9 @@ public accion(indice) {
 }
 //Obtiene el ID del modulo traido desde la base de datos y lo muestra en el campo id del formulario.
   private obtenerSiguienteId(){
-    this.subopcionServicio.obtenerSiguienteId().subscribe(
+    this.modalidadPagoService.obtenerSiguienteId().subscribe(
       res => {
-        console.log(res.json());
+        console.log(res);
         this.formulario.get('id').setValue(res.json());
       },
       err => {
@@ -159,22 +168,9 @@ public accion(indice) {
   }
   // Carga en listaCompleta todos los registros de la DB
   private listar(){
-    this.subopcionServicio.listar().subscribe(
+    this.modalidadPagoService.listar().subscribe(
       res => {
         this.listaCompleta=res.json();
-        console.log(this.listaCompleta);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  // Carga en el select Modulos, todos los registros
-  private listarModulos(){
-    this.moduloServicio.listar().subscribe(
-      res => {
-        this.listaModulos=res.json();
-        console.log(this.listaModulos);
       },
       err => {
         console.log(err);
@@ -183,7 +179,7 @@ public accion(indice) {
   }
   //Agrega un registro 
   private agregar(){
-    this.subopcionServicio.agregar(this.formulario.value).subscribe(
+    this.modalidadPagoService.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
@@ -207,7 +203,7 @@ public accion(indice) {
   }
   //Actualiza un registro
   private actualizar(){
-    this.subopcionServicio.actualizar(this.formulario.value).subscribe(
+    this.modalidadPagoService.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
@@ -231,7 +227,7 @@ public accion(indice) {
   }
   //Elimina un registro
   private eliminar(){
-    this.subopcionServicio.agregar(this.formulario.get('id').value).subscribe(
+    this.modalidadPagoService.agregar(this.formulario.get('id').value).subscribe(
       res => {
         console.log(res);
       },
@@ -240,6 +236,7 @@ public accion(indice) {
       }
     );
   }
+  
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
@@ -275,21 +272,22 @@ public accion(indice) {
       }
     }
   }
-   //Define el mostrado de datos y comparacion en campo select
+
+  //establece solo lectura en Combo box
+  private establecerSoloLectura(estado){
+    if(estado){
+      this.formulario.get('tipo').enable();
+    }
+    else {
+      this.formulario.get('tipo').disable();
+    }
+  }
+  //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
     if(a != null && b != null) {
       return a.id === b.id;
     }
   }
-  //Habilita o deshabilita los campos select dependiendo de la pestania actual
-  private establecerEstadoCampos(estado) {
-    if(estado) {
-      this.formulario.get('esABM').enable();
-      this.formulario.get('modulo').enable();
-    } else {
-      this.formulario.get('esABM').disable();
-      this.formulario.get('modulo').disable();
-    }
-  }
+
 }
