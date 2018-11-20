@@ -42,6 +42,7 @@ import { ModalidadPagoService } from './servicios/modalidad-pago.service';
 import { ListaPrecioComponent } from './componentes/lista-precio/lista-precio.component';
 import { ListaPrecioService } from './servicios/lista-precio.service';
 import { ListaPrecio } from './modelos/listaPrecio';
+import { TipoFacturaComponent } from './componentes/tipo-factura/tipo-factura.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { ListaPrecio } from './modelos/listaPrecio';
     BilleteComponent,
     GastoComponent,
     ModalidadPagoComponent,
-    ListaPrecioComponent
+    ListaPrecioComponent,
+    TipoFacturaComponent
   ],
   imports: [
     BrowserModule,
