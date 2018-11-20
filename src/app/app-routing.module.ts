@@ -5,9 +5,10 @@ import { SubopcionComponent } from './componentes/subopcion/subopcion.component'
 import { PestaniaComponent } from './componentes/pestania/pestania.component';
 import { RolComponent } from './componentes/rol/rol.component';
 import { UsuarioComponent } from './componentes/usuario/usuario.component';
+import { AutorizadoComponent } from './componentes/autorizado/autorizado.component';
 
 const routes: Routes = [
-  {path: '', component: UsuarioComponent}
+  {path: '', component: AutorizadoComponent}
 ];
 
 @NgModule({
