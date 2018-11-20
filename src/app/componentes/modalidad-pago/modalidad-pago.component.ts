@@ -77,10 +77,6 @@ export class ModalidadPagoComponent implements OnInit {
      this.listar();
   }
 
-  public mostrar(){
-    console.log(this.formulario.value);
-  }
-
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
     this.formulario.patchValue(elemento);

@@ -9,9 +9,10 @@ import { AutorizadoComponent } from './componentes/autorizado/autorizado.compone
 import { BilleteComponent } from './componentes/billete/billete.component';
 import { GastoComponent } from './componentes/gasto/gasto.component';
 import { ModalidadPagoComponent } from './componentes/modalidad-pago/modalidad-pago.component';
+import { ListaPrecioComponent } from './componentes/lista-precio/lista-precio.component';
 
 const routes: Routes = [
-  {path: '', component: ModalidadPagoComponent}
+  {path: '', component: ListaPrecioComponent}
 ];
 
 @NgModule({
