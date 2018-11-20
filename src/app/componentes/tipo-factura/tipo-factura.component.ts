@@ -57,7 +57,7 @@ public resultados:Array<any> = [];
 constructor(private tipoFacturaService: TipoFacturaService, private tipoFactura: TipoFactura, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
   this.autocompletado.valueChanges.subscribe(data => {
     if(typeof data == 'string') {
-      this.listaPrecioService.listarPorAlias(data).subscribe(res => {
+      this.tipoFacturaService.listarPorAlias(data).subscribe(res => {
         console.log(res.json());
         this.resultados = res.json();
       })
@@ -67,7 +67,7 @@ constructor(private tipoFacturaService: TipoFacturaService, private tipoFactura:
 
 ngOnInit() {
   //inicializa el formulario y sus elementos
-  this.formulario= this.listaPrecio.formulario;
+  this.formulario= this.tipoFactura.formulario;
   //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
   this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
     res => {
@@ -152,7 +152,7 @@ default:
 }
 //Obtiene el ID del modulo traido desde la base de datos y lo muestra en el campo id del formulario.
 private obtenerSiguienteId(){
-this.listaPrecioService.obtenerSiguienteId().subscribe(
+this.tipoFacturaService.obtenerSiguienteId().subscribe(
   res => {
     console.log(res);
     this.formulario.get('id').setValue(res.json());
@@ -164,7 +164,7 @@ this.listaPrecioService.obtenerSiguienteId().subscribe(
 }
 // Carga en listaCompleta todos los registros de la DB
 private listar(){
-this.listaPrecioService.listar().subscribe(
+this.tipoFacturaService.listar().subscribe(
   res => {
     this.listaCompleta=res.json();
   },
@@ -175,7 +175,7 @@ this.listaPrecioService.listar().subscribe(
 }
 //Agrega un registro 
 private agregar(){
-this.listaPrecioService.agregar(this.formulario.value).subscribe(
+this.tipoFacturaService.agregar(this.formulario.value).subscribe(
   res => {
     var respuesta = res.json();
     if(respuesta.codigo == 201) {
@@ -199,7 +199,7 @@ this.listaPrecioService.agregar(this.formulario.value).subscribe(
 }
 //Actualiza un registro
 private actualizar(){
-this.listaPrecioService.actualizar(this.formulario.value).subscribe(
+this.tipoFacturaService.actualizar(this.formulario.value).subscribe(
   res => {
     var respuesta = res.json();
     if(respuesta.codigo == 200) {
@@ -223,7 +223,7 @@ this.listaPrecioService.actualizar(this.formulario.value).subscribe(
 }
 //Elimina un registro
 private eliminar(){
-this.listaPrecioService.agregar(this.formulario.get('id').value).subscribe(
+this.tipoFacturaService.agregar(this.formulario.get('id').value).subscribe(
   res => {
     console.log(res);
   },
