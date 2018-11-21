@@ -1,6 +1,6 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 //Define la entidad de la base de datos.
-export class TipoFactura {
+export class TipoFormulario {
     //define un formulario FormGroup
     public formulario: FormGroup;
     
@@ -10,8 +10,7 @@ export class TipoFactura {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            nombre: new FormControl('', [Validators.required, Validators.maxLength(4)]),
-            alias: new FormControl('', Validators.maxLength(45)),
+            nombre: new FormControl('', [Validators.required, Validators.maxLength(15)])
         })
         
     }

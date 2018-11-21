@@ -45,6 +45,9 @@ import { ListaPrecio } from './modelos/listaPrecio';
 import { TipoFacturaComponent } from './componentes/tipo-factura/tipo-factura.component';
 import { TipoFactura } from './modelos/tipoFactura';
 import { TipoFacturaService } from './servicios/tipo-factura.service';
+import { TipoFormularioComponent } from './componentes/tipo-formulario/tipo-formulario.component';
+import { TipoFormularioService } from './servicios/tipo-formulario.service';
+import { TipoFormulario } from './modelos/tipoFormulario';
 
 
 @NgModule({
@@ -60,7 +63,8 @@ import { TipoFacturaService } from './servicios/tipo-factura.service';
     GastoComponent,
     ModalidadPagoComponent,
     ListaPrecioComponent,
-    TipoFacturaComponent
+    TipoFacturaComponent,
+    TipoFormularioComponent
   ],
   imports: [
     BrowserModule,
@@ -114,7 +118,9 @@ import { TipoFacturaService } from './servicios/tipo-factura.service';
     ListaPrecioService, 
     ListaPrecio,
     TipoFactura,
-    TipoFacturaService  
+    TipoFacturaService,
+    TipoFormulario,
+    TipoFormularioService
   ],
   bootstrap: [AppComponent]
 })

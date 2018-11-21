@@ -11,9 +11,10 @@ import { GastoComponent } from './componentes/gasto/gasto.component';
 import { ModalidadPagoComponent } from './componentes/modalidad-pago/modalidad-pago.component';
 import { ListaPrecioComponent } from './componentes/lista-precio/lista-precio.component';
 import { TipoFacturaComponent } from './componentes/tipo-factura/tipo-factura.component';
+import { TipoFormularioComponent } from './componentes/tipo-formulario/tipo-formulario.component';
 
 const routes: Routes = [
-  {path: '', component: TipoFacturaComponent}
+  {path: '', component: TipoFormularioComponent}
 ];
 
 @NgModule({
