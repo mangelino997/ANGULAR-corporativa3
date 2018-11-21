@@ -49,16 +49,17 @@ export class FotoService {
     //   reportProgress: true,
     //   responseType: 'text'
     // });
-    const formdata: FormData = new FormData();
+    // const formdata: FormData = new FormData();
  
-    formdata.append('archivo', archivo);
+    // formdata.append('archivo', archivo);
  
-    const req = new HttpRequest('POST', this.url, formdata, {
-      reportProgress: true,
-      responseType: 'text'
-    });
+    // const req = new HttpRequest('POST', this.url, formdata, {
+    //   reportProgress: true,
+    //   responseType: 'text'
+    // });
  
-     return this.httpClient.request(req);
+    //  return this.httpClient.request(req);
+    
  }
   //actualiza un registro
   public actualizar(elemento) {
@@ -68,4 +69,12 @@ export class FotoService {
   public eliminar(idRegistro) {
     return this.http.delete(this.url, idRegistro);
   }
+
+  public postFileImagen(imagenParaSubir: File){
+
+		const formData = new FormData(); 
+		formData.append('archivo', imagenParaSubir, imagenParaSubir.name); 
+		return this.http.post(this.url, formData);
+
+	}
 }

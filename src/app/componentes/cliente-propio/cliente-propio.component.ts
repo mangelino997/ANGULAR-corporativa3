@@ -46,6 +46,9 @@ public indiceSeleccionado:number = null;
 public resultados:Array<any> = [];
 //Definimos la variable donde guardaremos la foto
 public archivo: File=null;
+//datos imagen
+public respuestaImagenEnviada;
+public resultadoCarga;
 
 //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
 constructor(private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
@@ -299,19 +302,49 @@ if(keycode == 113) {
 }
 
 public subirFoto(e){
-  const fd= new FormData;
-  this.archivo= <File>e.target.files[0];
-  // fd.append('archivo', this.archivo);
+  // const fd= new FormData;
+  // this.archivo= <File>e.target.files[0];
+  // // fd.append('archivo', this.archivo);
 
-  this.fotoService.agregar(e).subscribe(
-    res => {
-      console.log(res);
-    },
-    err => {
-      console.log(err);
-    }
-  );
+  // this.fotoService.agregar(e).subscribe(
+  //   res => {
+  //     console.log(res);
+  //   },
+  //   err => {
+  //     console.log(err);
+  //   }
+  // );
   
 }
+
+//metodo cargar imagen
+public cargandoImagen(files: FileList){
+
+  this.fotoService.postFileImagen(files[0]).subscribe(
+
+    response => {
+      this.respuestaImagenEnviada = response; 
+      if(this.respuestaImagenEnviada <= 1){
+        console.log("Error en el servidor"); 
+      }else{
+
+        if(this.respuestaImagenEnviada.code == 200 && this.respuestaImagenEnviada.status == "success"){
+
+          this.resultadoCarga = 1;
+
+        }else{
+          this.resultadoCarga = 2;
+        }
+
+      }
+    },
+    error => {
+      console.log(<any>error);
+    }
+
+  );//FIN DE METODO SUBSCRIBE
+
+}
+
 }
 
