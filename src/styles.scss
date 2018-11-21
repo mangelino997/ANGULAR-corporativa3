@@ -29,3 +29,12 @@
     margin-right: 0px; 
     margin-left: 0px; 
 }
+.modal-content {
+    height: 350px;
+    min-width: 950px;
+}
+@media (min-width: 576px){
+    .modal-dialog {
+        margin: 0 auto;
+    }
+    }

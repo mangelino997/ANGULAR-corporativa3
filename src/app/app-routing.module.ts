@@ -12,9 +12,10 @@ import { ModalidadPagoComponent } from './componentes/modalidad-pago/modalidad-p
 import { ListaPrecioComponent } from './componentes/lista-precio/lista-precio.component';
 import { TipoFacturaComponent } from './componentes/tipo-factura/tipo-factura.component';
 import { TipoFormularioComponent } from './componentes/tipo-formulario/tipo-formulario.component';
+import { ClientePropioComponent } from './componentes/cliente-propio/cliente-propio.component';
 
 const routes: Routes = [
-  {path: '', component: TipoFormularioComponent}
+  {path: '', component: ClientePropioComponent}
 ];
 
 @NgModule({

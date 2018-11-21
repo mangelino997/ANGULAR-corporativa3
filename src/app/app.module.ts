@@ -1,9 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { Modulo } from 'src/app/modelos/modulo';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { HttpClientModule } from '@angular/common/http';
+
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -11,6 +12,7 @@ import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, Ma
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
   MatProgressBarModule } from '@angular/material';
+
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
 import { ModuloComponent } from './componentes/modulo/modulo.component';
@@ -48,6 +50,11 @@ import { TipoFacturaService } from './servicios/tipo-factura.service';
 import { TipoFormularioComponent } from './componentes/tipo-formulario/tipo-formulario.component';
 import { TipoFormularioService } from './servicios/tipo-formulario.service';
 import { TipoFormulario } from './modelos/tipoFormulario';
+import { ClientePropioComponent } from './componentes/cliente-propio/cliente-propio.component';
+import { ClientePropioService } from './servicios/cliente-propio.service';
+import { ClientePropio } from './modelos/clientePropio';
+import { Foto } from './modelos/foto';
+import { FotoService } from './servicios/foto.service';
 
 
 @NgModule({
@@ -64,10 +71,12 @@ import { TipoFormulario } from './modelos/tipoFormulario';
     ModalidadPagoComponent,
     ListaPrecioComponent,
     TipoFacturaComponent,
-    TipoFormularioComponent
+    TipoFormularioComponent,
+    ClientePropioComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule, 
+    HttpClientModule,
     AppRoutingModule,
     BrowserModule,
     HttpModule,
@@ -120,7 +129,11 @@ import { TipoFormulario } from './modelos/tipoFormulario';
     TipoFactura,
     TipoFacturaService,
     TipoFormulario,
-    TipoFormularioService
+    TipoFormularioService, 
+    ClientePropio,
+    ClientePropioService, 
+    Foto,
+    FotoService
   ],
   bootstrap: [AppComponent]
 })
