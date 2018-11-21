@@ -10,9 +10,10 @@ import { BilleteComponent } from './componentes/billete/billete.component';
 import { GastoComponent } from './componentes/gasto/gasto.component';
 import { ModalidadPagoComponent } from './componentes/modalidad-pago/modalidad-pago.component';
 import { ListaPrecioComponent } from './componentes/lista-precio/lista-precio.component';
+import { TipoFacturaComponent } from './componentes/tipo-factura/tipo-factura.component';
 
 const routes: Routes = [
-  {path: '', component: ListaPrecioComponent}
+  {path: '', component: TipoFacturaComponent}
 ];
 
 @NgModule({

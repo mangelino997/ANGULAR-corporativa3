@@ -43,6 +43,8 @@ import { ListaPrecioComponent } from './componentes/lista-precio/lista-precio.co
 import { ListaPrecioService } from './servicios/lista-precio.service';
 import { ListaPrecio } from './modelos/listaPrecio';
 import { TipoFacturaComponent } from './componentes/tipo-factura/tipo-factura.component';
+import { TipoFactura } from './modelos/tipoFactura';
+import { TipoFacturaService } from './servicios/tipo-factura.service';
 
 
 @NgModule({
@@ -90,7 +92,30 @@ import { TipoFacturaComponent } from './componentes/tipo-factura/tipo-factura.co
       preventDuplicates: true,
     })
   ],
-  providers: [ModuloService, Modulo, Subopcion, SubopcionService, PestaniaService, Pestania, Rol, RolService, Usuario, UsuarioService, AutorizadoService, Autorizado, BilleteService, Billete, Gasto, GastoService, ModalidadPago, ModalidadPagoService, ListaPrecioService, ListaPrecio],
+  providers: [
+    ModuloService, 
+    Modulo, 
+    Subopcion, 
+    SubopcionService, 
+    PestaniaService, 
+    Pestania, 
+    Rol, 
+    RolService, 
+    Usuario, 
+    UsuarioService, 
+    AutorizadoService, 
+    Autorizado, 
+    BilleteService, 
+    Billete, 
+    Gasto, 
+    GastoService, 
+    ModalidadPago, 
+    ModalidadPagoService, 
+    ListaPrecioService, 
+    ListaPrecio,
+    TipoFactura,
+    TipoFacturaService  
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
