@@ -305,6 +305,7 @@ if(keycode == 113) {
 //metodo cargar imagen
 public cargandoImagen(files: FileList){
   this.archivo=files[0];
+  this.formulario.get('foto').setValue(this.archivo);
   // this.fotoService.postFileImagen(files[0]).subscribe(
   //   response => {
   //     var respuesta = response.json();

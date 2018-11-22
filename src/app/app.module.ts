@@ -55,6 +55,9 @@ import { ClientePropioService } from './servicios/cliente-propio.service';
 import { ClientePropio } from './modelos/clientePropio';
 import { Foto } from './modelos/foto';
 import { FotoService } from './servicios/foto.service';
+import { ProveedorComponent } from './componentes/proveedor/proveedor.component';
+import { Proveedor } from './modelos/proveedor';
+import { ProveedorService } from './servicios/proveedor.service';
 
 
 @NgModule({
@@ -73,7 +76,8 @@ import { FotoService } from './servicios/foto.service';
     TipoFacturaComponent,
     TipoFormularioComponent,
     ClientePropioComponent,
-    ClientePropioModal
+    ClientePropioModal,
+    ProveedorComponent
   ],
   imports: [
     BrowserModule, 
@@ -134,7 +138,9 @@ import { FotoService } from './servicios/foto.service';
     ClientePropio,
     ClientePropioService, 
     Foto,
-    FotoService
+    FotoService,
+    Proveedor,
+    ProveedorService
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal]
