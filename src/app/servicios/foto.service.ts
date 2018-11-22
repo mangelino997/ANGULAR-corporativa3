@@ -34,33 +34,7 @@ export class FotoService {
   public listar() {
     return this.http.get(this.url);
   }
-  //agrega un registro
-  public agregar(e) {
-    // var deferred = $q.defer();
-    
-    // var formData = new FormData();
-    var archivo= <File>e.target.files[0];
-    // formData.append('archivo', archivo);
-
-    // var headers = new Headers({
-    //   'Content-Type': 'multipart/form-data' });
-
-    // return this.http.post(this.url, formData, {
-    //   reportProgress: true,
-    //   responseType: 'text'
-    // });
-    // const formdata: FormData = new FormData();
- 
-    // formdata.append('archivo', archivo);
- 
-    // const req = new HttpRequest('POST', this.url, formdata, {
-    //   reportProgress: true,
-    //   responseType: 'text'
-    // });
- 
-    //  return this.httpClient.request(req);
-    
- }
+  
   //actualiza un registro
   public actualizar(elemento) {
     return this.http.put(this.url, elemento);
@@ -69,12 +43,10 @@ export class FotoService {
   public eliminar(idRegistro) {
     return this.http.delete(this.url, idRegistro);
   }
-
+  //cargar imagenes
   public postFileImagen(imagenParaSubir: File){
-
 		const formData = new FormData(); 
-		formData.append('archivo', imagenParaSubir, imagenParaSubir.name); 
+		formData.append('file', imagenParaSubir, imagenParaSubir.name); 
 		return this.http.post(this.url, formData);
-
 	}
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -10,6 +10,8 @@ import { Autorizado } from 'src/app/modelos/autorizado';
 import { AutorizadoService } from 'src/app/servicios/autorizado.service';
 import { Foto } from 'src/app/modelos/foto';
 import { FotoService } from 'src/app/servicios/foto.service';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import * as $ from 'jquery';
 
 
 @Component({
@@ -20,8 +22,6 @@ import { FotoService } from 'src/app/servicios/foto.service';
 export class ClientePropioComponent implements OnInit {
 // define el formulario de cliente propio
 public formulario: FormGroup;
-// define el formulario para agregar un Autorizado
-public formularioAgregarAutorizado: FormGroup;
 //Define la lista completa de registros
 public listaCompleta:Array<any> = [];
 //Define la lista para roles
@@ -51,7 +51,7 @@ public respuestaImagenEnviada;
 public resultadoCarga;
 
 //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
-constructor(private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
+constructor(public dialog: MatDialog, private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
   this.autocompletado.valueChanges.subscribe(data => {
     if(typeof data == 'string') {
       this.clientePropioService.listarPorAlias(data).subscribe(res => {
@@ -60,13 +60,47 @@ constructor(private foto:Foto, private fotoService: FotoService ,private autoriz
       })
     }
   });
+
+    $(function() {
+     $('#file-input').change(function(e) {
+         addImage(e); 
+        });
+    
+        function addImage(e){
+         var file = e.target.files[0],
+         imageType = /image.*/;
+       
+         if (!file.type.match(imageType))
+          return;
+     
+         var reader = new FileReader();
+         reader.onload = fileOnload;
+         reader.readAsDataURL(file);
+        }
+     
+        function fileOnload(e) {
+         var result=e.target.result;
+         $('#imgSalida').attr("src",result);
+         $('#imagen-nombre').empty().append('Foto cargada');
+        }
+       });
+    
+}
+
+//declaramos los metodos para utilizar el Modal/Dialog
+openDialog(): void {
+  const dialogRef = this.dialog.open(ClientePropioModal, {
+    width: '750px',
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+  });
 }
 
 ngOnInit() {
   //inicializa el formulario y sus elementos
   this.formulario= this.clientePropio.formulario;
-  //inicializa el formulario para agregar un autorizado y sus elementos
-  this.formularioAgregarAutorizado= this.autorizado.formulario;
   //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
   this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
     res => {
@@ -78,7 +112,6 @@ ngOnInit() {
   this.seleccionarPestania(1, 'Agregar', 0);
   //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
   this.listar();
-  this.obtenerSiguienteIdAutorizado();
 }
 
 //Establece el formulario al seleccionar elemento del autocompletado
@@ -162,18 +195,7 @@ this.clientePropioService.obtenerSiguienteId().subscribe(
   }
 );
 }
-//Obtiene el ID del proximo autorizado traido desde la base de datos y lo muestra en el campo id del formulario.
-public obtenerSiguienteIdAutorizado(){
-  this.autorizadoService.obtenerSiguienteId().subscribe(
-    res => {
-      console.log(res);
-      this.formularioAgregarAutorizado.get('id').setValue(res.json());
-    },
-    err => {
-      console.log(err);
-    }
-  );
-  }
+
 // Carga en listaCompleta todos los registros de la DB
 private listar(){
 this.clientePropioService.listar().subscribe(
@@ -209,27 +231,7 @@ this.clientePropioService.agregar(this.formulario.value).subscribe(
   }
 );
 }
-//Agrega un autorizado 
-public agregarAutorizado(){
-  this.autorizadoService.agregar(this.formularioAgregarAutorizado.value).subscribe(
-    res => {
-      var respuesta = res.json();
-      if(respuesta.codigo == 201) {
-        this.reestablecerFormulario(respuesta.id);
-        setTimeout(function() {
-          document.getElementById('idNombre').focus();
-        }, 20);
-        this.toastr.success(respuesta.mensaje);
-      }
-    },
-    err => {
-      var respuesta = err.json();
-      if(respuesta.codigo == 11002) {
-        this.toastr.error(respuesta.mensaje);
-      }
-    }
-  );
-  }
+
 //Actualiza un registro
 private actualizar(){
 this.clientePropioService.actualizar(this.formulario.value).subscribe(
@@ -300,51 +302,94 @@ if(keycode == 113) {
   }
 }
 }
-
-public subirFoto(e){
-  // const fd= new FormData;
-  // this.archivo= <File>e.target.files[0];
-  // // fd.append('archivo', this.archivo);
-
-  // this.fotoService.agregar(e).subscribe(
-  //   res => {
-  //     console.log(res);
-  //   },
-  //   err => {
-  //     console.log(err);
-  //   }
-  // );
-  
-}
-
 //metodo cargar imagen
 public cargandoImagen(files: FileList){
+  this.archivo=files[0];
+  // this.fotoService.postFileImagen(files[0]).subscribe(
+  //   response => {
+  //     var respuesta = response.json();
+  //     this.respuestaImagenEnviada = response; 
+  //     if(this.respuestaImagenEnviada <= 1){
+  //       this.toastr.error('Error al cargar imagen');
+  //     }else{
+  //       if(this.respuestaImagenEnviada.code == 200 && this.respuestaImagenEnviada.status == "success"){
+  //         this.toastr.success(respuesta.mensaje);
+  //       }else{
+  //         this.toastr.success(respuesta.mensaje);
+  //       }
+  //     }
+  //   },
+  //   error => {
+  //     var respuesta = error.json();
+  //     if(respuesta.codigo == 11002) {
+  //       document.getElementById("labelNombre").classList.add('label-error');
+  //       document.getElementById("idNombre").classList.add('is-invalid');
+  //       document.getElementById("idNombre").focus();
+  //       this.toastr.error(respuesta.mensaje);
+  //     }
+  //   }
+  // );//FIN DE METODO SUBSCRIBE
+}
+}
 
-  this.fotoService.postFileImagen(files[0]).subscribe(
+@Component({
+  selector: 'cliente-propio-modal',
+  templateUrl: 'cliente-propio-modal.html',
+})
+export class ClientePropioModal{
+  // define el formulario para agregar un Autorizado
+  public formularioAgregarAutorizado: FormGroup;
 
-    response => {
-      this.respuestaImagenEnviada = response; 
-      if(this.respuestaImagenEnviada <= 1){
-        console.log("Error en el servidor"); 
-      }else{
+  constructor(public dialogRef: MatDialogRef<ClientePropioModal>, private autorizado: Autorizado, private autorizadoService: AutorizadoService, private toastr: ToastrService) {}
 
-        if(this.respuestaImagenEnviada.code == 200 && this.respuestaImagenEnviada.status == "success"){
+   ngOnInit() {
+   //inicializa el formulario para agregar un autorizado y sus elementos
+    this.formularioAgregarAutorizado= this.autorizado.formulario;
+    this.obtenerSiguienteIdAutorizado();
+   }
 
-          this.resultadoCarga = 1;
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 
-        }else{
-          this.resultadoCarga = 2;
-        }
-
+  //Obtiene el ID del proximo autorizado traido desde la base de datos y lo muestra en el campo id del formulario.
+public obtenerSiguienteIdAutorizado(){
+  this.autorizadoService.obtenerSiguienteId().subscribe(
+    res => {
+      console.log(res);
+      this.formularioAgregarAutorizado.get('id').setValue(res.json());
+    },
+    err => {
+      console.log(err);
+    }
+  );
+  }
+  //Agrega un autorizado 
+public agregarAutorizado(){
+  this.autorizadoService.agregar(this.formularioAgregarAutorizado.value).subscribe(
+    res => {
+      var respuesta = res.json();
+      if(respuesta.codigo == 201) {
+        this.reestablecerFormulario(respuesta.id);
+        setTimeout(function() {
+          document.getElementById('idNombre').focus();
+        }, 20);
+        this.toastr.success(respuesta.mensaje);
       }
     },
-    error => {
-      console.log(<any>error);
+    err => {
+      var respuesta = err.json();
+      if(respuesta.codigo == 11002) {
+        this.toastr.error(respuesta.mensaje);
+      }
     }
-
-  );//FIN DE METODO SUBSCRIBE
-
+  );
+  }
+  //Reestablece los campos formularios
+private reestablecerFormulario(id) {
+  this.formularioAgregarAutorizado.reset();
+  this.formularioAgregarAutorizado.get('id').setValue(id);
+  // this.autocompletado.setValue(undefined);
+  // this.resultados = [];
+  }
 }
-
-}
-

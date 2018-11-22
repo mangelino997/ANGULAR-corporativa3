@@ -12,10 +12,13 @@
         </nav>
   </div>
   </div>
+  <div class="row justify-content-center contenedor">
+    <h5>{{pestaniaActual}} Cliente Propio</h5>
+  </div>
+  <form [formGroup]="formulario" class="contenedor">
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-6 text-center">
-      <h5>{{pestaniaActual}} Cliente Propio</h5>
-      <form [formGroup]="formulario" class="contenedor">
+      
         <div class="row ">
           <div class="col-md-8">
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
@@ -52,14 +55,14 @@
           <div class="form-group has-float-label">
               <label id="" for="apellido" class="tamanio-label">Apellido*</label>
               <input id="apellido" type="text" formControlName="apellido" autocomplete="off"
-                class="form-control form-control-sm" >
+                class="form-control form-control-sm" [readonly]="soloLectura">
           </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
                 <label id="" for="dni" class="tamanio-label">DNI*</label>
-                <input id="dni" type="text" formControlName="dni" autocomplete="off"
-                  class="form-control form-control-sm" >
+                <input id="dni" type="number" formControlName="dni" autocomplete="off"
+                  class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
             </div>
         </div>
@@ -68,21 +71,21 @@
             <div class="form-group has-float-label">
               <label id="" for="idCuil" class="tamanio-label">Cuil*</label>
               <input id="idCuil" type="text" formControlName="cuil" autocomplete="off"
-              class="form-control form-control-sm" >
+              class="form-control form-control-sm" [readonly]="soloLectura" >
             </div>
           </div>
           <div class="col-md-4">
               <div class="form-group has-float-label">
                 <label id="" for="idMatricula" class="tamanio-label">Matrícula</label>
                 <input id="idMatricula" type="text" formControlName="matricula" autocomplete="off"
-                class="form-control form-control-sm" >
+                class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
           </div>
           <div class="col-md-4">
               <div class="form-group has-float-label">
                 <label id="" for="idFechaNacimiento" class="tamanio-label">Fecha de Nacimiento*</label>
-                <input id="idFechaNacimiento" type="text" formControlName="fechaNacimiento" autocomplete="off"
-                class="form-control form-control-sm" >
+                <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura" >
               </div>
           </div>
         </div>
@@ -91,14 +94,14 @@
             <div class="form-group has-float-label">
               <label id="" for="idDireccion" class="tamanio-label">Dirección</label>
               <input id="idDireccion" type="text" formControlName="direccion" autocomplete="off"
-              class="form-control form-control-sm" >
+              class="form-control form-control-sm" [readonly]="soloLectura" >
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label id="" for="idDireccionAlt" class="tamanio-label">Dirección Alternativa</label>
               <input id="idDireccionAlt" type="text" formControlName="direccionAlt" autocomplete="off"
-              class="form-control form-control-sm" >
+              class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -107,28 +110,28 @@
             <div class="form-group has-float-label">
               <label id="" for="idCodigoArea" class="tamanio-label">Código de Area</label>
               <input id="idCodigoArea" type="text" formControlName="codigoArea" autocomplete="off"
-              class="form-control form-control-sm" >
+              class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="" for="idTelefono" class="tamanio-label">Teléfono</label>
-              <input id="idtelefono" type="text" formControlName="telefono" autocomplete="off"
-              class="form-control form-control-sm" >
+              <input id="idtelefono" type="number" formControlName="telefono" autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="" for="idCodigoAreaAlt" class="tamanio-label">Cód. Area Alternativo</label>
               <input id="idCodigoAreaAlt" type="text" formControlName="codigoAreaAlt" autocomplete="off"
-              class="form-control form-control-sm" >
+              class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="" for="idTelefonoAlt" class="tamanio-label">Teléfono Alternativo</label>
-              <input id="idtelefonoAlt" type="text" formControlName="telefonoAlt" autocomplete="off"
-              class="form-control form-control-sm" >
+              <input id="idtelefonoAlt" type="number" formControlName="telefonoAlt" autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -136,20 +139,20 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="" for="idCorreoElectronico" class="tamanio-label">Correo Electrónico</label>
-              <input id="idCorreoElectronico" type="text" formControlName="correoElectronico" autocomplete="off"
-              class="form-control form-control-sm" >
+              <input id="idCorreoElectronico" type="email" formControlName="correoElectronico" autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label id="" for="idAutorizado" class="tamanio-label">Autorizado</label>
-              <input id="idAutorizado" type="text" formControlName="autorizado" autocomplete="off"
-              class="form-control form-control-sm" >
+              <input id="idAutorizado" type="text"  autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-2">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            <button type="button" class="btn btn-primary" (click)="openDialog()">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
             </button>
           </div>
@@ -158,88 +161,21 @@
           formnovalidate (click)="accion(indiceSeleccionado)" >
           {{pestaniaActual}}
         </button>
-      </form>
+      
     </div>
     <div class="col-md-3 align-self-end">
+        <div class="justify-content-center" style="text-align: center;">
+        <img id="imgSalida" width="50%" height="50%" src="assets/User.png" />
+        </div>
         <div class="input-group">
             <div class="custom-file">
-              <input type="file" class="custom-file-input" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" (change)="cargandoImagen($event.target.files)" multiple>
-              <label class="custom-file-label" for="inputGroupFile04"></label>
-            </div>
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon04" >Subir Foto</button>
+              <input type="file" class="custom-file-input" name="file-input" id="file-input" placeholder="Subir Foto" formControlName="foto" (change)="cargandoImagen($event.target.files)" multiple >
+              <label class="custom-file-label" id="imagen-nombre"></label>
             </div>
           </div>
     </div>
-
   </div>
-  <!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="row justify-content-center contenedor">
-          <div class="col-md-10 text-center">
-          <h5>Agregar Autorizado</h5>
-          <form [formGroup]="formularioAgregarAutorizado" class="contenedor">
-              <div class="row ">
-                  <div class="col-md-4">
-                    <div class="form-group has-float-label ">
-                      <label for="idCodigo" class="tamanio-label">Código</label>
-                      <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
-                    </div>
-                  </div>
-              </div>
-              <div class="row ">
-                <div class="col-md-4">
-                  <div class="form-group has-float-label">
-                    <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
-                    <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                      class="form-control form-control-sm" 
-                      (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
-                  </div>
-                </div>
-                <div class="col-md-4">
-                <div class="form-group has-float-label">
-                    <label id="" for="apellido" class="tamanio-label">Apellido*</label>
-                    <input id="apellido" type="text" formControlName="apellido" autocomplete="off"
-                      class="form-control form-control-sm" >
-                </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group has-float-label">
-                      <label id="" for="apellido" class="tamanio-label">DNI*</label>
-                      <input id="apellido" type="text" formControlName="dni" autocomplete="off"
-                        class="form-control form-control-sm" >
-                  </div>
-                  </div>
-              </div>
-              <div class="row">
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label id="" for="apellido" class="tamanio-label">Código de Area*</label>
-                    <input id="apellido" type="text" formControlName="codigoArea" autocomplete="off"
-                      class="form-control form-control-sm" >
-                </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group has-float-label">
-                      <label id="" for="apellido" class="tamanio-label">Teléfono*</label>
-                      <input id="apellido" type="text" formControlName="telefono" autocomplete="off"
-                        class="form-control form-control-sm" >
-                  </div>
-                  </div>
-              </div>
-              <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
-                formnovalidate (click)="agregarAutorizado()" >
-                Agregar
-              </button>
-            </form>
-            </div>
-            </div>
-      </div>
-    </div>
-  </div>
-  <!-- end modal-->
+</form>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-6">
       <table class="table table-bordered table-striped table-sm">

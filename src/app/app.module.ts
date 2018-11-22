@@ -50,7 +50,7 @@ import { TipoFacturaService } from './servicios/tipo-factura.service';
 import { TipoFormularioComponent } from './componentes/tipo-formulario/tipo-formulario.component';
 import { TipoFormularioService } from './servicios/tipo-formulario.service';
 import { TipoFormulario } from './modelos/tipoFormulario';
-import { ClientePropioComponent } from './componentes/cliente-propio/cliente-propio.component';
+import { ClientePropioComponent, ClientePropioModal } from './componentes/cliente-propio/cliente-propio.component';
 import { ClientePropioService } from './servicios/cliente-propio.service';
 import { ClientePropio } from './modelos/clientePropio';
 import { Foto } from './modelos/foto';
@@ -72,7 +72,8 @@ import { FotoService } from './servicios/foto.service';
     ListaPrecioComponent,
     TipoFacturaComponent,
     TipoFormularioComponent,
-    ClientePropioComponent
+    ClientePropioComponent,
+    ClientePropioModal
   ],
   imports: [
     BrowserModule, 
@@ -135,6 +136,7 @@ import { FotoService } from './servicios/foto.service';
     Foto,
     FotoService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [ClientePropioModal]
 })
 export class AppModule { }

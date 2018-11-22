@@ -25,7 +25,7 @@ export class ClientePropioService {
   }
   //obtiene un listado por nombre
   public listarPorAlias(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/'+nombre);
+    return this.http.get(this.url + '/listarPorAlias/'+nombre);
   }
  
   //obtiene la lista completa de registros
