@@ -15,10 +15,10 @@
   <div class="row justify-content-center contenedor">
     <h5>{{pestaniaActual}} Cliente Propio</h5>
   </div>
-  <form [formGroup]="formulario" class="contenedor">
+  <!-- <form [formGroup]="formulario" class="contenedor"> -->
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-6 text-center">
-      
+      <form [formGroup]="formulario" class="contenedor">
         <div class="row ">
           <div class="col-md-8">
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
@@ -143,27 +143,62 @@
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group has-float-label">
-              <label id="" for="idAutorizado" class="tamanio-label">Autorizado</label>
-              <input id="idAutorizado" type="text"  autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura">
-            </div>
+          <div class="col-md-5">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-8">
+              <div class="form-group has-float-label">
+                  <!-- <label id="" for="idAutorizado" class="tamanio-label">Autorizado</label>
+                  <input id="idAutorizado" type="text"  autocomplete="off" 
+                  class="form-control form-control-sm" [readonly]="soloLectura"> -->
+                  <label for="idAutocompletadoAut" class="tamanio-label">Buscar autorizado</label>
+                  <input id="idAutocompletadoAut" class="form-control form-control-sm color-busqueda"
+                    type="text" matInput [formControl]="autocompletadoAutorizados" [matAutocomplete]="autoAut" autocomplete="off">
+                  <mat-autocomplete #autoAut="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                    <mat-option *ngFor="let a of listaAutorizados" [value]="a" >
+                      {{a.alias}}
+                    </mat-option>
+                  </mat-autocomplete>
+              </div>
           </div>
           <div class="col-md-2">
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary" (click)="openDialog()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
-            </button>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" (click)="openDialog()">
+                  Nuevo Autorizado
+                </button>
           </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-bordered table-striped table-sm">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width:80%" scope="col">Nombre</th>
+                      <th class="text-center" style="width:10%" scope="col">Eliminar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let l of listaCompleta">
+                      <td >
+                        <span>{{l.nombre}}</span>
+                      </td>
+                      <td >
+                        <span class="cursor-color" (click)="activarConsultar(l)">X</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
         </div>
         <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
           formnovalidate (click)="accion(indiceSeleccionado)" >
           {{pestaniaActual}}
         </button>
-      
+      </form>
     </div>
     <div class="col-md-3 align-self-end">
+      <form [formGroup]="formularioFoto">
         <div class="justify-content-center" style="text-align: center;">
         <img id="imgSalida" width="50%" height="50%" src="assets/User.png" />
         </div>
@@ -173,9 +208,10 @@
               <label class="custom-file-label" id="imagen-nombre"></label>
             </div>
           </div>
+        </form>
     </div>
   </div>
-</form>
+<!-- </form> -->
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-6">
       <table class="table table-bordered table-striped table-sm">

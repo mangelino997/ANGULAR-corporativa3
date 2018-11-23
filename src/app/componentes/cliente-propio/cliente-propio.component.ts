@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -11,6 +11,10 @@ import { AutorizadoService } from 'src/app/servicios/autorizado.service';
 import { Foto } from 'src/app/modelos/foto';
 import { FotoService } from 'src/app/servicios/foto.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {MatAutocompleteSelectedEvent, MatChipInputEvent, MatAutocomplete} from '@angular/material';
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 import * as $ from 'jquery';
 
 
@@ -22,16 +26,22 @@ import * as $ from 'jquery';
 export class ClientePropioComponent implements OnInit {
 // define el formulario de cliente propio
 public formulario: FormGroup;
+// define el formulario para Foto
+public formularioFoto: FormGroup;
 //Define la lista completa de registros
 public listaCompleta:Array<any> = [];
 //Define la lista para roles
 public listaRoles:Array<any> = [];
+//Define la lista para roles
+public listaAutorizados:Array<any> = [];
 // define la lista de pestañas 
 public pestanias: Array<any>;
 // define el link que sera activado
 public activeLink: any;
 // define el autocompletado como un formControl
 public autocompletado: FormControl=new FormControl();
+// define el autocompletado como un formControl
+public autocompletadoAutorizados: FormControl=new FormControl();
 //Define la pestania actual seleccionada
 public pestaniaActual:string = null;
 //Define si mostrar el autocompletado
@@ -49,6 +59,9 @@ public archivo: File=null;
 //datos imagen
 public respuestaImagenEnviada;
 public resultadoCarga;
+// lista de Autorizados seleccionados por el usuario
+public autorizadoSeleccionado:Array<any> = [];
+  
 
 //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
 constructor(public dialog: MatDialog, private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
@@ -61,7 +74,18 @@ constructor(public dialog: MatDialog, private foto:Foto, private fotoService: Fo
     }
   });
 
-    $(function() {
+  this.autocompletadoAutorizados.valueChanges.subscribe(data => {
+    if(typeof data == 'string') {
+      this.autorizadoService.listarPorAlias(data).subscribe(res => {
+        this.listaAutorizados = res.json();
+        console.log(this.listaAutorizados);
+      })
+    }
+  });
+
+
+  //Escuchador del evento para cargar imagenes
+  $(function() {
      $('#file-input').change(function(e) {
          addImage(e); 
         });
@@ -83,7 +107,8 @@ constructor(public dialog: MatDialog, private foto:Foto, private fotoService: Fo
          $('#imgSalida').attr("src",result);
          $('#imagen-nombre').empty().append('Foto cargada');
         }
-       });
+    });
+
     
 }
 
@@ -101,6 +126,8 @@ openDialog(): void {
 ngOnInit() {
   //inicializa el formulario y sus elementos
   this.formulario= this.clientePropio.formulario;
+  //inicializa el formulario y sus elementos
+  this.formularioFoto= new FormGroup({foto: new FormControl()});
   //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
   this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
     res => {
@@ -112,6 +139,21 @@ ngOnInit() {
   this.seleccionarPestania(1, 'Agregar', 0);
   //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
   this.listar();
+  // obriene la lista de autorizados
+  this.listarAutorizados();
+}
+
+// Carga los autorizados al campo Chips
+private listarAutorizados(){
+  this.autorizadoService.listar().subscribe(
+    res => {
+      this.listaAutorizados=res.json();
+      console.log(this.listaAutorizados);
+    },
+    err => {
+      console.log(err);
+    }
+  );
 }
 
 //Establece el formulario al seleccionar elemento del autocompletado
@@ -147,7 +189,9 @@ this.activeLink = nombre;
 */
 if(opcion == 0) {
 this.autocompletado.setValue(undefined);
+this.autocompletadoAutorizados.setValue(undefined);
 this.resultados = [];
+this.listaAutorizados = [];
 }
 switch (id) {
 case 1:
@@ -209,27 +253,37 @@ this.clientePropioService.listar().subscribe(
 }
 //Agrega un registro 
 private agregar(){
-this.clientePropioService.agregar(this.formulario.value).subscribe(
-  res => {
-    var respuesta = res.json();
-    if(respuesta.codigo == 201) {
-      this.reestablecerFormulario(respuesta.id);
-      setTimeout(function() {
-        document.getElementById('idNombre').focus();
-      }, 20);
-      this.toastr.success(respuesta.mensaje);
-    }
-  },
-  err => {
-    var respuesta = err.json();
-    if(respuesta.codigo == 11002) {
-      document.getElementById("labelNombre").classList.add('label-error');
-      document.getElementById("idNombre").classList.add('is-invalid');
-      document.getElementById("idNombre").focus();
-      this.toastr.error(respuesta.mensaje);
-    }
+this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
+  var respuesta = res.json();
+  let foto = { 
+    id: respuesta.id
   }
-);
+  console.log(foto); //imprime el id de la foto que se va a cargar
+  this.formulario.get('foto').setValue(foto);
+  console.log( this.formulario.value);
+  this.clientePropioService.agregar(this.formulario.value).subscribe(
+    res => {
+      var respuesta = res.json();
+      if(respuesta.codigo == 201) {
+        this.reestablecerFormulario(respuesta.id);
+        setTimeout(function() {
+          document.getElementById('idNombre').focus();
+        }, 20);
+        this.toastr.success(respuesta.mensaje);
+      }
+    },
+    err => {
+      var respuesta = err.json();
+      if(respuesta.codigo == 11002) {
+        document.getElementById("labelNombre").classList.add('label-error');
+        document.getElementById("idNombre").classList.add('is-invalid');
+        document.getElementById("idNombre").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+    }
+  );
+});
+
 }
 
 //Actualiza un registro
@@ -267,12 +321,20 @@ this.clientePropioService.agregar(this.formulario.get('id').value).subscribe(
   }
 );
 }
+
+//metodo añadir autorizado a la tabla
+public añadirAutorizado(a){
+  this.autorizadoSeleccionado=a;
+}
+
 //Reestablece los campos formularios
 private reestablecerFormulario(id) {
 this.formulario.reset();
 this.formulario.get('id').setValue(id);
 this.autocompletado.setValue(undefined);
+this.autocompletadoAutorizados.setValue(undefined);
 this.resultados = [];
+this.listaAutorizados = [];
 }
 //Manejo de colores de campos y labels
 public cambioCampo(id, label) {
@@ -305,32 +367,8 @@ if(keycode == 113) {
 //metodo cargar imagen
 public cargandoImagen(files: FileList){
   this.archivo=files[0];
-  this.formulario.get('foto').setValue(this.archivo);
-  // this.fotoService.postFileImagen(files[0]).subscribe(
-  //   response => {
-  //     var respuesta = response.json();
-  //     this.respuestaImagenEnviada = response; 
-  //     if(this.respuestaImagenEnviada <= 1){
-  //       this.toastr.error('Error al cargar imagen');
-  //     }else{
-  //       if(this.respuestaImagenEnviada.code == 200 && this.respuestaImagenEnviada.status == "success"){
-  //         this.toastr.success(respuesta.mensaje);
-  //       }else{
-  //         this.toastr.success(respuesta.mensaje);
-  //       }
-  //     }
-  //   },
-  //   error => {
-  //     var respuesta = error.json();
-  //     if(respuesta.codigo == 11002) {
-  //       document.getElementById("labelNombre").classList.add('label-error');
-  //       document.getElementById("idNombre").classList.add('is-invalid');
-  //       document.getElementById("idNombre").focus();
-  //       this.toastr.error(respuesta.mensaje);
-  //     }
-  //   }
-  // );//FIN DE METODO SUBSCRIBE
-}
+  console.log('imagen adjuntada');
+  }
 }
 
 @Component({
@@ -367,6 +405,7 @@ public obtenerSiguienteIdAutorizado(){
   }
   //Agrega un autorizado 
 public agregarAutorizado(){
+  
   this.autorizadoService.agregar(this.formularioAgregarAutorizado.value).subscribe(
     res => {
       var respuesta = res.json();
