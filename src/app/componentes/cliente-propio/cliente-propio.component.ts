@@ -36,6 +36,10 @@ public listaRoles:Array<any> = [];
 public listaAutorizados:Array<any> = [];
 //Define la lista para autorizados añadidos 
 public listaAutorizadosAgregados:Array<any> = [];
+//Define la lista para autorizados añadidos por ID
+public listaAutorizadosAgregadosId:Array<any> = [];
+//Define la lista para autorizados añadidos por un Cliente
+public listaAutorizadosPorCliente:Array<any> = [];
 // define la lista de pestañas 
 public pestanias: Array<any>;
 // define el link que sera activado
@@ -66,7 +70,10 @@ public autorizadoSeleccionado:Array<any> = [];
 //captura el elemento 'inputAutorizado' del dom (como un document.getElementById)
 @ViewChild('inputAutorizado') inputAgregar: ElementRef;
 //captura el elemento 'tablaAutorizados' del dom 
-// @ViewChild('inputAutorizado') inputAgregar: ElementRef;
+@ViewChild('tablaAutorizados') tablaAutorizados: ElementRef;
+//captura el elemento 'tablaAutorizados' del dom 
+@ViewChild('autorizadosPorCliente') autorizadosPorCliente: ElementRef;
+
   
 
 //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
@@ -210,6 +217,9 @@ case 1:
   break;
 case 2:
   this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+  // this.tablaAutorizados.nativeElement.style.display="none";
+  // this.autorizadosPorCliente.nativeElement.style.display="block";
+  // this.listarAutorizadosPorCliente();listaAutorizadosPorCliente
   break;
 case 3:
   this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
@@ -288,7 +298,7 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
   console.log(this.listaAutorizadosAgregados.values);
   this.formulario.get('foto').setValue(foto);
   //obtiene el array de autorizados agregados y los guarda en el campo 'autorizados' del formulario
-  this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregados);
+  this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregadosId);
   console.log( this.formulario.value);
   this.clientePropioService.agregar(this.formulario.value).subscribe(
     res => {
@@ -355,6 +365,11 @@ this.clientePropioService.agregar(this.formulario.get('id').value).subscribe(
 public añadirAutorizado(a){
   this.autorizadoSeleccionado=a;
 }
+//metodo añadir autorizado a la tabla
+public listarAutorizadosPorCliente(a){
+  this.autorizadoSeleccionado=a;
+}
+
 
 //Reestablece los campos formularios
 private reestablecerFormulario(id) {
@@ -375,7 +390,15 @@ public activarConsultar(elemento) {
 this.seleccionarPestania(2, this.pestanias[1].pestania.nombre, 1);
 this.autocompletado.setValue(elemento);
 this.formulario.patchValue(elemento);
+//borro todo lo que tenga cargada la lista
+this.listaAutorizadosAgregados.splice(0, this.listaAutorizadosAgregados.length);
+//agrego los autorizados del Cliente seleccionado
+for(let i=0;i<elemento.autorizados.length; i++){
+this.listaAutorizadosAgregados.push(elemento.autorizados[i]);}
+console.log(this.listaAutorizadosAgregados);
+
 }
+
 //Muestra en la pestania actualizar el elemento seleccionado de listar
 public activarActualizar(elemento) {
 this.seleccionarPestania(3, this.pestanias[2].pestania.nombre, 1);

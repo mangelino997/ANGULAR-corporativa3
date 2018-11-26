@@ -17,15 +17,15 @@ export class ClientePropio {
             dni: new FormControl('', [Validators.required, Validators.maxLength(8)]),
             fechaNacimiento: new FormControl('', Validators.required),
             cuil: new FormControl('', [Validators.required, Validators.maxLength(11)]),
-            matricula: new FormControl('', Validators.maxLength(20)),
-            direccion: new FormControl('', Validators.maxLength(30)),
+            matricula: new FormControl('', [Validators.required,Validators.maxLength(20)]),
+            direccion: new FormControl('', [Validators.required,Validators.maxLength(30)]),
             direccionAlt: new FormControl('', Validators.maxLength(30)),
-            codigoArea: new FormControl('', Validators.maxLength(6)),
-            telefono: new FormControl('', Validators.maxLength(10)),
+            codigoArea: new FormControl('', [Validators.required,Validators.maxLength(6)]),
+            telefono: new FormControl('', [Validators.required,Validators.maxLength(10)]),
             codigoAreaAlt: new FormControl('', Validators.maxLength(6)),
             telefonoAlt: new FormControl('', Validators.maxLength(10)),
             correoElectronico: new FormControl('', Validators.maxLength(30)),
-            foto: new FormControl(''),
+            foto: new FormControl('', Validators.required),
             autorizados: new FormControl('')
         })
         

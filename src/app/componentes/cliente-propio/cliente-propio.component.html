@@ -169,9 +169,10 @@
                 </button>
           </div>
         </div>
+        <!--tabla para mostrar los autorizados que selecciono de la lista autocompletado-->
         <div class="row">
             <div class="col-md-8">
-                <table class="table table-bordered table-striped table-sm">
+                <table class="table table-bordered table-striped table-sm" #tablaAutorizados >
                   <thead>
                     <tr>
                       <th class="text-center" style="width:80%" scope="col">Nombre</th>
@@ -181,16 +182,39 @@
                   <tbody>
                     <tr *ngFor="let a of listaAutorizadosAgregados">
                       <td >
-                        <span>{{a.nombre}}</span>
+                        <input type="text" class="centrado" value="{{a.nombre}}" [readonly]="soloLectura" DISABLED>
                       </td>
                       <td >
-                        <span class="cursor-color" (click)="deleteAutorizados(a)">X</span>
+                        <input type="button" class="centrado" value="X" (click)="deleteAutorizados(a)" [readonly]="soloLectura" >
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
         </div>
+        <!--tabla para mostrar los autorizados seleccionados por un Cliente-->
+        <!-- <div class="row" #autorizadosPorCliente style="display: none;">
+          <div class="col-md-8">
+              <table class="table table-bordered table-striped table-sm"  >
+                <thead>
+                  <tr>
+                    <th class="text-center" style="width:80%" scope="col">Nombre</th>
+                    <th class="text-center" style="width:10%" scope="col">Eliminar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ac of listaAutorizadosPorCliente">
+                    <td >
+                      <input type="text" class="centrado" value="{{ac.nombre}}" [readonly]="soloLectura" DISABLED>
+                    </td>
+                    <td >
+                      <input type="button" class="centrado" value="X" (click)="deleteAutorizados(ac)" [readonly]="soloLectura" >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+      </div> -->
         <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
           formnovalidate (click)="accion(indiceSeleccionado)" >
           {{pestaniaActual}}
