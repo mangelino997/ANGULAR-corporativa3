@@ -26,7 +26,7 @@ export class ClientePropio {
             telefonoAlt: new FormControl('', Validators.maxLength(10)),
             correoElectronico: new FormControl('', Validators.maxLength(30)),
             foto: new FormControl(''),
-            autorizado: new FormControl('')
+            autorizados: new FormControl('')
         })
         
     }

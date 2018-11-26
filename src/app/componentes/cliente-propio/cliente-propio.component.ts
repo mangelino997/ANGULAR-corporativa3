@@ -34,6 +34,8 @@ public listaCompleta:Array<any> = [];
 public listaRoles:Array<any> = [];
 //Define la lista para roles
 public listaAutorizados:Array<any> = [];
+//Define la lista para autorizados añadidos 
+public listaAutorizadosAgregados:Array<any> = [];
 // define la lista de pestañas 
 public pestanias: Array<any>;
 // define el link que sera activado
@@ -61,6 +63,10 @@ public respuestaImagenEnviada;
 public resultadoCarga;
 // lista de Autorizados seleccionados por el usuario
 public autorizadoSeleccionado:Array<any> = [];
+//captura el elemento 'inputAutorizado' del dom (como un document.getElementById)
+@ViewChild('inputAutorizado') inputAgregar: ElementRef;
+//captura el elemento 'tablaAutorizados' del dom 
+// @ViewChild('inputAutorizado') inputAgregar: ElementRef;
   
 
 //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
@@ -141,6 +147,10 @@ ngOnInit() {
   this.listar();
   // obriene la lista de autorizados
   this.listarAutorizados();
+}
+
+public mostrar(){
+  console.log(this.listaAutorizadosAgregados);
 }
 
 // Carga los autorizados al campo Chips
@@ -251,6 +261,22 @@ this.clientePropioService.listar().subscribe(
   }
 );
 }
+// añade un autorizado seleccionado a la lista
+public addAutorizados(autorizado) {
+    this.listaAutorizadosAgregados.push(autorizado);
+    this.inputAgregar.nativeElement.value="";
+    
+}
+// elimina un autorizado seleccionado de la lista
+public  deleteAutorizados(a) {
+    for(let i=0; i< this.listaAutorizadosAgregados.length; i++ ){
+         if(a==this.listaAutorizadosAgregados[i]){
+          this.listaAutorizadosAgregados.splice(i, 1);
+       }
+    }
+}
+
+
 //Agrega un registro 
 private agregar(){
 this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
@@ -259,7 +285,10 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
     id: respuesta.id
   }
   console.log(foto); //imprime el id de la foto que se va a cargar
+  console.log(this.listaAutorizadosAgregados.values);
   this.formulario.get('foto').setValue(foto);
+  //obtiene el array de autorizados agregados y los guarda en el campo 'autorizados' del formulario
+  this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregados);
   console.log( this.formulario.value);
   this.clientePropioService.agregar(this.formulario.value).subscribe(
     res => {

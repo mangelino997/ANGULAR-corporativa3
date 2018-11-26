@@ -153,10 +153,10 @@
                   <input id="idAutorizado" type="text"  autocomplete="off" 
                   class="form-control form-control-sm" [readonly]="soloLectura"> -->
                   <label for="idAutocompletadoAut" class="tamanio-label">Buscar autorizado</label>
-                  <input id="idAutocompletadoAut" class="form-control form-control-sm color-busqueda"
-                    type="text" matInput [formControl]="autocompletadoAutorizados" [matAutocomplete]="autoAut" autocomplete="off">
-                  <mat-autocomplete #autoAut="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                    <mat-option *ngFor="let a of listaAutorizados" [value]="a" >
+                  <input id="idAutocompletadoAut" class="form-control form-control-sm color-busqueda"  #inputAutorizado
+                    type="text" matInput [formControl]="autocompletadoAutorizados" [matAutocomplete]="autoAut" autocomplete="off" [readonly]="soloLectura">
+                  <mat-autocomplete #autoAut="matAutocomplete" [displayWith]="displayFn.bind(this)" >
+                    <mat-option *ngFor="let a of listaAutorizados" [value]="a" (click)="addAutorizados(a)">
                       {{a.alias}}
                     </mat-option>
                   </mat-autocomplete>
@@ -179,12 +179,12 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let l of listaCompleta">
+                    <tr *ngFor="let a of listaAutorizadosAgregados">
                       <td >
-                        <span>{{l.nombre}}</span>
+                        <span>{{a.nombre}}</span>
                       </td>
                       <td >
-                        <span class="cursor-color" (click)="activarConsultar(l)">X</span>
+                        <span class="cursor-color" (click)="deleteAutorizados(a)">X</span>
                       </td>
                     </tr>
                   </tbody>
