@@ -224,7 +224,8 @@
     <div class="col-md-3 align-self-end">
       <form [formGroup]="formularioFoto">
         <div class="justify-content-center" style="text-align: center;">
-        <img id="imgSalida" width="50%" height="50%" src="assets/User.png" />
+        <img id="imgSalida" width="50%" height="50%" src="http://192.168.0.99:8080/hibanaws/auth/foto/obtenerPorId/{{idFoto}}" *ngIf="indiceSeleccionado>1"/>
+        <img id="imgSalida" width="50%" height="50%" src="assets/User.png" *ngIf="indiceSeleccionado==1">
         </div>
         <div class="input-group">
             <div class="custom-file">
