@@ -60,8 +60,8 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-                <label id="" for="dni" class="tamanio-label">DNI*</label>
-                <input id="dni" type="number" formControlName="dni" autocomplete="off"
+                <label id="labelDni" for="idDni" class="tamanio-label">DNI*</label>
+                <input id="idDni" type="number" formControlName="dni" autocomplete="off"
                   class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
             </div>
@@ -69,7 +69,7 @@
         <div class="row ">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="" for="idCuil" class="tamanio-label">Cuil*</label>
+              <label id="labelCuil" for="idCuil" class="tamanio-label">Cuil*</label>
               <input id="idCuil" type="text" formControlName="cuil" autocomplete="off"
               class="form-control form-control-sm" [readonly]="soloLectura" >
             </div>
@@ -138,7 +138,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="" for="idCorreoElectronico" class="tamanio-label">Correo Electrónico</label>
+              <label id="labelCorreo" for="idCorreoElectronico" class="tamanio-label">Correo Electrónico</label>
               <input id="idCorreoElectronico" type="email" formControlName="correoElectronico" autocomplete="off"
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -176,16 +176,16 @@
                   <thead>
                     <tr>
                       <th class="text-center" style="width:80%" scope="col">Nombre</th>
-                      <th class="text-center" style="width:10%" scope="col">Eliminar</th>
+                      <th class="text-center" style="width:10%" scope="col" *ngIf="!soloLectura">Eliminar</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr *ngFor="let a of listaAutorizadosAgregados">
                       <td >
-                        <input type="text" class="centrado" value="{{a.nombre}}" [readonly]="soloLectura" DISABLED>
+                        <input name="idAutorizados" type="text" class="centrado" value="{{a.nombreCompleto}}" [readonly]="soloLectura" DISABLED>
                       </td>
-                      <td >
-                        <input type="button" class="centrado" value="X" (click)="deleteAutorizados(a)" [readonly]="soloLectura" >
+                      <td *ngIf="!soloLectura">
+                        <input name="accionesAutorizados" type="button" class="centrado" value="X" (click)="deleteAutorizados(a)" >
                       </td>
                     </tr>
                   </tbody>

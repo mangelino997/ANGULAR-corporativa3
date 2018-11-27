@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -73,11 +73,11 @@ public autorizadoSeleccionado:Array<any> = [];
 @ViewChild('tablaAutorizados') tablaAutorizados: ElementRef;
 //captura el elemento 'tablaAutorizados' del dom 
 @ViewChild('autorizadosPorCliente') autorizadosPorCliente: ElementRef;
-
-  
+//captura el elemento 'accionesAutorizados' del dom 
+@ViewChild("accionesAutorizados") accionesAutorizados: ElementRef;
 
 //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
-constructor(public dialog: MatDialog, private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
+constructor(private renderer: Renderer2, public dialog: MatDialog, private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
   this.autocompletado.valueChanges.subscribe(data => {
     if(typeof data == 'string') {
       this.clientePropioService.listarPorAlias(data).subscribe(res => {
@@ -150,8 +150,6 @@ ngOnInit() {
   );
   //Establece los valores, activando la primera pestania 
   this.seleccionarPestania(1, 'Agregar', 0);
-  //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
-  this.listar();
   // obriene la lista de autorizados
   this.listarAutorizados();
 }
@@ -175,7 +173,9 @@ private listarAutorizados(){
 
 //Establece el formulario al seleccionar elemento del autocompletado
 public cambioAutocompletado(elemento) {
-this.formulario.patchValue(elemento);
+  this.formulario.patchValue(elemento);
+  this.borrarAgregados();
+  this.listarAutorizado(elemento);
 }
 //Formatea el valor del autocompletado
 public displayFn(elemento) {
@@ -200,6 +200,7 @@ public seleccionarPestania(id, nombre, opcion) {
 this.formulario.reset();
 this.indiceSeleccionado = id;
 this.activeLink = nombre;
+this.borrarAgregados();
 /*
 * Se vacia el formulario solo cuando se cambia de pestania, no cuando
 * cuando se hace click en ver o mod de la pestania lista
@@ -227,6 +228,9 @@ case 3:
 case 4:
   this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
   break;
+case 5:
+  //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
+  this.listar();
 default:
   break;
 }
@@ -279,11 +283,13 @@ public addAutorizados(autorizado) {
 }
 // elimina un autorizado seleccionado de la lista
 public  deleteAutorizados(a) {
+  console.log(this.soloLectura);
     for(let i=0; i< this.listaAutorizadosAgregados.length; i++ ){
          if(a==this.listaAutorizadosAgregados[i]){
           this.listaAutorizadosAgregados.splice(i, 1);
        }
-    }
+    
+  }
 }
 
 
@@ -298,7 +304,7 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
   console.log(this.listaAutorizadosAgregados.values);
   this.formulario.get('foto').setValue(foto);
   //obtiene el array de autorizados agregados y los guarda en el campo 'autorizados' del formulario
-  this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregadosId);
+  this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregados);
   console.log( this.formulario.value);
   this.clientePropioService.agregar(this.formulario.value).subscribe(
     res => {
@@ -319,6 +325,24 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
         document.getElementById("idNombre").focus();
         this.toastr.error(respuesta.mensaje);
       }
+      if(respuesta.codigo == 11011) {
+        document.getElementById("labelDni").classList.add('label-error');
+        document.getElementById("idDni").classList.add('is-invalid');
+        document.getElementById("idDni").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+      if(respuesta.codigo == 11008) {
+        document.getElementById("labelCuil").classList.add('label-error');
+        document.getElementById("idCuil").classList.add('is-invalid');
+        document.getElementById("idCuil").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+      if(respuesta.codigo == 11003) {
+        document.getElementById("labelCorreo").classList.add('label-error');
+        document.getElementById("idCorreoElectronico").classList.add('is-invalid');
+        document.getElementById("idCorreoElectronico").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
     }
   );
 });
@@ -327,6 +351,8 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
 
 //Actualiza un registro
 private actualizar(){
+//obtiene el array de autorizados agregados y los guarda en el campo 'autorizados' del formulario
+this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregados);
 this.clientePropioService.actualizar(this.formulario.value).subscribe(
   res => {
     var respuesta = res.json();
@@ -346,6 +372,24 @@ this.clientePropioService.actualizar(this.formulario.value).subscribe(
       document.getElementById("idNombre").focus();
       this.toastr.error(respuesta.mensaje);
     }
+    if(respuesta.codigo == 11011) {
+      document.getElementById("labelDni").classList.add('label-error');
+      document.getElementById("idDni").classList.add('is-invalid');
+      document.getElementById("idDni").focus();
+      this.toastr.error(respuesta.mensaje);
+    }
+    if(respuesta.codigo == 11008) {
+      document.getElementById("labelCuil").classList.add('label-error');
+      document.getElementById("idCuil").classList.add('is-invalid');
+      document.getElementById("idCuil").focus();
+      this.toastr.error(respuesta.mensaje);
+    }
+    if(respuesta.codigo == 11003) {
+      document.getElementById("labelCorreo").classList.add('label-error');
+      document.getElementById("idCorreoElectronico").classList.add('is-invalid');
+      document.getElementById("idCorreoElectronico").focus();
+      this.toastr.error(respuesta.mensaje);
+    }
   }
 );
 }
@@ -359,6 +403,16 @@ this.clientePropioService.agregar(this.formulario.get('id').value).subscribe(
     console.log(err);
   }
 );
+}
+//borro todo lo que tenga cargada la lista
+public borrarAgregados(){
+  this.listaAutorizadosAgregados.splice(0, this.listaAutorizadosAgregados.length);
+}
+//lista en la tabla todos los autorizados seleccionados por el Cliente
+public listarAutorizado(elemento){
+  for(let i=0;i<elemento.autorizados.length; i++){
+    this.listaAutorizadosAgregados.push(elemento.autorizados[i]);
+  }
 }
 
 //metodo añadir autorizado a la tabla
@@ -379,6 +433,8 @@ this.autocompletado.setValue(undefined);
 this.autocompletadoAutorizados.setValue(undefined);
 this.resultados = [];
 this.listaAutorizados = [];
+this.borrarAgregados();
+// this.listarAutorizado(id);
 }
 //Manejo de colores de campos y labels
 public cambioCampo(id, label) {
@@ -387,23 +443,24 @@ document.getElementById(label).classList.remove('label-error');
 };
 //Muestra en la pestania buscar el elemento seleccionado de listar
 public activarConsultar(elemento) {
-this.seleccionarPestania(2, this.pestanias[1].pestania.nombre, 1);
-this.autocompletado.setValue(elemento);
-this.formulario.patchValue(elemento);
-//borro todo lo que tenga cargada la lista
-this.listaAutorizadosAgregados.splice(0, this.listaAutorizadosAgregados.length);
-//agrego los autorizados del Cliente seleccionado
-for(let i=0;i<elemento.autorizados.length; i++){
-this.listaAutorizadosAgregados.push(elemento.autorizados[i]);}
-console.log(this.listaAutorizadosAgregados);
-
+  this.seleccionarPestania(2, this.pestanias[1].pestania.nombre, 1);
+  this.autocompletado.setValue(elemento);
+  this.formulario.patchValue(elemento);
+  //borro todo lo que tenga cargada la lista
+  this.borrarAgregados();
+  //agrego los autorizados del Cliente seleccionado
+  this.listarAutorizado(elemento);
+  console.log(this.listaAutorizadosAgregados);
 }
 
 //Muestra en la pestania actualizar el elemento seleccionado de listar
 public activarActualizar(elemento) {
-this.seleccionarPestania(3, this.pestanias[2].pestania.nombre, 1);
-this.autocompletado.setValue(elemento);
-this.formulario.patchValue(elemento);
+  this.seleccionarPestania(3, this.pestanias[2].pestania.nombre, 1);
+  this.autocompletado.setValue(elemento);
+  this.formulario.patchValue(elemento);
+  this.borrarAgregados();
+  this.listarAutorizado(elemento);
+  console.log(elemento);
 }
 //Maneja los evento al presionar una tacla (para pestanias y opciones)
 public manejarEvento(keycode) {
