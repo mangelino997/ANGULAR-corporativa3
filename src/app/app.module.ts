@@ -59,6 +59,9 @@ import { ProveedorComponent } from './componentes/proveedor/proveedor.component'
 import { Proveedor } from './modelos/proveedor';
 import { ProveedorService } from './servicios/proveedor.service';
 import { CompraComponent } from './componentes/compra/compra.component';
+import { ListaPrecioCompra } from './modelos/listaPrecioCompra';
+import { ListaPrecioCompraComponent } from './componentes/lista-precio-compra/lista-precio-compra.component';
+import { ListaPrecioCompraService } from './servicios/lista-precio-compra.service';
 
 
 @NgModule({
@@ -79,7 +82,8 @@ import { CompraComponent } from './componentes/compra/compra.component';
     ClientePropioComponent,
     ClientePropioModal,
     ProveedorComponent,
-    CompraComponent
+    CompraComponent,
+    ListaPrecioCompraComponent
   ],
   imports: [
     BrowserModule, 
@@ -143,7 +147,9 @@ import { CompraComponent } from './componentes/compra/compra.component';
     Foto,
     FotoService,
     Proveedor,
-    ProveedorService
+    ProveedorService,
+    ListaPrecioCompra,
+    ListaPrecioCompraService
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal]
