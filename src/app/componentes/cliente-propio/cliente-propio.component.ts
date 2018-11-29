@@ -54,6 +54,8 @@ public pestaniaActual:string = null;
 public mostrarAutocompletado:boolean = null;
 //Define si el campo es de solo lectura
 public soloLectura:boolean = false;
+//Define si el segundo <img> en subir imagen se muestra o no
+public muestraImagenPc: boolean=null;
 //Define si mostrar el boton
 public mostrarBoton:boolean = null;
 //Define el indice seleccionado de pestania
@@ -67,6 +69,8 @@ public respuestaImagenEnviada;
 public resultadoCarga;
 //id de la foto del cliente para mostrarla en Consultar, Actualizar y Eliminar
 public idFoto: number=51;
+// guarda el json del campo Foto del cliente que se selecciono/actualizo
+public fotoCliente: number;
 // lista de Autorizados seleccionados por el usuario
 public autorizadoSeleccionado:Array<any> = [];
 //captura el elemento 'inputAutorizado' del dom (como un document.getElementById)
@@ -77,6 +81,7 @@ public autorizadoSeleccionado:Array<any> = [];
 @ViewChild('autorizadosPorCliente') autorizadosPorCliente: ElementRef;
 //captura el elemento 'accionesAutorizados' del dom 
 @ViewChild("accionesAutorizados") accionesAutorizados: ElementRef;
+  bandera: boolean= false;
 
 //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
 constructor(private renderer: Renderer2, public dialog: MatDialog, private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
@@ -152,8 +157,10 @@ ngOnInit() {
   );
   //Establece los valores, activando la primera pestania 
   this.seleccionarPestania(1, 'Agregar', 0);
-  // obriene la lista de autorizados
+  // obtiene la lista de autorizados
   this.listarAutorizados();
+  // inicializa en false
+  this.muestraImagenPc=false;
 }
 
 public mostrar(){
@@ -178,6 +185,7 @@ public cambioAutocompletado(elemento) {
   this.formulario.patchValue(elemento);
   this.borrarAgregados();
   this.listarAutorizado(elemento);
+  this.mostrarFotoCliente(elemento);
 }
 //Formatea el valor del autocompletado
 public displayFn(elemento) {
@@ -221,6 +229,7 @@ case 1:
 case 2:
   this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
   this.mostrarFotoCliente(this.idFoto);
+  this.muestraImagenPc=false;
   // this.tablaAutorizados.nativeElement.style.display="none";
   // this.autorizadosPorCliente.nativeElement.style.display="block";
   // this.listarAutorizadosPorCliente();listaAutorizadosPorCliente
@@ -228,14 +237,17 @@ case 2:
 case 3:
   this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
   this.mostrarFotoCliente(this.idFoto);
+  // this.muestraImagenPc=false;
   break;
 case 4:
   this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
   this.mostrarFotoCliente(this.idFoto);
+  this.muestraImagenPc=false;
   break;
 case 5:
   //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
   this.listar();
+  this.muestraImagenPc=false;
 default:
   break;
 }
@@ -348,6 +360,12 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
         document.getElementById("idCorreoElectronico").focus();
         this.toastr.error(respuesta.mensaje);
       }
+      if(respuesta.codigo == 500) {
+        document.getElementById("labelCorreo").classList.add('label-error');
+        document.getElementById("idCorreoElectronico").classList.add('is-invalid');
+        document.getElementById("idCorreoElectronico").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
     }
   );
 });
@@ -357,46 +375,112 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
 //Actualiza un registro
 private actualizar(){
 //obtiene el array de autorizados agregados y los guarda en el campo 'autorizados' del formulario
-this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregados);
-this.clientePropioService.actualizar(this.formulario.value).subscribe(
-  res => {
+if(this.bandera== true){
+  this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
     var respuesta = res.json();
-    if(respuesta.codigo == 200) {
-      this.reestablecerFormulario(undefined);
-      setTimeout(function() {
-        document.getElementById('idAutocompletado').focus();
-      }, 20);
-      this.toastr.success(respuesta.mensaje);
+    let foto = { 
+      id: respuesta.id
     }
-  },
-  err => {
-    var respuesta = err.json();
-    if(respuesta.codigo == 11002) {
-      document.getElementById("labelNombre").classList.add('label-error');
-      document.getElementById("idNombre").classList.add('is-invalid');
-      document.getElementById("idNombre").focus();
-      this.toastr.error(respuesta.mensaje);
-    }
-    if(respuesta.codigo == 11011) {
-      document.getElementById("labelDni").classList.add('label-error');
-      document.getElementById("idDni").classList.add('is-invalid');
-      document.getElementById("idDni").focus();
-      this.toastr.error(respuesta.mensaje);
-    }
-    if(respuesta.codigo == 11008) {
-      document.getElementById("labelCuil").classList.add('label-error');
-      document.getElementById("idCuil").classList.add('is-invalid');
-      document.getElementById("idCuil").focus();
-      this.toastr.error(respuesta.mensaje);
-    }
-    if(respuesta.codigo == 11003) {
-      document.getElementById("labelCorreo").classList.add('label-error');
-      document.getElementById("idCorreoElectronico").classList.add('is-invalid');
-      document.getElementById("idCorreoElectronico").focus();
-      this.toastr.error(respuesta.mensaje);
-    }
+    this.formulario.get('foto').setValue(foto);
+    this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregados);
+    this.clientePropioService.actualizar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          setTimeout(function() {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        if(respuesta.codigo == 11011) {
+          document.getElementById("labelDni").classList.add('label-error');
+          document.getElementById("idDni").classList.add('is-invalid');
+          document.getElementById("idDni").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        if(respuesta.codigo == 11008) {
+          document.getElementById("labelCuil").classList.add('label-error');
+          document.getElementById("idCuil").classList.add('is-invalid');
+          document.getElementById("idCuil").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        if(respuesta.codigo == 11003) {
+          document.getElementById("labelCorreo").classList.add('label-error');
+          document.getElementById("idCorreoElectronico").classList.add('is-invalid');
+          document.getElementById("idCorreoElectronico").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        if(respuesta.codigo == 500) {
+          document.getElementById("labelCorreo").classList.add('label-error');
+          document.getElementById("idCorreoElectronico").classList.add('is-invalid');
+          document.getElementById("idCorreoElectronico").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+      }
+    );
   }
-);
+  );
+}
+else{
+  this.formulario.get('foto').setValue(this.fotoCliente);
+  this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregados);
+    this.clientePropioService.actualizar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          setTimeout(function() {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        if(respuesta.codigo == 11011) {
+          document.getElementById("labelDni").classList.add('label-error');
+          document.getElementById("idDni").classList.add('is-invalid');
+          document.getElementById("idDni").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        if(respuesta.codigo == 11008) {
+          document.getElementById("labelCuil").classList.add('label-error');
+          document.getElementById("idCuil").classList.add('is-invalid');
+          document.getElementById("idCuil").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        if(respuesta.codigo == 11003) {
+          document.getElementById("labelCorreo").classList.add('label-error');
+          document.getElementById("idCorreoElectronico").classList.add('is-invalid');
+          document.getElementById("idCorreoElectronico").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        if(respuesta.codigo == 500) {
+          document.getElementById("labelCorreo").classList.add('label-error');
+          document.getElementById("idCorreoElectronico").classList.add('is-invalid');
+          document.getElementById("idCorreoElectronico").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+      }
+    );
+}
+
 }
 //Elimina un registro
 private eliminar(){
@@ -440,6 +524,7 @@ this.resultados = [];
 this.listaAutorizados = [];
 this.borrarAgregados();
 this.idFoto=51;
+this.muestraImagenPc=false;
 // this.listarAutorizado(id);
 }
 //Manejo de colores de campos y labels
@@ -457,11 +542,13 @@ public activarConsultar(elemento) {
   //agrego los autorizados del Cliente seleccionado
   this.listarAutorizado(elemento);
   this.mostrarFotoCliente(elemento);
+  this.muestraImagenPc=false;
 }
 //mostrar Foto del Cliente en pestaña Actualizar, Consulat y Eliminar
 public mostrarFotoCliente(elemento){
   if(elemento.foto!= null){
     this.idFoto=elemento.foto.id;
+    this.fotoCliente=elemento.foto;
   }else
   {
     this.idFoto=51;
@@ -475,6 +562,7 @@ public activarActualizar(elemento) {
   this.borrarAgregados();
   this.listarAutorizado(elemento);
   this.mostrarFotoCliente(elemento);
+  this.muestraImagenPc=false;
 }
 //Maneja los evento al presionar una tacla (para pestanias y opciones)
 public manejarEvento(keycode) {
@@ -491,8 +579,11 @@ if(keycode == 113) {
 public cargandoImagen(files: FileList){
   this.archivo=files[0];
   console.log('imagen adjuntada');
+  this.bandera=true;
+  this.muestraImagenPc=true;
+  
   }
-
+  
 }
 
 @Component({

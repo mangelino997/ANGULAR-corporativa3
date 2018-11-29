@@ -224,12 +224,12 @@
     <div class="col-md-3 align-self-end">
       <form [formGroup]="formularioFoto">
         <div class="justify-content-center" style="text-align: center;">
-        <img id="imgSalida" width="50%" height="50%" src="http://192.168.0.99:8080/hibanaws/auth/foto/obtenerPorId/{{idFoto}}" *ngIf="indiceSeleccionado>1"/>
-        <img id="imgSalida" width="50%" height="50%" src="assets/User.png" *ngIf="indiceSeleccionado==1">
+        <img id="imgSalida" width="50%" height="50%" src="http://192.168.0.99:8081/hibanaws/auth/foto/obtenerPorId/{{idFoto}}" *ngIf="indiceSeleccionado>1 && !muestraImagenPc"/>
+        <img id="imgSalida" width="50%" height="50%" src="assets/User.png" *ngIf="indiceSeleccionado==1 || muestraImagenPc">
         </div>
         <div class="input-group">
             <div class="custom-file">
-              <input type="file" class="custom-file-input" name="file-input" id="file-input" placeholder="Subir Foto" formControlName="foto" (change)="cargandoImagen($event.target.files)" multiple >
+              <input type="file" class="custom-file-input" name="file-input" id="file-input" placeholder="Subir Foto" formControlName="foto" (change)="cargandoImagen($event.target.files)" multiple *ngIf="!soloLectura">
               <label class="custom-file-label" id="imagen-nombre"></label>
             </div>
           </div>
