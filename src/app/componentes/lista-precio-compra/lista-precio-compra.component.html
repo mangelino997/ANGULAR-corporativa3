@@ -12,72 +12,66 @@
         </nav>
   </div>
   </div>
-<div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-  <div class="col-md-6 text-center">
+<div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 6">
+  <div class="col-md-12 text-center">
     <h5>{{pestaniaActual}} Lista Precio Compra</h5>
     <form [formGroup]="formulario" class="contenedor">
       <div class="row ">
-        <div class="col-md-8">
-          <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
-            <label for="idAutocompletado" class="tamanio-label">Buscar Autorizado</label>
-            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-              type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-              <mat-option *ngFor="let item of resultados" [value]="item"
-                (onSelectionChange)="cambioAutocompletado(item)">
-                {{item.alias}}
-              </mat-option>
-            </mat-autocomplete>
-          </div>
-        </div>
-      </div>
-      <div class="row ">
           <div class="col-md-4">
-            <div class="form-group has-float-label ">
-              <label for="idCodigo" class="tamanio-label">Código</label>
-              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
+            <!-- <div class="form-group has-float-label ">
+              <label for="idListaPrecio" class="tamanio-label">lista de Precio</label>
+              <input id="idListaPrecio" type="number" formControlName="idListasPrecio" class="form-control form-control-sm" >
+            </div> -->
+            <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
+                <label for="idListaPrecio" class="tamanio-label">lista de Precio</label>
+                <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                  type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                  <mat-option *ngFor="let item of resultados" [value]="item.listaPrecio.alias"
+                    (onSelectionChange)="cambioAutocompletado(item)">
+                    {{item.listaPrecio.alias}}
+                  </mat-option>
+                </mat-autocomplete>
             </div>
           </div>
       </div>
-      <div class="row ">
-        <div class="col-md-4">
-          <div class="form-group has-float-label">
-            <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
-            <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura"
-              (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
-          </div>
+      <div class="row " *ngIf="mostrarTabla">
+        <div class="col-md-12">
+            <table class="table table-bordered table-striped table-sm">
+                <thead>
+                  <tr>
+                    <th class="text-center" style="width:20%" scope="col">#</th>
+                    <th class="text-center" style="width:40%" scope="col">Tipo de Formulario</th>
+                    <th class="text-center" style="width:20%" scope="col">Precio($)</th>
+                    <th class="text-center" style="width:20%" scope="col" *ngIf="mostrarAccionTabla">
+                      <span class="cursor-color" (click)="agregarFila()">+</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let l of fieldArray; let i = index" [formGroupName]="i"> <!--*ngFor="let lc of quarterFormGroup.get('elementosA').controls; let i = index" [formGroupName]="i"-->
+                    <td >
+                      <span></span>
+                    </td>
+                    <td >
+                      <!-- <div class="form-group ">
+                          <div class="form-group has-float-label">
+                              <mat-select class="form-control" id="idListaPrecio" placeholder="Lista de Precios" formControlName="listaPrecio" [compareWith]="compareFn">
+                                  <mat-option *ngFor="let tipoFormulario of listaPrecio" [value]="tipoFormulario"> {{tipoFormulario.nombre }}</mat-option>
+                              </mat-select>
+                            </div>
+                        </div> -->
+                    </td>
+                    <td >
+                      <span></span>
+                    </td>
+                    <td  *ngIf="mostrarAccionTabla">
+                      <span class="cursor-color" (click)="activarConsultar(l)">X</span>
+                    </td>
+                  </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="col-md-4">
-        <div class="form-group has-float-label">
-            <label id="" for="apellido" class="tamanio-label">Apellido*</label>
-            <input id="apellido" type="text" formControlName="apellido" autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura">
-        </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group has-float-label">
-              <label id="" for="apellido" class="tamanio-label">DNI*</label>
-              <input id="apellido" type="text" formControlName="dni" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
-          </div>
-          </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2">
-          <div class="form-group has-float-label">
-            <label id="" for="apellido" class="tamanio-label">Código de Area*</label>
-            <input id="apellido" type="text" formControlName="codigoArea" autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura">
-        </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group has-float-label">
-              <label id="" for="apellido" class="tamanio-label">Teléfono*</label>
-              <input id="apellido" type="text" formControlName="telefono" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
-          </div>
-          </div>
       </div>
       <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
         formnovalidate (click)="accion(indiceSeleccionado)" >
@@ -86,42 +80,34 @@
     </form>
   </div>
 </div>
-  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-6">
-      <table class="table table-bordered table-striped table-sm">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:20%" scope="col">id</th>
-            <th class="text-center" style="width:40%" scope="col">Nombre</th>
-            <th class="text-center" style="width:20%" scope="col">DNI</th>
-            <th class="text-center" style="width:20%" scope="col">Teléfono</th>
-            <th class="text-center" style="width:10%" scope="col">-</th>
-            <th class="text-center" style="width:10%" scope="col">-</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let l of listaCompleta">
-            <td >
-              <span>{{l.id}}</span>
-            </td>
-            <td >
-              <span>{{l.nombre}}</span>
-            </td>
-            <td >
-              <span>{{l.dni}}</span>
-            </td>
-            <td >
-              <span>{{l.telefono}}</span>
-            </td>
-            <td >
-              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
-            </td>
-            <td >
-              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <!-- <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+      <div class="col-md-12">
+          <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:20%" scope="col">#</th>
+                  <th class="text-center" style="width:40%" scope="col">Tipo de Formulario</th>
+                  <th class="text-center" style="width:20%" scope="col">Precio($)</th>
+                  <th class="text-center" style="width:20%" scope="col" *ngIf="mostrarAccionTabla">+</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let l of listaCompleta">
+                  <td >
+                    <span>{{l.id}}</span>
+                  </td>
+                  <td >
+                    <span>{{l.tipoFormulario}}</span>
+                  </td>
+                  <td >
+                    <span>{{l.precio}}</span>
+                  </td>
+                  <td  *ngIf="mostrarAccionTabla">
+                    <span class="cursor-color" (click)="activarConsultar(l)">X</span>
+                  </td>
+                </tr>
+              </tbody>
+          </table>
+      </div>
+  </div> -->
 </div>
