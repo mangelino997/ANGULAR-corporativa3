@@ -7,6 +7,7 @@ import { PestaniaService } from 'src/app/servicios/pestania.service';
 import { ListaPrecioCompraService } from 'src/app/servicios/lista-precio-compra.service';
 import { ListaPrecioCompra } from 'src/app/modelos/listaPrecioCompra';
 import { TipoFormularioService } from 'src/app/servicios/tipo-formulario.service';
+import { ListaPrecioService } from 'src/app/servicios/lista-precio.service';
 
 @Component({
   selector: 'app-lista-precio-compra',
@@ -28,6 +29,8 @@ export class ListaPrecioCompraComponent implements OnInit {
   public activeLink: any;
   // define el autocompletado como un formControl
   public autocompletado: FormControl=new FormControl();
+  //Define el form control para las busquedas vendedor
+  public buscarTipoFormulario:FormControl = new FormControl();
   //Define la pestania actual seleccionada
   public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
@@ -47,22 +50,41 @@ export class ListaPrecioCompraComponent implements OnInit {
   public elementoFila:FormArray;
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
+  //Define la lista de resultados de busqueda para tipos de formularios
+  public resultadosTiposFormularios = [];
+  //Define los elementos que tendrá cada fila que se agregue
+  public elementosA:FormArray;
   
   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
-  constructor(private formBuilder: FormBuilder, private tiposFormularios: TipoFormularioService ,private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService, private listaPrecioCompraService: ListaPrecioCompraService, private listaPrecioCompra: ListaPrecioCompra) {
+  constructor(private formBuilder: FormBuilder, private tiposFormularios: TipoFormularioService ,private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService, private listaPrecioCompraService: ListaPrecioCompraService, private listaPrecioService: ListaPrecioService) {
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.listaPrecioCompraService.listarPorListaPrecio(data).subscribe(res => {
+        this.listaPrecioService.listarPorAlias(data).subscribe(res => {
           this.resultados = res.json();
           console.log(res.json());
         })
       }
     })
+    //Autocompletado - Buscar por Tipo de formulario
+    this.buscarTipoFormulario.valueChanges.subscribe(data => {
+        if(typeof data == 'string') {
+          this.tiposFormularios.listarPorNombre(data).subscribe(response =>{
+            this.resultadosTiposFormularios = response.json();
+            console.log(response.json());
+          })
+        }
+    })
+
    }
 
   ngOnInit() {
-    //inicializa el formulario y sus elementos
-    this.formulario= this.listaPrecioCompra.formulario;
+    //Define los campos para validaciones
+    this.formulario = this.formBuilder.group({
+      id: new FormControl(),
+      version: new FormControl(),
+      idListasPrecio: new FormControl('', Validators.required),
+      elementosA: this.formBuilder.array([this.crearElementoA()])
+    });
     //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
     this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
       res => {
@@ -70,12 +92,15 @@ export class ListaPrecioCompraComponent implements OnInit {
         this.activeLink= this.pestanias[0].pestania.nombre;
       }
     );
-
-    elementoFila: this.formBuilder.array([this.crearElementoB()]);
     //Establece los valores, activando la primera pestania 
     this.seleccionarPestania(1, 'Agregar', 0);
     //Cargar en listatiposFormularios los tipos que existen
     this.listarTiposFormularios();
+  }
+
+  //mostrar datos formulario
+  public mostrar(){
+    console.log(this.formulario.value);
   }
 
   //Establece el formulario al seleccionar elemento del autocompletado
@@ -96,9 +121,9 @@ export class ListaPrecioCompraComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    setTimeout(function () {
-      document.getElementById(componente).focus();
-    }, 20);
+    // setTimeout(function () {
+    //   document.getElementById(componente).focus();
+    // }, 20);
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -189,14 +214,13 @@ private establecerAccionTabla(estado){
   //Agrega un registro 
   
   private agregar(){
-    let newListaPrecioCompra: Array<any>=[];// aca agrego todos los formGroup de cada fila que quiero agregar en una Lista de Precio
-    this.listaPrecioCompraService.agregar(this.formulario.value).subscribe(
+    this.listaPrecioCompraService.agregarLista(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idNombre').focus();
+            document.getElementById('idPrecio').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -204,9 +228,8 @@ private establecerAccionTabla(estado){
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
+          document.getElementById("idPrecio").classList.add('is-invalid');
+          document.getElementById("idPrecio").focus();
           this.toastr.error(respuesta.mensaje);
         }
       }
@@ -228,9 +251,9 @@ private establecerAccionTabla(estado){
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
+          document.getElementById("labelPecio").classList.add('label-error');
+          document.getElementById("idPrecio").classList.add('is-invalid');
+          document.getElementById("idPrecio").focus();
           this.toastr.error(respuesta.mensaje);
         }
       }
@@ -290,28 +313,28 @@ private establecerAccionTabla(estado){
        return a.id === b.id;
      }
    }
-  //Habilita o deshabilita los campos select dependiendo de la pestania actual
-  private establecerEstadoCampos(estado) {
-    if(estado) {
-      this.formulario.get('esABM').enable();
-      this.formulario.get('modulo').enable();
-    } else {
-      this.formulario.get('rol').disable();
-      this.formulario.get('modulo').disable();
-    }
+  //Agrega una fila a la segunda tabla
+  public agregarElemento() {
+    this.elementosA = this.formulario.get('elementosA') as FormArray;
+    this.elementosA.push(this.crearElementoA());
+    console.log(this.elementosA.length);
   }
-  // Agrega una fila cuando se hace click en el icono "+"
-  public agregarFila(){
-    this.indiceFila++;
-    this.elementoFila = this.formulario.get('elementosB') as FormArray;
-    this.elementoFila.push(this.crearElementoB());
+  //Elimina una fila de la segunda tabla
+  public eliminarElemento(indice) {
+    this.elementosA.removeAt(indice);
   }
-  //Crea un elemento para tabla al añadir una fila
-  private crearElementoB(): FormGroup {
+  // //Crea un elemento para tabla al añadir una fila
+  private crearElementoA(): FormGroup {
     return this.formBuilder.group({
+      listaPrecio: '',
       tipoFormulario: '',
       precio: ''
     })
+  }
+  //Manejo de cambio de autocompletado de tipo formulario
+  public cambioAutocompletadoTramo(elemento, indice) {
+    (<FormArray>this.formulario.get('elementosA')).at(indice).get('listaPrecio').setValue(this.autocompletado.value);
+    (<FormArray>this.formulario.get('elementosA')).at(indice).get('tipoFormulario').setValue(elemento);
   }
   // Carga en el select tipos de formularios
   private listarTiposFormularios(){
