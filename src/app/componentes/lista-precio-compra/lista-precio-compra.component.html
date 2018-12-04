@@ -21,7 +21,7 @@
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
                 <label for="idListaPrecio" class="labelListaPrecio">Lista de Precio</label>
                 <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-                  type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+                  type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" *ngIf="listaPrecioDisable">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                   <mat-option *ngFor="let item of resultados" [value]="item"
                     (onSelectionChange)="cambioAutocompletado(item.alias)">
@@ -43,38 +43,56 @@
           </div>
           </div>
       </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group has-float-label">
+            <label for="idTipoOrdenVenta" class="tamanio-label">Tipo de Formulario *</label>
+            <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="tipoFormulario"
+            type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
+            autocomplete="off"
+            [readonly]="mostrarTipoFormulario"  required>
+            <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoListaPrecioCompra(tipoFormulario, i)">
+                {{tipoFormulario.nombre}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group has-float-label">
+          <label for="idTipoOrdenVenta" class="tamanio-label">Precio *</label>
+            <input id="idPrecio" type="number" formControlName="precio" class="form-control form-control-sm" [readonly]="soloLectura" required>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <button id="idBoton" class="btn btn-primary btn-sm " type="button" (click)="agregarElemento()" *ngIf="mostrarAccionTabla" > 
+            Añadir Precio Compra(+)
+          </button>
+        </div>
+      </div><br>
       <div class="row " *ngIf="mostrarTabla">
         <div class="col-md-12">
-            <div formArrayName="elementosA" >
             <table class="table table-bordered table-striped table-sm">
                 <thead>
                   <tr>
                     <th class="text-center" style="width:20%" scope="col">#</th>
                     <th class="text-center" style="width:40%" scope="col">Tipo de Formulario</th>
                     <th class="text-center" style="width:20%" scope="col">Precio($)</th>
-                    <th class="text-center" style="width:20%" scope="col" *ngIf="mostrarAccionTabla">
-                      <span class="cursor-color" (click)="agregarElemento()">+</span>
+                    <th class="text-center" style="width:20%" scope="col" >
+                      <span class="">Eliminar</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let a of formulario.get('elementosA').controls; let i = index" [formGroupName]="i"> 
+                  <tr *ngFor="let a of listaAgregar; let i = index" > 
                     <td class="td-edicion-tabla">
                       <span>{{i+1}}</span>
                     </td>
                     <td class="td-edicion-tabla">
-                        <input id="idTipoFormulario" class="form-control form-control-sm" 
-                        type="text" matInput [formControl]="a.get('tipoFormulario')" [matAutocomplete]="autoFormulario" 
-                        autocomplete="off"
-                        [readonly]="mostrarTipoFormulario" required>
-                        <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                          <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormurio" (onSelectionChange)="cambioAutocompletadoTramo(tipoFormulario, i)">
-                            {{tipoFormulario.nombre}}
-                          </mat-option>
-                        </mat-autocomplete>
+                      <span>{{a.tipoFormulario.nombre}}</span>
                     </td>
                     <td class="td-edicion-tabla">
-                      <input id="idPrecio" type="number" formControlName="precio" class="form-control form-control-sm" [readonly]="soloLectura" required>
+                      <span>{{a.precio}}</span>
                     </td>
                     <td *ngIf="mostrarAccionTabla" class="td-edicion-tabla">
                       <span class="cursor-color" (click)="eliminarElemento(i)">X</span>
@@ -82,7 +100,6 @@
                   </tr>
                 </tbody>
             </table>
-          </div>
         </div>
       </div>
       <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
