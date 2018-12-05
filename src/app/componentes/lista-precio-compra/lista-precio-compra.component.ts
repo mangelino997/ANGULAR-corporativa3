@@ -95,7 +95,6 @@ export class ListaPrecioCompraComponent implements OnInit {
       listaPrecio: new FormControl('', Validators.required),
       tipoFormulario: new FormControl('', Validators.required),
       precio: new FormControl('', Validators.required)
-      // elementosA: this.formBuilder.array([this.crearElementoA()])
     });
     //Carga desde un principio las pestañas "Agregar, Consultar, Actualizar y listar"
     this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
@@ -122,21 +121,12 @@ export class ListaPrecioCompraComponent implements OnInit {
   public cambioAutocompletado(elemento) {
     this.formulario.patchValue(elemento);
   }
-  //Establece el formulario al seleccionar elemento del autocompletado por Id listaPrecio (se ejecuta en las demás pestañas)
+  //Establece el formulario al seleccionar elemento del autocompletado por Id listaPrecio (se ejecuta en las demás pestañas menos en "Agregar")
   public cambioAutocompletadoPorId(elemento) {
-    console.log(elemento);
+    // console.log(elemento);
     this.listaPrecioCompraService.listarPorListaPrecio(elemento.id).subscribe(
       res => {
-        this.listaCompletaPorId=res.json();
-        this.elementosA = this.formulario.get('elementosA') as FormArray;
-        console.log(this.elementosA);
-        // this.elementosA= <any>this.listaCompletaPorId;
-        // for(let i=0; i<this.listaCompletaPorId.length; i++){
-        //   this.elementosA.push(this.crearElementoAPorId(this.listaCompletaPorId[i]));
-        // }
-        // this.formulario.get('elementosA').setValue(this.elementosA);
-        console.log(this.listaCompletaPorId);
-        console.log(this.elementosA);
+        this.listaAgregar=res.json();
       },
       err => {
         console.log(err);
@@ -184,25 +174,30 @@ export class ListaPrecioCompraComponent implements OnInit {
       this.mostrarTabla=true;
       this.establecerAccionTabla(true);
       this.establecerValoresPestania(nombre, true, false, true, false, false, 'idNombre');
+      this.limpiarArray();
       break;
     case 2:
       this.mostrarTabla=true;
       this.establecerAccionTabla(false);
       this.establecerValoresPestania(nombre, false, true, false, true, true, 'idAutocompletado');
+      this.limpiarArray();
       break;
     case 3:
       this.mostrarTabla=true;
       this.establecerAccionTabla(true);
       this.establecerValoresPestania(nombre, false, false, true, true, true, 'idAutocompletado');
+      this.limpiarArray();
       break;
     case 4:
       this.mostrarTabla=false;
       this.establecerValoresPestania(nombre, false, true, true, true, true, 'idAutocompletado');
+      this.limpiarArray();
       break;
     case 5:
       this.mostrarTabla=true;
       this.establecerAccionTabla(false);
       this.establecerValoresPestania(nombre, false, false, true, true, true,'idAutocompletado');
+      this.limpiarArray();
       break;
     default:
       break;
@@ -252,7 +247,10 @@ private establecerAccionTabla(estado){
       }
     );
   }
-  
+  //Elimina todos los elementos cargados en el array listaAgregar
+  public limpiarArray(){
+    this.listaAgregar.splice(0, this.listaAgregar.length);
+  }
   //Agrega un registro 
   private agregar(){
     console.log(this.listaAgregar);
@@ -261,10 +259,12 @@ private establecerAccionTabla(estado){
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.formulario.reset();
           setTimeout(function() {
-            document.getElementById('idPrecio').focus();
+            document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.limpiarArray();
         }
       },
       err => {
@@ -279,7 +279,8 @@ private establecerAccionTabla(estado){
   }
   //Actualiza un registro
   private actualizar(){
-    this.listaPrecioCompraService.actualizar(this.formulario.get('elementosA').value).subscribe(
+    console.log(this.listaAgregar);
+    this.listaPrecioCompraService.actualizarLista(this.listaAgregar).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
@@ -288,6 +289,7 @@ private establecerAccionTabla(estado){
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.limpiarArray();
         }
       },
       err => {
@@ -367,7 +369,7 @@ private establecerAccionTabla(estado){
   }
   //Elimina una fila de la segunda tabla
   public eliminarElemento(indice) {
-    this.listaAgregar.pop();
+    this.listaAgregar.splice(indice, indice+1);
     if(this.listaAgregar.length<1){
       this.listaPrecioDisable= true;
     }

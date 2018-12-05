@@ -45,12 +45,11 @@
       </div>
       <div class="row">
         <div class="col-md-4">
-          <div class="form-group has-float-label">
+          <div class="form-group has-float-label" *ngIf="mostrarAccionTabla">
             <label for="idTipoOrdenVenta" class="tamanio-label">Tipo de Formulario *</label>
             <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="tipoFormulario"
             type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
-            autocomplete="off"
-            [readonly]="mostrarTipoFormulario"  required>
+            autocomplete="off"  required>
             <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
               <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoListaPrecioCompra(tipoFormulario, i)">
                 {{tipoFormulario.nombre}}
@@ -58,7 +57,7 @@
             </mat-autocomplete>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" *ngIf="mostrarAccionTabla">
           <div class="form-group has-float-label">
           <label for="idTipoOrdenVenta" class="tamanio-label">Precio *</label>
             <input id="idPrecio" type="number" formControlName="precio" class="form-control form-control-sm" [readonly]="soloLectura" required>
@@ -78,7 +77,7 @@
                     <th class="text-center" style="width:20%" scope="col">#</th>
                     <th class="text-center" style="width:40%" scope="col">Tipo de Formulario</th>
                     <th class="text-center" style="width:20%" scope="col">Precio($)</th>
-                    <th class="text-center" style="width:20%" scope="col" >
+                    <th class="text-center" style="width:20%" scope="col" *ngIf="mostrarAccionTabla">
                       <span class="">Eliminar</span>
                     </th>
                   </tr>
@@ -136,7 +135,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let l of listaCompletaPorId">
+                <tr *ngFor="let l of listaAgregar">
                   <td >
                     <span>{{l.id}}</span>
                   </td>
