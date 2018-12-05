@@ -2,7 +2,7 @@
   <div class="row">
     <div class="container text-center">
       <nav mat-tab-nav-bar>
-          <a mat-tab-link disabled>Lista Precio Compra</a>
+          <a mat-tab-link disabled>Lista Precio Venta</a>
           <a mat-tab-link
              *ngFor="let pestania of pestanias"
              [active]="activeLink== pestania.pestania.nombre"
@@ -14,7 +14,7 @@
   </div>
 <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
   <div class="col-md-12 text-center">
-    <h5>{{pestaniaActual}} Lista Precio Compra</h5>
+    <h5>{{pestaniaActual}} Lista Precio Venta</h5>
     <form [formGroup]="formulario" class="contenedor">
       <div class="row ">
           <div class="col-md-4">

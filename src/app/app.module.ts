@@ -62,6 +62,9 @@ import { CompraComponent } from './componentes/compra/compra.component';
 import { ListaPrecioCompra } from './modelos/listaPrecioCompra';
 import { ListaPrecioCompraComponent } from './componentes/lista-precio-compra/lista-precio-compra.component';
 import { ListaPrecioCompraService } from './servicios/lista-precio-compra.service';
+import { ListaPrecioVentaComponent } from './componentes/lista-precio-venta/lista-precio-venta.component';
+import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service';
+
 
 
 @NgModule({
@@ -83,7 +86,8 @@ import { ListaPrecioCompraService } from './servicios/lista-precio-compra.servic
     ClientePropioModal,
     ProveedorComponent,
     CompraComponent,
-    ListaPrecioCompraComponent
+    ListaPrecioCompraComponent,
+    ListaPrecioVentaComponent
   ],
   imports: [
     BrowserModule, 
@@ -149,7 +153,8 @@ import { ListaPrecioCompraService } from './servicios/lista-precio-compra.servic
     Proveedor,
     ProveedorService,
     ListaPrecioCompra,
-    ListaPrecioCompraService
+    ListaPrecioCompraService,
+    ListaPrecioVentaService,
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal]

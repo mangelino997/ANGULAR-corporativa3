@@ -3,16 +3,16 @@ import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@ang
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
 import { PestaniaService } from 'src/app/servicios/pestania.service';
-import { ListaPrecioCompraService } from 'src/app/servicios/lista-precio-compra.service';
+import { ListaPrecioVentaService } from 'src/app/servicios/lista-precio-venta.service';
 import { TipoFormularioService } from 'src/app/servicios/tipo-formulario.service';
 import { ListaPrecioService } from 'src/app/servicios/lista-precio.service';
 
 @Component({
-  selector: 'app-lista-precio-compra',
-  templateUrl: './lista-precio-compra.component.html',
-  styleUrls: ['./lista-precio-compra.component.scss']
+  selector: 'app-lista-precio-venta',
+  templateUrl: './lista-precio-venta.component.html',
+  styleUrls: ['./lista-precio-venta.component.scss']
 })
-export class ListaPrecioCompraComponent implements OnInit {
+export class ListaPrecioVentaComponent implements OnInit {
   // define el formulario
   public formulario: FormGroup;
   //Define la lista completa de registros
@@ -59,7 +59,7 @@ export class ListaPrecioCompraComponent implements OnInit {
   public resultadosTiposFormularios = [];
   
   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
-  constructor(private formBuilder: FormBuilder, private tiposFormularios: TipoFormularioService ,private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService, private listaPrecioCompraService: ListaPrecioCompraService, private listaPrecioService: ListaPrecioService) {
+  constructor(private formBuilder: FormBuilder, private tiposFormularios: TipoFormularioService ,private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService, private listaPrecioVentaService: ListaPrecioVentaService, private listaPrecioService: ListaPrecioService) {
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.listaPrecioService.listarPorAlias(data).subscribe(res => {
@@ -99,7 +99,6 @@ export class ListaPrecioCompraComponent implements OnInit {
     this.listarTiposFormularios();
     //Cargamos la listacompleta
     this.listar();
-    
   }
   //mostrar datos formulario
   public mostrar(){
@@ -112,7 +111,7 @@ export class ListaPrecioCompraComponent implements OnInit {
   //Establece el formulario al seleccionar elemento del autocompletado por Id listaPrecio (se ejecuta en las demás pestañas menos en "Agregar")
   public cambioAutocompletadoPorId(elemento) {
     // console.log(elemento);
-    this.listaPrecioCompraService.listarPorListaPrecio(elemento.id).subscribe(
+    this.listaPrecioVentaService.listarPorListaPrecio(elemento.id).subscribe(
       res => {
         this.listaAgregar=res.json();
       },
@@ -210,7 +209,7 @@ private establecerAccionTabla(estado){
 }
 //Obtiene el ID del modulo traido desde la base de datos y lo muestra en el campo id del formulario.
   private obtenerSiguienteId(){
-    this.listaPrecioCompraService.obtenerSiguienteId().subscribe(
+    this.listaPrecioVentaService.obtenerSiguienteId().subscribe(
       res => {
         console.log(res);
       },
@@ -221,7 +220,7 @@ private establecerAccionTabla(estado){
   }
   // Carga en listaCompleta todos los registros de la DB
   public listar(){
-    this.listaPrecioCompraService.listar().subscribe(
+    this.listaPrecioVentaService.listar().subscribe(
       res => {
         this.listaCompleta=res.json();
         
@@ -238,7 +237,7 @@ private establecerAccionTabla(estado){
   //Agrega un registro 
   private agregar(){
     console.log(this.listaAgregar);
-    this.listaPrecioCompraService.agregarLista(this.listaAgregar).subscribe(
+    this.listaPrecioVentaService.agregarLista(this.listaAgregar).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
@@ -264,7 +263,7 @@ private establecerAccionTabla(estado){
   //Actualiza un registro
   private actualizar(){
     console.log(this.listaAgregar);
-    this.listaPrecioCompraService.actualizarLista(this.listaAgregar).subscribe(
+    this.listaPrecioVentaService.actualizarLista(this.listaAgregar).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
@@ -289,7 +288,7 @@ private establecerAccionTabla(estado){
   }
   //Elimina un registro
   private eliminar(){
-    this.listaPrecioCompraService.agregar(this.formulario.get('id').value).subscribe(
+    this.listaPrecioVentaService.agregar(this.formulario.get('id').value).subscribe(
       res => {
         console.log(res);
       },
@@ -377,4 +376,5 @@ private establecerAccionTabla(estado){
       }
     );
   }
+
 }
