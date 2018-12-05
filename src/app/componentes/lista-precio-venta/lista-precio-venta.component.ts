@@ -110,7 +110,6 @@ export class ListaPrecioVentaComponent implements OnInit {
   }
   //Establece el formulario al seleccionar elemento del autocompletado por Id listaPrecio (se ejecuta en las demás pestañas menos en "Agregar")
   public cambioAutocompletadoPorId(elemento) {
-    // console.log(elemento);
     this.listaPrecioVentaService.listarPorListaPrecio(elemento.id).subscribe(
       res => {
         this.listaAgregar=res.json();
