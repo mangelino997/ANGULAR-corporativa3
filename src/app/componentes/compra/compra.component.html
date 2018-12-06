@@ -20,7 +20,7 @@
             <div class="col-md-3">
                 <div class="form-group has-float-label">
                 <label for="idFecha" class="labelFecha">Fecha</label>
-                <input id="idFecha" type="date" formControlName="fechaActual" class="form-control form-control-sm">
+                <input id="idFecha" type="date" formControlName="fecha" class="form-control form-control-sm">
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNumeroFactura" class="labelNumeroFactura">N° de Factura</label>
-              <input id="idNumeroFactura" type="number" formControlName="numeroFactura" autocomplete="off" class="form-control form-control-sm">
+              <input id="idNumeroFactura" type="number" formControlName="numero" autocomplete="off" class="form-control form-control-sm">
             </div>
           </div>
           <div class="col-md-3">
@@ -37,7 +37,7 @@
                 <input id="idModalidadPago" class="form-control form-control-sm color-busqueda"
                   type="text" matInput [formControl]="idModalidadPago" [matAutocomplete]="auto" autocomplete="off" >
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad">
+                  <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad" (click)="cambioIncrementoDescuento(modalidad)">
                     {{modalidad.nombre}}
                   </mat-option>
                 </mat-autocomplete>
@@ -49,7 +49,7 @@
                 <input id="idProveedor" class="form-control form-control-sm color-busqueda" 
                 type="text" matInput [formControl]="idProveedor" [matAutocomplete]="auto2" autocomplete="off" >
                 <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                    <mat-option *ngFor="let proveedor of resultadosProveedor" [value]="proveedor" (onSelectionChange)="cambioAutocompletado(proveedor)">
+                    <mat-option *ngFor="let proveedor of resultadosProveedor" [value]="proveedor" (onSelectionChange)="cambioAutocompletadoProveedor(proveedor)">
                     {{proveedor.nombre}}
                     </mat-option>
                 </mat-autocomplete>
@@ -65,6 +65,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
+              <div formArrayName="formulariosCompra" >
                 <table class="table table-bordered table-striped table-sm">
                     <thead>
                       <tr>
@@ -76,27 +77,47 @@
                         <th class="text-center" style="width:10%" scope="col">Cantidad</th>
                         <th class="text-center" style="width:20%" scope="col">Precio Total ($)</th>
                         <th class="text-center" style="width:5%" scope="col" >
-                          <span class="">+</span>
+                          <span class="" (click)="agregarElemento()">+</span>
                         </th>
                       </tr>
                     </thead>
-                    <!-- <tbody>
-                      <tr *ngFor="let a of listaAgregar; let i = index" > 
+                    <tbody>
+                      <tr  *ngFor="let a of formulario.get('formulariosCompra').controls; let i = index" [formGroupName]="i"> 
                         <td class="td-edicion-tabla">
                           <span>{{i+1}}</span>
                         </td>
                         <td class="td-edicion-tabla">
-                          <span>{{a.tipoFormulario.nombre}}</span>
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="tipoFormulario"
+                            type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
+                            autocomplete="off" >
+                          <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                            <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)">
+                              {{tipoFormulario.nombre}}
+                            </mat-option>
+                          </mat-autocomplete>
                         </td>
                         <td class="td-edicion-tabla">
-                          <span>{{a.precio}}</span>
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="precioUnitario" [readonly]="soloLectura">
                         </td>
-                        <td *ngIf="mostrarAccionTabla" class="td-edicion-tabla">
+                        <td class="td-edicion-tabla">
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="numeracionDesde" type="number">
+                        </td>
+                        <td class="td-edicion-tabla">
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="numeracionHasta" type="number" (blur)="calcularCantidad(i)">
+                        </td>
+                        <td class="td-edicion-tabla">
+                            <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="cantidad" [readonly]="soloLectura">
+                        </td>
+                        <td class="td-edicion-tabla">
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="montoTotal" type="number" [readonly]="soloLectura">
+                        </td>
+                        <td class="td-edicion-tabla">
                           <span class="cursor-color" (click)="eliminarElemento(i)">X</span>
                         </td>
                       </tr>
-                    </tbody> -->
+                    </tbody>
                 </table>
+              </div>
             </div>
         </div>
         <div class="row">
@@ -104,20 +125,19 @@
             <div class="col-md-3"></div>
             <div class="col-md-3">
                 <div class="form-group has-float-label">
-                <label for="idProveedor" class="labelProveedor">Incremento/Descuento ($)</label>
-                <input id="idProveedor" type="text" formControlName="incrementoDescuento" autocomplete="off" class="form-control form-control-sm"
-                  [readonly]="soloLectura">
+                <label for="idProveedor" class="labelProveedor">{{tipoModalidadPago}} ($)</label>
+                <input id="idProveedor" type="number" formControlName="incrementoDescuento" autocomplete="off" class="form-control form-control-sm" (blur)="aplicarDescuentoIncremento()">
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group has-float-label">
                 <label for="idTipoFactura" class="labelTipoFactura">Precio Factura</label>
-                <input id="idTipoFactura" type="text" formControlName="precioFactura" autocomplete="off" class="form-control form-control-sm"
+                <input id="idTipoFactura" type="text" formControlName="monto" autocomplete="off" class="form-control form-control-sm"
                   [readonly]="soloLectura">
               </div>
             </div>
         </div>
-        <button id="idBoton" class="btn btn-primary" type="button">
+        <button id="idBoton" class="btn btn-primary" type="button" (click)="guardar()">
           Guardar
         </button>
       </form>

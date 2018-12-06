@@ -350,7 +350,7 @@ private establecerAccionTabla(estado){
   }
   //Elimina una fila de la segunda tabla
   public eliminarElemento(indice) {
-    this.listaAgregar.splice(indice, indice+1);
+    this.listaAgregar.splice(indice, 1); //splice(indice, indice+1)
     if(this.listaAgregar.length<1){
       this.listaPrecioDisable= true;
     }
