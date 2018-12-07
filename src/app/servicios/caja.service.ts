@@ -32,6 +32,10 @@ export class CajaService {
   public obtenerMontos() {
     this.http.get(this.url + '/obtenerMontos');
   }
+  //Obtiene la caja de hoy si existe
+  public obtenerCajaDeHoy() {
+    return this.http.get(this.url + '/obtenerCajaDeHoy');
+  }
   //agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento);

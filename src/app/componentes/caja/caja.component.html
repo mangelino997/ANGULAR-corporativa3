@@ -107,7 +107,7 @@
               </div>
             </div>
             <div class="col-md-2">
-              <button class="btn btn-primary btn-sm btn-block">Listo</button>
+              <button class="btn btn-primary btn-sm btn-block" (click)="finalizarRetiro()" [disabled]="!estadoBtnRetiro">Listo</button>
             </div>
           </div>
           <div class="row">
