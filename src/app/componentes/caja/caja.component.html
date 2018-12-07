@@ -1,77 +1,178 @@
 <div class="row justify-content-center container-fluid">
   <div class="col-md-11">
     <h4 class="text-center">Caja</h4>
-    <form [formGroup]="formularioBillete">
+    <form [formGroup]="formulario">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4" formGroupName="billetes">
           <h5 class="text-center">Dinero en Caja</h5>
           <div class="row">
-            <div class="form-group has-float-label">
-              <label for="idPesos2" class="tamanio-label">2 Pesos</label>
-              <input id="idPesos2" type="text" formControlName="pesos2" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPesos2" class="tamanio-label">2 Pesos</label>
+                <input id="idPesos2" type="number" formControlName="pesos2" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
             </div>
-            <div style="margin-left: 5px;" class="form-group has-float-label">
-              <label for="idPesos2" class="tamanio-label">5 Pesos</label>
-              <input id="idPesos2" type="text" formControlName="pesos5" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group has-float-label">
-              <label for="idPesos10" class="tamanio-label">10 Pesos</label>
-              <input id="idPesos10" type="text" formControlName="pesos10" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
-            </div>
-            <div style="margin-left: 5px;" class="form-group has-float-label">
-              <label for="idPesos20" class="tamanio-label">20 Pesos</label>
-              <input id="idPesos20" type="text" formControlName="pesos20" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPesos2" class="tamanio-label">5 Pesos</label>
+                <input id="idPesos2" type="number" formControlName="pesos5" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
             </div>
           </div>
           <div class="row">
-            <div class="form-group has-float-label">
-              <label for="idPesos50" class="tamanio-label">50 Pesos</label>
-              <input id="idPesos50" type="text" formControlName="pesos50" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPesos10" class="tamanio-label">10 Pesos</label>
+                <input id="idPesos10" type="number" formControlName="pesos10" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
             </div>
-            <div style="margin-left: 5px;" class="form-group has-float-label">
-              <label for="idPesos100" class="tamanio-label">100 Pesos</label>
-              <input id="idPesos100" type="text" formControlName="pesos100" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
-            </div>
-          </div>
-          <div class="row">
-            <div class="form-group has-float-label">
-              <label for="idPesos200" class="tamanio-label">200 Pesos</label>
-              <input id="idPesos200" type="text" formControlName="pesos200" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
-            </div>
-            <div style="margin-left: 5px;" class="form-group has-float-label">
-              <label for="idPesos500" class="tamanio-label">500 Pesos</label>
-              <input id="idPesos500" type="text" formControlName="pesos500" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPesos20" class="tamanio-label">20 Pesos</label>
+                <input id="idPesos20" type="number" formControlName="pesos20" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
             </div>
           </div>
           <div class="row">
-            <button class="btn btn-primary btn-sm">Listo</button>
-          </div>
-          <hr style="margin-top: 10px; margin-bottom: 10px;">
-          <div class="row">
-            <div class="form-group has-float-label">
-              <label for="idCantidad" class="tamanio-label">Cantidad Billetes</label>
-              <input id="idCantidad" type="text" formControlName="cantidad" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="true">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPesos50" class="tamanio-label">50 Pesos</label>
+                <input id="idPesos50" type="number" formControlName="pesos50" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
             </div>
-            <div style="margin-left: 5px;" class="form-group has-float-label">
-              <label for="idImporteTotal" class="tamanio-label">Importe Total ($)</label>
-              <input id="idImporteTotal" type="text" formControlName="importeTotal" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="true">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPesos100" class="tamanio-label">100 Pesos</label>
+                <input id="idPesos100" type="number" formControlName="pesos100" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPesos200" class="tamanio-label">200 Pesos</label>
+                <input id="idPesos200" type="number" formControlName="pesos200" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPesos500" class="tamanio-label">500 Pesos</label>
+                <input id="idPesos500" type="number" formControlName="pesos500" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-end">
+            <div class="col-md-6">
+              <button class="btn btn-primary btn-sm btn-block" (click)="calcularCantidadEImporte()" [disabled]="!estadoBtnCalcular">Calcular</button>
+            </div>
+          </div>
+          <hr style="margin-top: 10px; margin-bottom: 15px;">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idCantidad" class="tamanio-label">Cantidad Billetes</label>
+                <input id="idCantidad" type="number" formControlName="cantidad" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idImporteTotal" class="tamanio-label">Importe Total ($)</label>
+                <input id="idImporteTotal" type="number" formControlName="importeTotal" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-end">
+            <div class="col-md-6">
+              <button class="btn btn-primary btn-sm btn-block" (click)="guardarBilletes()" [disabled]="!estadoBtnGuardarBilletes">Guardar</button>
             </div>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-8" style="padding-left: 100px;">
           <h5 class="text-center">Importe de Operaciones</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idRetiro" class="tamanio-label">Retiro ($)</label>
+                <input id="idRetiro" type="text" formControlName="montoRetiro" autocomplete="off" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-sm btn-block">Listo</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idImporteVenta" class="tamanio-label">Importe Ventas ($)</label>
+                <input id="idImporteVenta" type="text" formControlName="montoVenta" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idImporteTransferencia" class="tamanio-label">Importe Transferencias ($)</label>
+                <input id="idImporteTransferencia" type="text" formControlName="montoTransferencia" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idImporteGasto" class="tamanio-label">Importe Gastos ($)</label>
+                <input id="idImporteGasto" type="text" formControlName="montoGasto" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+          </div>
+          <hr style="margin-top: 10px; margin-bottom: 15px;">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idImporteTotalO" class="tamanio-label">Importe Total ($)</label>
+                <input id="idImporteTotalO" type="text" formControlName="montoTotal" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idSobrante" class="tamanio-label">Sobrante ($)</label>
+                <input id="idSobrante" type="text" formControlName="sobrante" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idFaltante" class="tamanio-label">Faltante ($)</label>
+                <input id="idFaltante" type="text" formControlName="faltante" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idImporteFinalCaja" class="tamanio-label">Importe Final en Caja ($)</label>
+                <input id="idImporteFinalCaja" type="text" formControlName="faltante" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="true">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <button class="btn btn-primary">Guardar</button>
+            </div>
+          </div>
         </div>
       </div>
     </form>

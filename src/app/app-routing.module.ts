@@ -20,7 +20,7 @@ import { ListaPrecioVentaComponent } from './componentes/lista-precio-venta/list
 import { CajaComponent } from './componentes/caja/caja.component';
 
 const routes: Routes = [
-  {path: '', component: CompraComponent}
+  {path: '', component: CajaComponent}
 ];
 
 @NgModule({

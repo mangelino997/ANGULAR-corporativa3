@@ -66,6 +66,7 @@ import { ListaPrecioVentaComponent } from './componentes/lista-precio-venta/list
 import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service';
 import { CajaComponent } from './componentes/caja/caja.component';
 import { CajaService } from './servicios/caja.service';
+import { Caja } from './modelos/caja';
 
 @NgModule({
   declarations: [
@@ -156,7 +157,8 @@ import { CajaService } from './servicios/caja.service';
     ListaPrecioCompra,
     ListaPrecioCompraService,
     ListaPrecioVentaService,
-    CajaService
+    CajaService,
+    Caja
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal]
