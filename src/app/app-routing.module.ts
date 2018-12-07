@@ -17,6 +17,7 @@ import { ProveedorComponent } from './componentes/proveedor/proveedor.component'
 import { CompraComponent } from './componentes/compra/compra.component';
 import { ListaPrecioCompraComponent } from './componentes/lista-precio-compra/lista-precio-compra.component';
 import { ListaPrecioVentaComponent } from './componentes/lista-precio-venta/lista-precio-venta.component';
+import { CajaComponent } from './componentes/caja/caja.component';
 
 const routes: Routes = [
   {path: '', component: CompraComponent}

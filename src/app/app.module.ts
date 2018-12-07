@@ -4,7 +4,7 @@ import { Modulo } from 'src/app/modelos/modulo';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import {MatChipsModule} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -64,8 +64,8 @@ import { ListaPrecioCompraComponent } from './componentes/lista-precio-compra/li
 import { ListaPrecioCompraService } from './servicios/lista-precio-compra.service';
 import { ListaPrecioVentaComponent } from './componentes/lista-precio-venta/lista-precio-venta.component';
 import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service';
-
-
+import { CajaComponent } from './componentes/caja/caja.component';
+import { CajaService } from './servicios/caja.service';
 
 @NgModule({
   declarations: [
@@ -87,7 +87,8 @@ import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service'
     ProveedorComponent,
     CompraComponent,
     ListaPrecioCompraComponent,
-    ListaPrecioVentaComponent
+    ListaPrecioVentaComponent,
+    CajaComponent
   ],
   imports: [
     BrowserModule, 
@@ -114,7 +115,7 @@ import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service'
     MatTableModule,
     MatDialogModule,
     MatProgressBarModule,
-    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    ReactiveFormsModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-bottom-right',
@@ -155,6 +156,7 @@ import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service'
     ListaPrecioCompra,
     ListaPrecioCompraService,
     ListaPrecioVentaService,
+    CajaService
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal]
