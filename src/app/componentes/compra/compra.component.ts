@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +9,8 @@ import { ListaPrecioService } from 'src/app/servicios/lista-precio.service';
 import { ModalidadPagoService } from 'src/app/servicios/modalidad-pago.service';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { ListaPrecioCompraService } from 'src/app/servicios/lista-precio-compra.service';
+import { FacturaCompraService } from 'src/app/servicios/factura-compra.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-compra',
@@ -18,6 +20,8 @@ import { ListaPrecioCompraService } from 'src/app/servicios/lista-precio-compra.
 export class CompraComponent implements OnInit {
   // define el formulario
   public formulario: FormGroup;
+  // define el formulario para la pestaña Consultar
+  public formularioConsulta: FormGroup;
   //Define la lista completa de registros
   public listaAgregar:FormArray;
   //Define la lista completa de registros
@@ -86,9 +90,20 @@ export class CompraComponent implements OnInit {
 
   //Define el tipo de Modalidad de pago si es =0 (Descuento) y si es =1 (Incremento)
   public tipoModalidadPago:string = null;
+
+  // VARIABLES PARA LA PESTAÑA CONSULTAR
+  //campo fechaConsulta como un FormControl
+  public fechaConsulta: FormControl=new FormControl();
+  //campo numeroFacturaConsulta como un FormControl
+  public numeroFacturaConsulta: FormControl=new FormControl();
+  //campo modalidadPagoConsulta como un FormControl
+  public idModalidadPagoConsultar: FormControl=new FormControl();
+  //campo proveedorConsulta como un FormControl
+  public idProveedorConsultar: FormControl=new FormControl();
+  
   
   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
-  constructor(private formBuilder: FormBuilder, private listaPrecioCompraService: ListaPrecioCompraService, private tiposFormularios: TipoFormularioService, private modalidadPagoService: ModalidadPagoService, private proveedorService: ProveedorService) {
+  constructor(public dialog: MatDialog, private formBuilder: FormBuilder, private toastr: ToastrService, private facturaCompraService: FacturaCompraService, private listaPrecioCompraService: ListaPrecioCompraService, private tiposFormularios: TipoFormularioService, private modalidadPagoService: ModalidadPagoService, private proveedorService: ProveedorService) {
     //Autocompletado - Buscar por modalidad de Pago
     this.idModalidadPago.valueChanges
       .subscribe(data => {
@@ -107,6 +122,26 @@ export class CompraComponent implements OnInit {
           })
         }
     })
+    //Autocompletado - Buscar por modalidad de Pago en pestaña consultar
+    this.idModalidadPagoConsultar.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.modalidadPagoService.listarPorAlias(data).subscribe(response =>{
+            this.resultadosModalidadPago = response.json();
+            console.log(this.resultadosModalidadPago);
+          })
+        }
+    })
+    //Autocompletado - Buscar por proveedor en pestaña consultar
+    this.idProveedorConsultar.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.proveedorService.listarPorAlias(data).subscribe(response =>{
+            this.resultadosProveedor = response.json();
+            console.log(this.resultadosProveedor);
+          })
+        }
+    })
     //Autocompletado - Buscar por Tipo de formulario
     this.buscarTipoFormulario.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -116,28 +151,20 @@ export class CompraComponent implements OnInit {
         })
       }
   })
-
     //Establece la pestania activa por defecto
     this.activeLink = 1;
     //Establece el indice activo por defecto
     this.indiceSeleccionado = 1;
     //
-   
-   }
-
+  }
   ngOnInit() {
+    //obtenemos la fecha actual
     var dateDay = new Date().toISOString().substring(0,10);
-    // var dd = dateDay.getDate();
-    // var MM = dateDay.getMonth() + 1; //January is 0!
-    // var yyyy = dateDay.getFullYear();
-    // var today = yyyy + '-' + MM + '-' + dd;
-    
-    console.log(dateDay);
     //Define los campos para validaciones
     this.formulario = this.formBuilder.group({
       numero: new FormControl(),
       fecha: new FormControl(),
-      incrementoDescuento: new FormControl(),
+      increDesc: new FormControl(),
       monto: new FormControl(),
       tipoFormulario: new FormControl(),
       modalidadPago: this.formBuilder.group({
@@ -148,9 +175,29 @@ export class CompraComponent implements OnInit {
       }),
       formulariosCompra: this.formBuilder.array([this.crearformulariosCompra()])
     });
-
+    this.formularioConsulta = this.formBuilder.group({
+      fecha: new FormControl(),
+      numero: new FormControl(),
+      modalidadPago: new FormControl(),
+      proveedor: new FormControl(),
+    });
     this.formulario.get('fecha').setValue(dateDay);
+    this.formularioConsulta.get('fecha').setValue(dateDay);
+    this.formulario.get('increDesc').setValue(0);
   }
+
+//declaramos los metodos para utilizar el Modal/Dialog
+public openDialog(formulariosFacturas): void {
+  const dialogRef = this.dialog.open(FacturasModal, {
+    width: '950px',
+    //los formularios que paso desde el html en cada ver son asignados a la variable formularios para que pueda leerlos desde la ventana factura-modal.html
+    data: {formularios: formulariosFacturas},
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+  });
+}
 
 //Crea formulariosCompra para la tabla (cada fila que se agrega)
 private crearformulariosCompra(): FormGroup {
@@ -231,37 +278,86 @@ public calcularCantidad(indice){
 public aplicarDescuentoIncremento(){
   this.formulario.get('monto').setValue(this.montoPrecioFactura);
   if(this.tipoModalidadPago== "Descuento"){
-    this.formulario.get('monto').setValue(this.formulario.get('monto').value-this.formulario.get('incrementoDescuento').value);
+    this.formulario.get('monto').setValue(this.formulario.get('monto').value-this.formulario.get('increDesc').value);
   }
   else{
-    this.formulario.get('monto').setValue(this.formulario.get('monto').value+this.formulario.get('incrementoDescuento').value);
+    this.formulario.get('monto').setValue(this.formulario.get('monto').value+this.formulario.get('increDesc').value);
   }
   console.log(this.formulario.value)
 }
 //Agrega un registro 
-// private agregar(){
-//   console.log(this.listaAgregar);
-//   this.agregarLista(this.listaAgregar).subscribe(
-//     res => {
-//       var respuesta = res.json();
-//       if(respuesta.codigo == 201) {
-//         this.reestablecerFormulario(respuesta.id);
-//         this.formulario.reset();
-//         setTimeout(function() {
-//           document.getElementById('idAutocompletado').focus();
-//         }, 20);
-//         this.toastr.success(respuesta.mensaje);
-//         this.limpiarArray();
-//       }
-//     },
-//     err => {
-//       var respuesta = err.json();
-//       if(respuesta.codigo == 11002) {
-//         document.getElementById("idPrecio").classList.add('is-invalid');
-//         document.getElementById("idPrecio").focus();
-//         this.toastr.error(respuesta.mensaje);
-//       }
-//     }
-//   );
-// }
+public agregar(){
+  //pregunto si el campo IncreDesc es nulo o no, porque no se realizará el agregar registro si dicho campo es nulo
+  //si es nulo le seteo como valor 0
+  if(this.formulario.get('increDesc').value==null){
+    this.formulario.get('increDesc').setValue(0);
+  }
+  console.log(this.formulario.value);
+  this.facturaCompraService.agregar(this.formulario.value).subscribe(
+    res => {
+      var respuesta = res.json();
+      if(respuesta.codigo == 201) {
+        this.reestablecerFormulario(respuesta.id);
+        this.formulario.reset();
+        setTimeout(function() {
+          document.getElementById('idFecha').focus();
+        }, 20);
+        this.toastr.success(respuesta.mensaje);
+      }
+    },
+    err => {
+      var respuesta = err.json();
+      if(respuesta.codigo == 11002) {
+        document.getElementById("idFecha").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+    }
+  );
+}
+//buscar Factura Compra de la pestaña consultar
+public buscar(){
+  if(this.idProveedorConsultar.value==""){
+    this.formularioConsulta.get('proveedor').setValue(null);
+  }else{
+    this.formularioConsulta.get('proveedor').setValue(this.idProveedorConsultar.value);
+  }
+
+  if(this.idModalidadPagoConsultar.value==""){
+    this.formularioConsulta.get('modalidadPago').setValue(null);
+  }else{
+    this.formularioConsulta.get('modalidadPago').setValue(this.idModalidadPagoConsultar.value);
+  }
+  // this.formularioConsulta.get('proveedor').setValue(this.idProveedorConsultar.value);
+  // this.formularioConsulta.get('modalidadPago').setValue(this.idModalidadPagoConsultar.value);
+  console.log(this.formularioConsulta.value);
+  this.facturaCompraService.listarPorFiltros(this.formularioConsulta.value).subscribe(res =>{
+    this.listaCompleta= res.json();
+  });
+}
+//Reestablece los campos formularios
+private reestablecerFormulario(id) {
+  this.formulario.reset();
+  // this.formulario.get('id').setValue(id);
+  this.autocompletado.setValue(undefined);
+  this.resultados = [];
+  }
+}
+
+@Component({
+  selector: 'factura-modal',
+  templateUrl: 'factura-modal.html',
+})
+export class FacturasModal{
+  //Define la lista completa de registros
+  public listaCompletaDeFormularios:FormArray ;
+
+  constructor(public dialogRef: MatDialogRef<FacturasModal>, @Inject(MAT_DIALOG_DATA) public data) {}
+  ngOnInit() {
+    this.listaCompletaDeFormularios=this.data.formularios;
+    console.log(this.listaCompletaDeFormularios);
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
 }

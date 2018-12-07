@@ -102,8 +102,6 @@ constructor(private renderer: Renderer2, public dialog: MatDialog, private foto:
       })
     }
   });
-
-
   //Escuchador del evento para cargar imagenes
   $(function() {
      $('#file-input').change(function(e) {
@@ -129,9 +127,7 @@ constructor(private renderer: Renderer2, public dialog: MatDialog, private foto:
         }
     });
 
-    
 }
-
 //declaramos los metodos para utilizar el Modal/Dialog
 openDialog(): void {
   const dialogRef = this.dialog.open(ClientePropioModal, {
@@ -142,7 +138,6 @@ openDialog(): void {
     console.log('The dialog was closed');
   });
 }
-
 ngOnInit() {
   //inicializa el formulario y sus elementos
   this.formulario= this.clientePropio.formulario;

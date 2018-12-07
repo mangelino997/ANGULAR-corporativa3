@@ -58,7 +58,7 @@ import { FotoService } from './servicios/foto.service';
 import { ProveedorComponent } from './componentes/proveedor/proveedor.component';
 import { Proveedor } from './modelos/proveedor';
 import { ProveedorService } from './servicios/proveedor.service';
-import { CompraComponent } from './componentes/compra/compra.component';
+import { CompraComponent, FacturasModal } from './componentes/compra/compra.component';
 import { ListaPrecioCompra } from './modelos/listaPrecioCompra';
 import { ListaPrecioCompraComponent } from './componentes/lista-precio-compra/lista-precio-compra.component';
 import { ListaPrecioCompraService } from './servicios/lista-precio-compra.service';
@@ -66,6 +66,8 @@ import { ListaPrecioVentaComponent } from './componentes/lista-precio-venta/list
 import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service';
 import { CajaComponent } from './componentes/caja/caja.component';
 import { CajaService } from './servicios/caja.service';
+import { FacturaCompraService } from './servicios/factura-compra.service';
+
 
 @NgModule({
   declarations: [
@@ -88,7 +90,8 @@ import { CajaService } from './servicios/caja.service';
     CompraComponent,
     ListaPrecioCompraComponent,
     ListaPrecioVentaComponent,
-    CajaComponent
+    CajaComponent,
+    FacturasModal
   ],
   imports: [
     BrowserModule, 
@@ -156,9 +159,10 @@ import { CajaService } from './servicios/caja.service';
     ListaPrecioCompra,
     ListaPrecioCompraService,
     ListaPrecioVentaService,
-    CajaService
+    CajaService,
+    FacturaCompraService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ClientePropioModal]
+  entryComponents: [ClientePropioModal, FacturasModal]
 })
 export class AppModule { }
