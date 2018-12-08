@@ -36,6 +36,17 @@ export class CajaComponent implements OnInit {
         this.estadoBtnCalcular = false;
         this.estadoBtnGuardarBilletes = false;
       }
+      if(caja.montoRetiro != -1 && caja.montoRetiro != null) {
+        this.formulario.get('montoRetiro').setValue(caja.montoRetiro.toFixed(2));
+        this.formulario.get('montoRetiro').disable();
+        this.estadoBtnRetiro = false;
+      } else {
+        let valor = 0;
+        this.formulario.get('montoRetiro').setValue(valor.toFixed(2));
+        setTimeout(function() {
+          document.getElementById('idRetiro').focus();
+        }, 20)
+      }
     })
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
@@ -91,6 +102,7 @@ export class CajaComponent implements OnInit {
           this.formulario.get('billetes').get('importeTotal').disable();
           this.estadoBtnCalcular = false;
           this.estadoBtnGuardarBilletes = false;
+          this.formulario.get('id').setValue(respuesta.id-1);
           this.toastr.success(respuesta.mensaje);
         }
       },
@@ -102,7 +114,18 @@ export class CajaComponent implements OnInit {
   }
   //Deshabilita el campo retiro
   public finalizarRetiro(): void {
-    this.formulario.get('montoRetiro').disable();
-    this.estadoBtnRetiro = false;
+    console.log(this.formulario.value);
+    this.cajaServicio.actualizarRetiro(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.formulario.get('montoRetiro').disable();
+        this.estadoBtnRetiro = false;
+        this.toastr.success(respuesta.mensaje);
+      },
+      err => {
+        let respuesta = err.json();
+        this.toastr.error(respuesta.mensaje);
+      }
+    )
   }
 }

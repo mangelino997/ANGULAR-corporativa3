@@ -44,6 +44,10 @@ export class CajaService {
   public actualizar(elemento) {
     return this.http.put(this.url, elemento);
   }
+  //actualiza el retiro
+  public actualizarRetiro(elemento) {
+    return this.http.put(this.url + '/actualizarRetiro', elemento);
+  }
   //eliminar un registro
   public eliminar(idRegistro) {
     return this.http.delete(this.url, idRegistro);
