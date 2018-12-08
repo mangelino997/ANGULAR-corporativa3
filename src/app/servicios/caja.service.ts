@@ -30,7 +30,7 @@ export class CajaService {
   }
   //Obtiene los importes del dia actual
   public obtenerMontos() {
-    this.http.get(this.url + '/obtenerMontos');
+    return this.http.get(this.url + '/obtenerMontos');
   }
   //Obtiene la caja de hoy si existe
   public obtenerCajaDeHoy() {
