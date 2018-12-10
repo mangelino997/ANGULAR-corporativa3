@@ -67,6 +67,9 @@ import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service'
 import { CajaComponent } from './componentes/caja/caja.component';
 import { CajaService } from './servicios/caja.service';
 import { Caja } from './modelos/caja';
+import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
+import { CuentaCorrienteService } from './servicios/cuenta-corriente.service';
+import { CuentaCorriente } from './modelos/cuentaCorriente';
 
 @NgModule({
   declarations: [
@@ -89,7 +92,8 @@ import { Caja } from './modelos/caja';
     CompraComponent,
     ListaPrecioCompraComponent,
     ListaPrecioVentaComponent,
-    CajaComponent
+    CajaComponent,
+    CuentaCorrienteComponent
   ],
   imports: [
     BrowserModule, 
@@ -158,7 +162,9 @@ import { Caja } from './modelos/caja';
     ListaPrecioCompraService,
     ListaPrecioVentaService,
     CajaService,
-    Caja
+    Caja,
+    CuentaCorrienteService,
+    CuentaCorriente
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal]
