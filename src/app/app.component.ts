@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { ModuloService } from './servicios/modulo.service';
 import { Router } from '@angular/router';
 
-
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,7 +13,6 @@ export class AppComponent {
   constructor(private moduloServicio: ModuloService, private router: Router) {
     this.obtenerMenu();
   }
-
   //Obtiene la subopcion
   public getSubopcion() {
     return this.subopcion;
@@ -29,13 +26,13 @@ export class AppComponent {
     this.moduloServicio.obtenerMenuPorRol(1).subscribe(
       res => {
         this.menu = res.json();
-        console.log(this.menu);
       },
       err => {
         console.log(err);
       }
     );  
   }
+  //Define la navegación en el menu
   public navegar(subopcion, idSubopcion) {
     this.setSubopcion(idSubopcion);
     var pag = subopcion;
@@ -55,5 +52,3 @@ export class AppComponent {
     this.router.navigate([pagina]);
   }
 }
-
-

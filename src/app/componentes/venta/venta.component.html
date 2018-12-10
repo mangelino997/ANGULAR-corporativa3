@@ -1,0 +1,296 @@
+<div id="agendatelefonica" class="container-fluid">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>VENTA</a>
+        <a mat-tab-link (click)="indiceSeleccionado=1" [active]="activeLink== 1" >Nueva</a>
+        <a mat-tab-link (click)="indiceSeleccionado=2" [active]="activeLink== 2" >Consultar</a>
+      </nav>
+    </div>
+  </div>
+  <!--Pestaña solicitar-->
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado==1">
+    <div class="col-md-10 text-center">
+      <h5>Nueva Venta</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                <label for="idFecha" class="labelFecha">Fecha</label>
+                <input id="idFecha" type="date" formControlName="fecha" class="form-control form-control-sm" #fecha>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNumeroRecibo" class="labelNumeroRecibo">N° de Recibo</label>
+              <input id="idNumeroRecibo" type="number" formControlName="numeroA" autocomplete="off" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label id="labelTipo" for="idTipo" class="tamanio-label">Tipo de Cliente</label>
+              <mat-select class="form-control" placeholder="---" [formControl]="tipoCliente" (blur)="mostrarInputTipoCliente()">
+                  <mat-option [value]="0"> Propio</mat-option>
+                  <mat-option [value]="1"> Eventual</mat-option>
+                </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3" *ngIf="inputClientePropio">
+            <div class="form-group has-float-label ">
+              <label for="idCliente" class="labelidProveedor">Cliente</label>
+              <input id="idCliente" class="form-control form-control-sm color-busqueda" [formControl]="idCliente"
+                    type="text" matInput  [matAutocomplete]="auto" autocomplete="off" >
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                  <mat-option *ngFor="let cliente of resultadosCliente" [value]="cliente" (onSelectionChange)="cambioAutocompletadoClientePropio(cliente.id)">
+                        {{cliente.nombre}}
+                  </mat-option>
+                </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="inputsClienteEventual">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="labelNombre">Nombre</label>
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idDni" class="labelDni">DNI</label>
+              <input id="idDni" type="number" formControlName="dni" autocomplete="off" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idDomicilio" class="labelDomicilio">Domicilio</label>
+              <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idTelefono" class="labelTelefono">Teléfono</label>
+              <input id="idTelefono" type="text" formControlName="telefono" autocomplete="off" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+              <div class="form-group has-float-label ">
+                  <label for="idListaPrecio" class="labelListaPrecio">Lista de Precio</label>
+                  <input id="idListaPrecio" class="form-control form-control-sm color-busqueda" [formControl]="listaPrecio"
+                    type="text" matInput  [matAutocomplete]="auto1" autocomplete="off" >
+                  <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                    <mat-option *ngFor="let listaPrecio of resultadosListaPrecio" [value]="listaPrecio" (onSelectionChange)="cambioAutocompletadoListaPrecio(listaPrecio.id)">
+                      {{listaPrecio.alias}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+              <div formArrayName="formulariosVenta" >
+                <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width:5%" scope="col">#</th>
+                        <th class="text-center" style="width:15%" scope="col">Tipo de Formulario</th>
+                        <th class="text-center" style="width:15%" scope="col">Precio c/u ($)</th>
+                        <th class="text-center" style="width:15%" scope="col">Cantidad</th>
+                        <th class="text-center" style="width:15%" scope="col">Numeración</th>
+                        <th class="text-center" style="width:20%" scope="col">Precio Total ($)</th>
+                        <th class="text-center" style="width:5%" scope="col" >
+                          <span class="" (click)="agregarElemento()">+</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr  *ngFor="let a of formulario.get('formulariosVenta').controls; let i = index" [formGroupName]="i"> 
+                        <td class="td-edicion-tabla">
+                          <span>{{i+1}}</span>
+                        </td>
+                        <td class="td-edicion-tabla">
+                          <input id="idTipoFormulario" class="form-control form-control-sm" 
+                            type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
+                            autocomplete="off" >
+                          <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                            <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)">
+                              {{tipoFormulario.nombre}}
+                            </mat-option>
+                          </mat-autocomplete>
+                        </td>
+                        <td class="td-edicion-tabla">
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="precioUnitario" [readonly]="soloLectura">
+                        </td>
+                        <td class="td-edicion-tabla">
+                            <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="cantidad" >
+                        </td>
+                        <td class="td-edicion-tabla">
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="numeracion" type="number" (blur)="calcularCantidad(i)">
+                        </td>
+                        <td class="td-edicion-tabla">
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="montoTotal" type="number" [readonly]="soloLectura">
+                        </td>
+                        <td class="td-edicion-tabla">
+                          <span class="cursor-color" (click)="eliminarElemento(i)">X</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                </table>
+              </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label ">
+                <label for="idModalidadPago" class="labelModalidadPago">modalidad de Pago</label>
+                <input id="idModalidadPago" class="form-control form-control-sm color-busqueda" [formControl]="idModalidadPago"
+                  type="text" matInput [matAutocomplete]="auto2" autocomplete="off" >
+                <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayFn.bind(this)" >
+                  <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad" (click)="cambioIncrementoDescuento(modalidad)">
+                    {{modalidad.nombre}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-3" *ngIf="!modalidadPago"></div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                <label for="idModalidadPago" class="labelModalidadPago">{{tipoModalidadPago}} ($)</label>
+                <input id="idModalidadPago" type="number" formControlName="increDesc" autocomplete="off" class="form-control form-control-sm" (blur)="aplicarDescuentoIncremento()">
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="modalidadPago">
+                <div class="form-group has-float-label" >
+                <label for="idAbona" class="labelAbona">Abona ($)</label>
+                <input id="idAbona" type="text" formControlName="pago" autocomplete="off" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                <label for="idPrecioFactura" class="labelPrecioFactura">Precio Factura ($)</label>
+                <input id="idPrecioFactura" type="text" formControlName="monto" autocomplete="off" class="form-control form-control-sm"
+                  [readonly]="soloLectura">
+              </div>
+            </div>
+        </div>
+        <button id="idBoton" class="btn btn-primary" type="button" (click)="agregar()">
+          Guardar
+        </button>
+      </form>
+    </div>
+  </div>
+  <!--Pestaña Consultar-->
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado==2">
+    <div class="col-md-10 text-center">
+        <h5>Consultar Venta</h5>
+        <form [formGroup]="formularioConsulta" class="contenedor">
+                <div class="row">
+                        <div class="col-md-2">
+                          <div class="form-group has-float-label">
+                            <label for="idFechaConsultar" class="labelNumeroFactura">Fecha</label>
+                            <input id="idFechaConsultar" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+                              >
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group has-float-label">
+                            <label for="idModalidadPago" class="labelModalidadPago">N° Recibo</label>
+                            <input id="idModalidadPago" type="number" formControlName="numeroA" autocomplete="off" class="form-control form-control-sm"
+                             >
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group has-float-label ">
+                            <label for="idModalidadPago" class="labelModalidadPago">modalidad de Pago</label>
+                            <input id="idModalidadPago" class="form-control form-control-sm color-busqueda" [formControl]="idModalidadPagoConsultar"
+                              type="text" matInput [matAutocomplete]="auto3" autocomplete="off" >
+                            <mat-autocomplete #auto3="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                              <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad">
+                                {{modalidad.nombre}}
+                              </mat-option>
+                            </mat-autocomplete>
+                        </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group has-float-label ">
+                            <label for="idCliente" class="labelidProveedor">Cliente</label>
+                            <input id="idCliente" class="form-control form-control-sm color-busqueda" [formControl]="idClienteConsultar"
+                            type="text" matInput  [matAutocomplete]="auto" autocomplete="off" >
+                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                                <mat-option *ngFor="let cliente of resultadosCliente" [value]="cliente">
+                                {{cliente.nombre}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button id="idBoton" class="btn btn-primary " type="button" (click)="buscar()">
+                                Buscar
+                            </button>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width:10%" scope="col">#</th>
+                                    <th class="text-center" style="width:15%" scope="col">Fecha</th>
+                                    <th class="text-center" style="width:15%" scope="col">N° de Recibo</th>
+                                    <th class="text-center" style="width:15%" scope="col">Modalidad de Pago</th>
+                                    <th class="text-center" style="width:15%" scope="col">Precio ($)</th>
+                                    <th class="text-center" style="width:20%" scope="col">Cliente</th>
+                                    <th class="text-center" style="width:10%" scope="col">Formularios</th>
+                                    <th class="text-center" style="width:10%" scope="col">Anular</th>
+                                </tr>
+                            </thead>
+                              <tbody>
+                                <tr *ngFor="let factura of listaCompleta; let i = index" > 
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.id}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.fecha}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.numero}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.modalidadPago.nombre}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.monto}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.cliente.nombre}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span class="cursor-color" (click)="openDialog(factura.formulariosCompra)">ver</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span class="cursor-color-rojo" (click)="openDialog(factura.formulariosCompra)">X</span>
+                                  </td>
+                                </tr>
+                              </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
