@@ -12,6 +12,8 @@ import { ListaPrecioCompraService } from 'src/app/servicios/lista-precio-compra.
 import { FacturaCompraService } from 'src/app/servicios/factura-compra.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ClientePropioService } from 'src/app/servicios/cliente-propio.service';
+import { FormularioMostradorService } from 'src/app/servicios/formulario-mostrador.service';
+import { FacturaVentaService } from 'src/app/servicios/factura-venta.service';
 
 @Component({
   selector: 'app-venta',
@@ -70,6 +72,8 @@ export class VentaComponent implements OnInit {
   public indiceFila:number = 0;
   //Define el id Lista Precio del autocompletado
   public idListaPrecio:number = 0;
+  //Define el id del Tipo de formulario
+  public idTipoFormulario:number = 0;
   //Define el id de la modalidad de pago seleccionada (si es CuentaCorriente el id=0 y mostrará el input "Abona($)", sino lo oculta)
   public modalidadPago:boolean = false;
   
@@ -109,13 +113,13 @@ export class VentaComponent implements OnInit {
   public fechaConsulta: FormControl=new FormControl();
   //campo numeroFacturaConsulta como un FormControl
   public numeroFacturaConsulta: FormControl=new FormControl();
-  //campo modalidadPagoConsulta como un FormControl
+  //campo modalidadPagoConsulta como un FormControl (pestaña Consultar)
   public idModalidadPagoConsultar: FormControl=new FormControl();
   //campo proveedorConsulta como un FormControl
   public idProveedorConsultar: FormControl=new FormControl();
   
   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
-  constructor(public dialog: MatDialog,private clienteService: ClientePropioService, private listaPrecioService: ListaPrecioService, private listaPrecioVentaService: ListaPrecioVentaService, private formBuilder: FormBuilder, private toastr: ToastrService, private facturaCompraService: FacturaCompraService, private listaPrecioCompraService: ListaPrecioCompraService, private tiposFormularios: TipoFormularioService, private modalidadPagoService: ModalidadPagoService, private proveedorService: ProveedorService) {
+  constructor(public dialog: MatDialog, private formularioMostradorServices: FormularioMostradorService, private clienteService: ClientePropioService, private listaPrecioService: ListaPrecioService, private listaPrecioVentaService: ListaPrecioVentaService, private formBuilder: FormBuilder, private toastr: ToastrService, private facturaCompraService: FacturaCompraService, private facturaVentaService: FacturaVentaService, private listaPrecioCompraService: ListaPrecioCompraService, private tiposFormularios: TipoFormularioService, private modalidadPagoService: ModalidadPagoService, private proveedorService: ProveedorService) {
 
     //Autocompletado - Buscar por proveedor
     this.listaPrecio.valueChanges
@@ -153,6 +157,15 @@ export class VentaComponent implements OnInit {
           })
         }
     })
+    //Autocompletado - Buscar por modalidad de Pago en la pestaña Consultar
+    this.idModalidadPagoConsultar.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.modalidadPagoService.listarPorAlias(data).subscribe(response =>{
+            this.resultadosModalidadPago = response.json();
+          })
+        }
+    })
     //Autocompletado - Buscar por Tipo de formulario
     this.buscarTipoFormulario.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -175,7 +188,9 @@ export class VentaComponent implements OnInit {
     var dateDay = new Date().toISOString().substring(0,10);
     //Define los campos para validaciones
     this.formulario = this.formBuilder.group({
+      numero: new FormControl(),
       numeroA: new FormControl(),
+      numeroB: new FormControl(),
       fecha: new FormControl(),
       increDesc: new FormControl(),
       monto: new FormControl(),
@@ -194,31 +209,39 @@ export class VentaComponent implements OnInit {
     });
     this.formularioConsulta = this.formBuilder.group({
       fecha: new FormControl(),
-      numeroA: new FormControl(),
+      numeroRecibo: new FormControl(),
       modalidadPago: new FormControl(),
-      proveedor: new FormControl(),
+      clientePropio: new FormControl()
     });
     this.formulario.get('fecha').setValue(dateDay);
     this.formularioConsulta.get('fecha').setValue(dateDay);
     this.formulario.get('increDesc').setValue(0);
+    //cargamos numero de recibo
+    this.facturaVentaService.obtenerSiguienteNumero().subscribe(res=>{
+      this.formulario.get('numero').setValue(res.json().numeroCompleto);
+      this.formulario.get('numeroA').setValue(res.json().numeroCompleto.split('-')[0]);
+      this.formulario.get('numeroB').setValue(res.json().numeroCompleto.split('-')[1]);
+    });
+  
   }
 
   //declaramos los metodos para utilizar el Modal/Dialog
-// public openDialog(formulariosFacturas): void {
-//   const dialogRef = this.dialog.open(FacturasModal, {
-//     width: '950px',
-//     //los formularios que paso desde el html en cada ver son asignados a la variable formularios para que pueda leerlos desde la ventana factura-modal.html
-//     data: {formularios: formulariosFacturas},
-//   });
+public openDialog(formulariosFacturas): void {
+  const dialogRef = this.dialog.open(FacturasVentaModal, {
+    width: '950px',
+    //los formularios que paso desde el html en cada ver son asignados a la variable formularios para que pueda leerlos desde la ventana factura-modal.html
+    data: {formularios: formulariosFacturas},
+  });
 
-//   dialogRef.afterClosed().subscribe(result => {
-//     console.log('The dialog was closed');
-//   });
-// }
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+  });
+}
 
 //Crea formulariosCompra para la tabla (cada fila que se agrega)
 private crearformulariosVenta(): FormGroup {
   return this.formBuilder.group({
+    autoTipoFormulario: '',
     precioUnitario: '',
     numeracion: '',
     cantidad: '',
@@ -258,8 +281,9 @@ public cambioIncrementoDescuento(elemento){
     this.tipoModalidadPago= "Incremento";
   }
   this.formulario.get('modalidadPago.id').setValue(elemento.id);
-  if(elemento.id==1){
-    this.modalidadPago= true; //si es cuenta corriente muestro el input "Abona ($)"
+  console.log(elemento.id);
+  if(elemento.id==5){
+    this.modalidadPago= true; //si es cuenta corriente muestro el input "Abona ($)". El Id de CuentaCorriente esta seteado en 5
   }
   else{
     this.modalidadPago= false;
@@ -291,13 +315,26 @@ public agregarElemento() {
   this.listaAgregar = this.formulario.get('formulariosVenta') as FormArray;
   this.listaAgregar.push(this.crearformulariosVenta());
 }
-//Elimina una fila de la segunda tabla
+//Elimina una fila de la  tabla
 public eliminarElemento(indice) {
+  //restar el montoTotal de la fila que se elimina 
+  let calculoMontoTotal=(<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('montoTotal').value;
+  this.formulario.get('monto').setValue(this.formulario.get('monto').value-calculoMontoTotal)
+  //luego eliminamos la fila
   this.listaAgregar.removeAt(indice);
+  
+}
+//Elimina una fila de la tabla Consultar
+public anular(indice) {
+  //luego eliminamos la fila
+  // (<FormArray>this.listaCompleta).removeAt(indice);
+  
 }
 //Manejo de cambio de autocompletado de tipo formulario
 public cambioAutocompletadoTipoFormulario(elemento, indice) {
   // this.formulario.get('tipoFormulario').setValue(elemento);
+  this.idTipoFormulario = elemento.id;
+  console.log("id del tipo de formulario seleccionado: "+this.idTipoFormulario);
   (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('listaPrecio.id').setValue(this.idListaPrecio);
   (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue(elemento.id);
   //obtenemos el precio de ListaPrecioVenta al tener los id (idListaPrecio, idTipoDeFormulario) necesarios para la consulta
@@ -308,15 +345,34 @@ public cambioAutocompletadoTipoFormulario(elemento, indice) {
 }
 //Evento que calcula la "cantidad" como diferencia entre N° Hasta y N° Desde mas uno
 public calcularCantidad(indice){
-  console.log(this.formulario.value);
-  let calculoCantidad: number= (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracionHasta').value-(<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracionDesde').value+1;
-  (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').setValue(calculoCantidad);
-  let calculoMontoTotal=calculoCantidad*(<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').value;
+  (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('montoTotal').setValue(0);
+  let calculoMontoTotal: number=0;
+  let cantidad: number=0;
+  cantidad=(<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').value;
+  calculoMontoTotal=cantidad*(<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').value;
   (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('montoTotal').setValue(calculoMontoTotal);
   this.montoPrecioFactura=this.montoPrecioFactura+calculoMontoTotal;
   this.formulario.get('monto').setValue(this.montoPrecioFactura);
-  console.log(this.montoPrecioFactura);
-  console.log(this.formulario.value);
+  if(calculoMontoTotal!=0){
+    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').disable();
+    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('autoTipoFormulario').disable();
+  }
+  
+  //calcular la Numeracion
+  this.formularioMostradorServices.listarNumeracionDesdeHasta(this.idTipoFormulario, cantidad).subscribe(response =>{
+    let primerIndice=0;
+    let segundoIndice=1;
+    let mostrarNumeracion="";
+    for(let i=0; i<response.json().length; i++){
+      while(response.json()[segundoIndice]!= undefined){
+        mostrarNumeracion=mostrarNumeracion+response.json()[primerIndice]+"->"+response.json()[segundoIndice]+ ", ";
+        primerIndice+=2;
+        segundoIndice+=2;
+      }
+    }
+    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracion').setValue(mostrarNumeracion);
+    console.log(mostrarNumeracion);
+  })
 }
 //Aplica descuento o incremento dependiendo el tipo de modalidad de Pago seleccionado
 public aplicarDescuentoIncremento(){
@@ -329,6 +385,10 @@ public aplicarDescuentoIncremento(){
   }
   console.log(this.formulario.value)
 }
+//Aplica un descuento segun lo que abona el cliente (solo cuando la modalidad de pago es cuentaCorriente)
+public aplicarAbona(){
+  this.formulario.get('monto').setValue(this.formulario.get('monto').value-this.formulario.get('pago').value);
+}
 //Agrega un registro 
 public agregar(){
   //pregunto si el campo IncreDesc es nulo o no, porque no se realizará el agregar registro si dicho campo es nulo
@@ -337,7 +397,7 @@ public agregar(){
     this.formulario.get('increDesc').setValue(0);
   }
   console.log(this.formulario.value);
-  this.facturaCompraService.agregar(this.formulario.value).subscribe(
+  this.facturaVentaService.agregar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
       if(respuesta.codigo == 201) {
@@ -360,22 +420,23 @@ public agregar(){
 }
 //buscar Factura Compra de la pestaña consultar
 public buscar(){
-  if(this.idProveedorConsultar.value==""){
-    this.formularioConsulta.get('proveedor').setValue(null);
+  let objeto={};
+  if(this.idClienteConsultar.value==""){
+    this.formularioConsulta.get('cliente').setValue(null);
   }else{
-    this.formularioConsulta.get('proveedor').setValue(this.idProveedorConsultar.value);
+    // objeto.cliente.id=this.idClienteConsultar.value.id;
+    this.formularioConsulta.get('clientePropio').setValue(this.idClienteConsultar.value);
   }
-
+  console.log(this.idClienteConsultar.value);
   if(this.idModalidadPagoConsultar.value==""){
     this.formularioConsulta.get('modalidadPago').setValue(null);
   }else{
     this.formularioConsulta.get('modalidadPago').setValue(this.idModalidadPagoConsultar.value);
   }
-  // this.formularioConsulta.get('proveedor').setValue(this.idProveedorConsultar.value);
-  // this.formularioConsulta.get('modalidadPago').setValue(this.idModalidadPagoConsultar.value);
   console.log(this.formularioConsulta.value);
-  this.facturaCompraService.listarPorFiltros(this.formularioConsulta.value).subscribe(res =>{
+  this.facturaVentaService.listarPorFiltros(this.formularioConsulta.value).subscribe(res =>{
     this.listaCompleta= res.json();
+    console.log(res.json());
   });
 }
 //Reestablece los campos formularios
@@ -385,4 +446,23 @@ private reestablecerFormulario(id) {
   this.autocompletado.setValue(undefined);
   this.resultados = [];
   }
+}
+
+@Component({
+  selector: 'factura-venta-modal',
+  templateUrl: 'factura-venta-modal.html',
+})
+export class FacturasVentaModal{
+  //Define la lista completa de registros
+  public listaCompletaDeFormulariosVenta:FormArray ;
+
+  constructor(public dialogRef: MatDialogRef<FacturasVentaModal>, @Inject(MAT_DIALOG_DATA) public data) {}
+  ngOnInit() {
+    this.listaCompletaDeFormulariosVenta=this.data.formularios;
+    console.log(this.listaCompletaDeFormulariosVenta);
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
 }

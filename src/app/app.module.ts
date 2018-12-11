@@ -68,10 +68,13 @@ import { CajaComponent } from './componentes/caja/caja.component';
 import { CajaService } from './servicios/caja.service';
 import { FacturaCompraService } from './servicios/factura-compra.service';
 import { FacturaVentaService } from './servicios/factura-venta.service';
-
+import { FormularioMostradorService } from './servicios/formulario-mostrador.service';
 
 import { Caja } from './modelos/caja';
-import { VentaComponent } from './componentes/venta/venta.component';
+import { VentaComponent, FacturasVentaModal } from './componentes/venta/venta.component';
+import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
+import { CuentaCorrienteService } from './servicios/cuenta-corriente.service';
+import { CuentaCorriente } from './modelos/cuentaCorriente';
 
 @NgModule({
   declarations: [
@@ -96,7 +99,9 @@ import { VentaComponent } from './componentes/venta/venta.component';
     ListaPrecioVentaComponent,
     CajaComponent,
     FacturasModal,
-    VentaComponent
+    VentaComponent,
+    CuentaCorrienteComponent,
+    FacturasVentaModal
   ],
   imports: [
     BrowserModule, 
@@ -167,9 +172,13 @@ import { VentaComponent } from './componentes/venta/venta.component';
     CajaService,
     FacturaCompraService,
     Caja,
-    FacturaVentaService
+    FacturaVentaService,
+    Caja,
+    CuentaCorrienteService,
+    CuentaCorriente,
+    FormularioMostradorService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ClientePropioModal, FacturasModal]
+  entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal]
 })
 export class AppModule { }

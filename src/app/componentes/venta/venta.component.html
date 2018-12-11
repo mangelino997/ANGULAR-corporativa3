@@ -8,7 +8,7 @@
       </nav>
     </div>
   </div>
-  <!--Pestaña solicitar-->
+  <!--Pestaña Nueva Venta-->
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado==1">
     <div class="col-md-10 text-center">
       <h5>Nueva Venta</h5>
@@ -28,7 +28,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNumeroRecibo" class="labelNumeroRecibo">N° de Recibo</label>
-              <input id="idNumeroRecibo" type="number" formControlName="numeroA" autocomplete="off" class="form-control form-control-sm">
+              <input id="idNumeroRecibo" type="text" formControlName="numero" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@
                           <span>{{i+1}}</span>
                         </td>
                         <td class="td-edicion-tabla">
-                          <input id="idTipoFormulario" class="form-control form-control-sm" 
+                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="autoTipoFormulario"
                             type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
                             autocomplete="off" >
                           <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
@@ -128,16 +128,16 @@
                           </mat-autocomplete>
                         </td>
                         <td class="td-edicion-tabla">
-                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="precioUnitario" [readonly]="soloLectura">
+                          <input id="idPrecioUnitario" class="form-control form-control-sm" formControlName="precioUnitario" [readonly]="soloLectura">
                         </td>
                         <td class="td-edicion-tabla">
-                            <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="cantidad" >
+                            <input id="idCantidad" class="form-control form-control-sm" formControlName="cantidad" (blur)="calcularCantidad(i)">
                         </td>
                         <td class="td-edicion-tabla">
-                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="numeracion" type="number" (blur)="calcularCantidad(i)">
+                          <input id="idNumeracion" class="form-control form-control-sm" formControlName="numeracion" type="text" [readonly]="soloLectura">
                         </td>
                         <td class="td-edicion-tabla">
-                          <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="montoTotal" type="number" [readonly]="soloLectura">
+                          <input id="idMontoTotal" class="form-control form-control-sm" formControlName="montoTotal" type="number" [readonly]="soloLectura">
                         </td>
                         <td class="td-edicion-tabla">
                           <span class="cursor-color" (click)="eliminarElemento(i)">X</span>
@@ -177,7 +177,7 @@
             <div class="col-md-3" *ngIf="modalidadPago">
                 <div class="form-group has-float-label" >
                 <label for="idAbona" class="labelAbona">Abona ($)</label>
-                <input id="idAbona" type="text" formControlName="pago" autocomplete="off" class="form-control form-control-sm">
+                <input id="idAbona" type="text" formControlName="pago" autocomplete="off" class="form-control form-control-sm" (blur)="aplicarAbona()">
               </div>
             </div>
             <div class="col-md-3">
@@ -210,7 +210,7 @@
                         <div class="col-md-3">
                           <div class="form-group has-float-label">
                             <label for="idModalidadPago" class="labelModalidadPago">N° Recibo</label>
-                            <input id="idModalidadPago" type="number" formControlName="numeroA" autocomplete="off" class="form-control form-control-sm"
+                            <input id="idModalidadPago" type="text" formControlName="numeroRecibo" autocomplete="off" class="form-control form-control-sm"
                              >
                           </div>
                         </div>
@@ -239,7 +239,7 @@
                         </div>
                         </div>
                         <div class="col-md-1">
-                            <button id="idBoton" class="btn btn-primary " type="button" (click)="buscar()">
+                            <button id="idBoton" class="btn btn-primary btn-sm" type="button" (click)="buscar()">
                                 Buscar
                             </button>
                         </div>
@@ -268,7 +268,7 @@
                                     <span>{{factura.fecha}}</span>
                                   </td>
                                   <td class="td-edicion-tabla">
-                                    <span>{{factura.numero}}</span>
+                                    <span>{{factura.numeroCompleto}}</span>
                                   </td>
                                   <td class="td-edicion-tabla">
                                     <span>{{factura.modalidadPago.nombre}}</span>
@@ -277,13 +277,13 @@
                                     <span>{{factura.monto}}</span>
                                   </td>
                                   <td class="td-edicion-tabla">
-                                    <span>{{factura.cliente.nombre}}</span>
+                                    <span>{{factura.clientePropio.nombre}}</span>
                                   </td>
                                   <td class="td-edicion-tabla">
-                                    <span class="cursor-color" (click)="openDialog(factura.formulariosCompra)">ver</span>
+                                    <span class="cursor-color" (click)="openDialog(factura.formulariosVenta)">ver</span>
                                   </td>
                                   <td class="td-edicion-tabla">
-                                    <span class="cursor-color-rojo" (click)="openDialog(factura.formulariosCompra)">X</span>
+                                    <span class="cursor-color-rojo" (click)="anular(indice)">X</span>
                                   </td>
                                 </tr>
                               </tbody>
