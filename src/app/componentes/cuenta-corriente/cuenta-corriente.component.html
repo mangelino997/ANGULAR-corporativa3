@@ -2,19 +2,19 @@
   <div class="row">
     <div class="container text-center">
       <nav mat-tab-nav-bar>
-        <a mat-tab-link disabled>Autorizado</a>
-        <a mat-tab-link [active]="activeLink == 'Consultar'" (click)="seleccionarPestania(1)">Consultar</a>
-        <a mat-tab-link [active]="activeLink == 'Deudores'" (click)="seleccionarPestania(2)">Deudores</a>
-        <a mat-tab-link [active]="activeLink == 'Historial'" (click)="seleccionarPestania(3)">Historial</a>
+        <a mat-tab-link disabled>CUENTA CORRIENTE</a>
+        <a mat-tab-link [active]="pestaniaActiva == 'Consultar'" (click)="seleccionarPestania(1)">Consultar</a>
+        <a mat-tab-link [active]="pestaniaActiva == 'Deudores'" (click)="seleccionarPestania(2)">Deudores</a>
+        <a mat-tab-link [active]="pestaniaActiva == 'Historial'" (click)="seleccionarPestania(3)">Historial</a>
       </nav>
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1">
-    <div class="col-md-6 text-center">
+    <div class="col-md-8 text-center">
       <h5>Consultar Cuenta Corriente</h5>
       <form [formGroup]="formulario" class="contenedor">
-        <div class="row ">
-          <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-5">
             <div class="form-group has-float-label">
               <label for="idCliente" class="tamanio-label">Cliente</label>
               <input id="idCliente" class="form-control form-control-sm color-busqueda" type="text" matInput
@@ -26,11 +26,44 @@
               </mat-autocomplete>
             </div>
           </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary btn-sm" (click)="listarPorClientePropioDeudor()">Consultar</button>
+          </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate 
-          (click)="accion(indiceSeleccionado)">
-          {{pestaniaActual}}
-        </button>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:10%" scope="col">#</th>
+                  <th class="text-center" style="width:20%" scope="col">Fecha</th>
+                  <th class="text-center" style="width:20%" scope="col">Detalle</th>
+                  <th class="text-center" style="width:25%" scope="col">Importe ($)</th>
+                  <th class="text-center" style="width:25%" scope="col">Saldo($)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let l of clientesDeudores; let i = index">
+                  <td>
+                    <span>{{i+1}}</span>
+                  </td>
+                  <td>
+                    <span>{{l.fecha}}</span>
+                  </td>
+                  <td>
+                    <span style="color:blue" (click)="openDialog(l.facturaVenta)">ver</span>
+                  </td>
+                  <td>
+                    <span>{{l.montoTotal}}</span>
+                  </td>
+                  <td>
+                    <span>{{l.deuda}}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </form>
     </div>
   </div>

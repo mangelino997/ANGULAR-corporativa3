@@ -20,9 +20,10 @@ import { ListaPrecioVentaComponent } from './componentes/lista-precio-venta/list
 import { CajaComponent } from './componentes/caja/caja.component';
 import { FacturaCompraService } from './servicios/factura-compra.service';
 import { VentaComponent } from './componentes/venta/venta.component';
+import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
 
 const routes: Routes = [
-  {path: '', component: VentaComponent}
+  {path: '', component: CuentaCorrienteComponent}
 ];
 
 @NgModule({

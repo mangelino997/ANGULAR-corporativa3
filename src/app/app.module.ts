@@ -69,10 +69,9 @@ import { CajaService } from './servicios/caja.service';
 import { FacturaCompraService } from './servicios/factura-compra.service';
 import { FacturaVentaService } from './servicios/factura-venta.service';
 import { FormularioMostradorService } from './servicios/formulario-mostrador.service';
-
 import { Caja } from './modelos/caja';
 import { VentaComponent, FacturasVentaModal } from './componentes/venta/venta.component';
-import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
+import { CuentaCorrienteComponent, ConsultarDetalleModal } from './componentes/cuenta-corriente/cuenta-corriente.component';
 import { CuentaCorrienteService } from './servicios/cuenta-corriente.service';
 import { CuentaCorriente } from './modelos/cuentaCorriente';
 
@@ -101,6 +100,7 @@ import { CuentaCorriente } from './modelos/cuentaCorriente';
     FacturasModal,
     VentaComponent,
     CuentaCorrienteComponent,
+    ConsultarDetalleModal,
     FacturasVentaModal
   ],
   imports: [
@@ -179,6 +179,6 @@ import { CuentaCorriente } from './modelos/cuentaCorriente';
     FormularioMostradorService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal]
+  entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal]
 })
 export class AppModule { }
