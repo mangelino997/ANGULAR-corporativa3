@@ -1,0 +1,39 @@
+<div class="row justify-content-center contenedor" >
+    <div class="col-md-10 text-center">
+            <h5>Formularios de la Factura</h5>
+            <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width:10%" scope="col">#</th>
+                                <th class="text-center" style="width:15%" scope="col">Tipo Formulario</th>
+                                <th class="text-center" style="width:15%" scope="col">N° Desde</th>
+                                <th class="text-center" style="width:15%" scope="col">N° Hasta</th>
+                                <th class="text-center" style="width:20%" scope="col">Precio ($)</th>
+                            </tr>
+                        </thead>
+                          <tbody>
+                            <tr *ngFor="let formularios of listaCompletaDeFormularios; let i = index" > 
+                              <td class="td-edicion-tabla">
+                                <span>{{formularios.id}}</span>
+                              </td>
+                              <td class="td-edicion-tabla">
+                                <span>{{formularios.tipoFormulario.nombre}}</span>
+                              </td>
+                              <td class="td-edicion-tabla">
+                                <span>{{formularios.numeracionDesde}}</span>
+                              </td>
+                              <td class="td-edicion-tabla">
+                                <span>{{formularios.numeracionHasta}}</span>
+                              </td>
+                              <td class="td-edicion-tabla">
+                                <span>{{formularios.montoTotal}}</span>
+                              </td>
+                            </tr>
+                          </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

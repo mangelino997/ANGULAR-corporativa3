@@ -1,0 +1,37 @@
+<div id="area" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <div class="row">
+    <div class="container text-center">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>Autorizado</a>
+        <a mat-tab-link [active]="activeLink == 'Consultar'" (click)="seleccionarPestania(1)">Consultar</a>
+        <a mat-tab-link [active]="activeLink == 'Deudores'" (click)="seleccionarPestania(2)">Deudores</a>
+        <a mat-tab-link [active]="activeLink == 'Historial'" (click)="seleccionarPestania(3)">Historial</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1">
+    <div class="col-md-6 text-center">
+      <h5>Consultar Cuenta Corriente</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row ">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idCliente" class="tamanio-label">Cliente</label>
+              <input id="idCliente" class="form-control form-control-sm color-busqueda" type="text" matInput
+                [formControl]="formulario.get('clientePropio')" [matAutocomplete]="auto" autocomplete="off">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let item of resultadosClientes" [value]="item">
+                  {{item.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate 
+          (click)="accion(indiceSeleccionado)">
+          {{pestaniaActual}}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

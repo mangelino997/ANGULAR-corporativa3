@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { AppService } from './app.service';
 import { Http, Headers, RequestOptions } from '@angular/http';
@@ -7,13 +6,13 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 @Injectable({
   providedIn: 'root'
 })
-export class CajaService {
+export class FacturaVentaService {
   //define la url contra el servicio web
   private url: string;
   private opciones: any;
   //constructor
   constructor(private appService: AppService, private http: Http) {
-    this.url = appService.getUrlBase() + '/caja';
+    this.url = appService.getUrlBase() + '/facturaVenta';
     const cabecera: Headers = new Headers();
     cabecera.append('Content-Type', 'application/json');
     this.opciones= new RequestOptions({
@@ -24,29 +23,29 @@ export class CajaService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId');
   }
+  //obtiene el siguiente número
+  public obtenerSiguienteNumero() {
+    return this.http.get(this.url + '/obtenerSiguienteNumero');
+  }
+  //obtiene un listado por numero
+  public verificarFacturaExistentePorNumero(numero) {
+    return this.http.get(this.url + '/obtenerPorNumero/'+numero);
+  }
   //obtiene la lista completa de registros
   public listar() {
     return this.http.get(this.url);
-  }
-  //Obtiene los importes del dia actual
-  public obtenerMontos() {
-    return this.http.get(this.url + '/obtenerMontos');
-  }
-  //Obtiene la caja de hoy si existe
-  public obtenerCajaDeHoy() {
-    return this.http.get(this.url + '/obtenerCajaDeHoy');
   }
   //agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento);
   }
+  //agrega un registro
+  public listarPorFiltros(elemento) {
+    return this.http.post(this.url+'/listarPorFiltros', elemento);
+  }
   //actualiza un registro
   public actualizar(elemento) {
     return this.http.put(this.url, elemento);
-  }
-  //actualiza el retiro
-  public actualizarRetiro(elemento) {
-    return this.http.put(this.url + '/actualizarRetiro', elemento);
   }
   //eliminar un registro
   public eliminar(idRegistro) {

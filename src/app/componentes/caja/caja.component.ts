@@ -20,6 +20,8 @@ export class CajaComponent implements OnInit {
   public estadoBtnGuardarBilletes:boolean = true;
   //Define el estado del boton retiro
   public estadoBtnRetiro:boolean = true;
+  //Define el estado del boton guardar
+  public estadoBtnGuardar:boolean = true;
   //Constructor
   constructor(private cajaServicio: CajaService, private cajaModelo: Caja,
     private toastr: ToastrService) {}
@@ -30,9 +32,14 @@ export class CajaComponent implements OnInit {
     //Obtiene la caja del dia de la fecha
     this.cajaServicio.obtenerCajaDeHoy().subscribe(res => {
       let caja = res.json();
+      /*
+      * Si ya se cargaron billetes el dia de la fecha, calcula la cantidad e importe 
+      * y deshabilita los botones calcular y guardar
+      */
       if(caja.billetes != null) {
         this.formulario.patchValue(caja);
         this.calcularCantidadEImporte();
+        this.estadoCampoBilletes();
         this.estadoBtnCalcular = false;
         this.estadoBtnGuardarBilletes = false;
         if(caja.montoRetiro != -1 && caja.montoRetiro != null) {
@@ -86,6 +93,7 @@ export class CajaComponent implements OnInit {
   }
   //Guarda los billetes con sus cantidades ingresadas, establece esta seccion en no editable
   public guardarBilletes(): void {
+    console.log(this.formulario.value);
     this.cajaServicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -93,17 +101,7 @@ export class CajaComponent implements OnInit {
           setTimeout(function() {
             document.getElementById('idRetiro').focus();
           }, 20);
-          this.formulario.get('billetes').get('pesos2').disable();
-          this.formulario.get('billetes').get('pesos5').disable();
-          this.formulario.get('billetes').get('pesos10').disable();
-          this.formulario.get('billetes').get('pesos20').disable();
-          this.formulario.get('billetes').get('pesos50').disable();
-          this.formulario.get('billetes').get('pesos100').disable();
-          this.formulario.get('billetes').get('pesos200').disable();
-          this.formulario.get('billetes').get('pesos500').disable();
-          this.formulario.get('billetes').get('pesos1000').disable();
-          this.formulario.get('billetes').get('cantidad').disable();
-          this.formulario.get('billetes').get('importeTotal').disable();
+          this.estadoCampoBilletes();
           this.estadoBtnCalcular = false;
           this.estadoBtnGuardarBilletes = false;
           this.formulario.get('id').setValue(respuesta.id-1);
@@ -116,19 +114,84 @@ export class CajaComponent implements OnInit {
       }
     )
   }
+  //Establece el campo de los billetes en deshabilitado
+  private estadoCampoBilletes() {
+    this.formulario.get('billetes').get('pesos2').disable();
+    this.formulario.get('billetes').get('pesos5').disable();
+    this.formulario.get('billetes').get('pesos10').disable();
+    this.formulario.get('billetes').get('pesos20').disable();
+    this.formulario.get('billetes').get('pesos50').disable();
+    this.formulario.get('billetes').get('pesos100').disable();
+    this.formulario.get('billetes').get('pesos200').disable();
+    this.formulario.get('billetes').get('pesos500').disable();
+    this.formulario.get('billetes').get('pesos1000').disable();
+    this.formulario.get('billetes').get('cantidad').disable();
+    this.formulario.get('billetes').get('importeTotal').disable();
+  }
   //Deshabilita el campo retiro
   public finalizarRetiro(): void {
-    console.log(this.formulario.value);
     this.cajaServicio.actualizarRetiro(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         this.formulario.get('montoRetiro').disable();
         this.estadoBtnRetiro = false;
         this.toastr.success(respuesta.mensaje);
+        this.obtenerMontos();
       },
       err => {
         let respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
+      }
+    )
+  }
+  //Obtiene los montos del dia de la fecha
+  private obtenerMontos(): void {
+    this.cajaServicio.obtenerMontos().subscribe(
+      res => {
+        let importes = res.json();
+        this.formulario.get('montoVenta').setValue((importes.montoVenta).toFixed(2));
+        this.formulario.get('montoTransferencia').setValue((importes.montoTransferencia).toFixed(2));
+        this.formulario.get('montoGasto').setValue((importes.montoGasto).toFixed(2));
+        this.formulario.get('montoTotal').setValue((importes.montoTotal).toFixed(2));
+        this.calcularImportesFinales();
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+  //Calcula el sobrante o faltante y el importe final en caja
+  private calcularImportesFinales(): void {
+    let retiro = this.formulario.get('montoRetiro').value;
+    let importeTotalBilletes = this.formulario.get('billetes').get('importeTotal').value;
+    let importeTotal = this.formulario.get('montoTotal').value;
+    let diferencia = importeTotal - importeTotalBilletes;
+    let valor = 0;
+    if(diferencia == 0) {
+      this.formulario.get('sobrante').setValue(valor.toFixed(2));
+      this.formulario.get('faltante').setValue(valor.toFixed(2));
+    } else if(diferencia > 0) {
+      this.formulario.get('sobrante').setValue(valor.toFixed(2));
+      this.formulario.get('faltante').setValue(diferencia.toFixed(2));
+    } else {
+      this.formulario.get('sobrante').setValue(Math.abs(diferencia).toFixed(2));
+      this.formulario.get('faltante').setValue(valor.toFixed(2));
+    }
+    this.formulario.get('importeFinalCaja').setValue((importeTotalBilletes-retiro).toFixed(2));
+  }
+  //Actualiza la caja del dia
+  public actualizar(): void {
+    this.formulario.get('montoRetiro').enable();
+    this.cajaServicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.estadoBtnGuardar = false;
+        this.formulario.get('montoRetiro').disable();
+        this.toastr.success(respuesta.mensaje);
+      },
+      err => {
+        let respuesta = err.json();
+        this.toastr.success(respuesta.mensaje);
       }
     )
   }

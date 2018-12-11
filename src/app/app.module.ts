@@ -58,7 +58,7 @@ import { FotoService } from './servicios/foto.service';
 import { ProveedorComponent } from './componentes/proveedor/proveedor.component';
 import { Proveedor } from './modelos/proveedor';
 import { ProveedorService } from './servicios/proveedor.service';
-import { CompraComponent } from './componentes/compra/compra.component';
+import { CompraComponent, FacturasModal } from './componentes/compra/compra.component';
 import { ListaPrecioCompra } from './modelos/listaPrecioCompra';
 import { ListaPrecioCompraComponent } from './componentes/lista-precio-compra/lista-precio-compra.component';
 import { ListaPrecioCompraService } from './servicios/lista-precio-compra.service';
@@ -66,7 +66,15 @@ import { ListaPrecioVentaComponent } from './componentes/lista-precio-venta/list
 import { ListaPrecioVentaService } from './servicios/lista-precio-venta.service';
 import { CajaComponent } from './componentes/caja/caja.component';
 import { CajaService } from './servicios/caja.service';
+import { FacturaCompraService } from './servicios/factura-compra.service';
+import { FacturaVentaService } from './servicios/factura-venta.service';
+import { FormularioMostradorService } from './servicios/formulario-mostrador.service';
+
 import { Caja } from './modelos/caja';
+import { VentaComponent, FacturasVentaModal } from './componentes/venta/venta.component';
+import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
+import { CuentaCorrienteService } from './servicios/cuenta-corriente.service';
+import { CuentaCorriente } from './modelos/cuentaCorriente';
 
 @NgModule({
   declarations: [
@@ -89,7 +97,11 @@ import { Caja } from './modelos/caja';
     CompraComponent,
     ListaPrecioCompraComponent,
     ListaPrecioVentaComponent,
-    CajaComponent
+    CajaComponent,
+    FacturasModal,
+    VentaComponent,
+    CuentaCorrienteComponent,
+    FacturasVentaModal
   ],
   imports: [
     BrowserModule, 
@@ -158,9 +170,15 @@ import { Caja } from './modelos/caja';
     ListaPrecioCompraService,
     ListaPrecioVentaService,
     CajaService,
-    Caja
+    FacturaCompraService,
+    Caja,
+    FacturaVentaService,
+    Caja,
+    CuentaCorrienteService,
+    CuentaCorriente,
+    FormularioMostradorService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ClientePropioModal]
+  entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal]
 })
 export class AppModule { }

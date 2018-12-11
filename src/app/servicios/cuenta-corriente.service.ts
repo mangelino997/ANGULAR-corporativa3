@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { AppService } from './app.service';
 import { Http, Headers, RequestOptions } from '@angular/http';
@@ -7,20 +6,20 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 @Injectable({
   providedIn: 'root'
 })
-export class CajaService {
-  //define la url contra el servicio web
+export class CuentaCorrienteService {
+  //Define la url contra el servicio web
   private url: string;
   private opciones: any;
-  //constructor
+  //Constructor
   constructor(private appService: AppService, private http: Http) {
-    this.url = appService.getUrlBase() + '/caja';
+    this.url = appService.getUrlBase() + '/cuentaCorriente';
     const cabecera: Headers = new Headers();
     cabecera.append('Content-Type', 'application/json');
     this.opciones= new RequestOptions({
       headers: cabecera
     });
   }
-  //obtiene el siguiente Id
+  //Obtiene el siguiente Id
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId');
   }
@@ -28,13 +27,25 @@ export class CajaService {
   public listar() {
     return this.http.get(this.url);
   }
-  //Obtiene los importes del dia actual
-  public obtenerMontos() {
-    return this.http.get(this.url + '/obtenerMontos');
+  //Obtiene un lista por cliente propio
+  public listarPorClientePropio(idClientePropio) {
+    return this.http.get(this.url + '/listarPorClientePropio/' + idClientePropio);
   }
-  //Obtiene la caja de hoy si existe
-  public obtenerCajaDeHoy() {
-    return this.http.get(this.url + '/obtenerCajaDeHoy');
+  //Obtiene un lista por cliente propio deudor
+  public listarPorClientePropioDeudor(idClientePropio) {
+    return this.http.get(this.url + '/listarPorClientePropioDeudor/' + idClientePropio);
+  }
+  //Obtiene la deuda total de un cliente
+  public obtenerDeudaTotalCliente(idClientePropio) {
+    return this.http.get(this.url + '/obtenerDeudaTotalCliente/' + idClientePropio);
+  }
+  //Obtiene la deuda de cada cliente
+  public listarDeudaClientes() {
+    return this.http.get(this.url + '/listarDeudaClientes/');
+  }
+  //Salda una deuda
+  public saldar(elemento) {
+    return this.http.post(this.url + '/saldar', elemento);
   }
   //agrega un registro
   public agregar(elemento) {
@@ -43,10 +54,6 @@ export class CajaService {
   //actualiza un registro
   public actualizar(elemento) {
     return this.http.put(this.url, elemento);
-  }
-  //actualiza el retiro
-  public actualizarRetiro(elemento) {
-    return this.http.put(this.url + '/actualizarRetiro', elemento);
   }
   //eliminar un registro
   public eliminar(idRegistro) {
