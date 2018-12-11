@@ -35,16 +35,20 @@ export class CajaComponent implements OnInit {
         this.calcularCantidadEImporte();
         this.estadoBtnCalcular = false;
         this.estadoBtnGuardarBilletes = false;
-      }
-      if(caja.montoRetiro != -1 && caja.montoRetiro != null) {
-        this.formulario.get('montoRetiro').setValue(caja.montoRetiro.toFixed(2));
-        this.formulario.get('montoRetiro').disable();
-        this.estadoBtnRetiro = false;
+        if(caja.montoRetiro != -1 && caja.montoRetiro != null) {
+          this.formulario.get('montoRetiro').setValue(caja.montoRetiro.toFixed(2));
+          this.formulario.get('montoRetiro').disable();
+          this.estadoBtnRetiro = false;
+        } else {
+          let valor = 0;
+          this.formulario.get('montoRetiro').setValue(valor.toFixed(2));
+          setTimeout(function() {
+            document.getElementById('idRetiro').focus();
+          }, 20)
+        }
       } else {
-        let valor = 0;
-        this.formulario.get('montoRetiro').setValue(valor.toFixed(2));
         setTimeout(function() {
-          document.getElementById('idRetiro').focus();
+          document.getElementById('idPesos2').focus();
         }, 20)
       }
     })
