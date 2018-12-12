@@ -46,6 +46,7 @@ export class CajaComponent implements OnInit {
           this.formulario.get('montoRetiro').setValue(caja.montoRetiro.toFixed(2));
           this.formulario.get('montoRetiro').disable();
           this.estadoBtnRetiro = false;
+          this.obtenerMontos();
         } else {
           let valor = 0;
           this.formulario.get('montoRetiro').setValue(valor.toFixed(2));
@@ -93,7 +94,6 @@ export class CajaComponent implements OnInit {
   }
   //Guarda los billetes con sus cantidades ingresadas, establece esta seccion en no editable
   public guardarBilletes(): void {
-    console.log(this.formulario.value);
     this.cajaServicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -135,8 +135,8 @@ export class CajaComponent implements OnInit {
         let respuesta = res.json();
         this.formulario.get('montoRetiro').disable();
         this.estadoBtnRetiro = false;
-        this.toastr.success(respuesta.mensaje);
         this.obtenerMontos();
+        this.toastr.success(respuesta.mensaje);
       },
       err => {
         let respuesta = err.json();

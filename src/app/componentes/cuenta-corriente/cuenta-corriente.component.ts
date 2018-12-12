@@ -4,6 +4,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { CuentaCorriente } from 'src/app/modelos/cuentaCorriente';
 import { ClientePropioService } from 'src/app/servicios/cliente-propio.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cuenta-corriente',
@@ -23,7 +24,7 @@ export class CuentaCorrienteComponent implements OnInit {
   public pestaniaActiva: string;
   //Constructor
   constructor(private cuentaCorrienteServicio: CuentaCorrienteService, private cuentaCorrienteModelo: CuentaCorriente,
-    private clientePropioServicio: ClientePropioService, public dialog: MatDialog) {
+    private clientePropioServicio: ClientePropioService, public dialog: MatDialog, private toastr: ToastrService) {
     //Establece el indice seleccionado por defecto
     this.indiceSeleccionado = 1;
     //Establece la pestania activa
@@ -50,8 +51,32 @@ export class CuentaCorrienteComponent implements OnInit {
     let idClientePropio = this.formulario.get('clientePropio').value.id;
     this.cuentaCorrienteServicio.listarPorClientePropioDeudor(idClientePropio).subscribe(res => {
       this.clientesDeudores = res.json();
-      console.log(this.clientesDeudores);
     })
+  }
+  //Salda una deuda
+  public saldar(): void {
+    let elemento = {
+      clientePropio: {
+        id: this.formulario.get('clientePropio').value.id
+      },
+      deuda: this.formulario.get('importeASaldar').value
+    }
+    this.cuentaCorrienteServicio.saldar(elemento).subscribe(
+      res => {
+        console.log(res.json());
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.listarPorClientePropioDeudor();
+          this.formulario.get('importeASaldar').setValue('');
+          document.getElementById('idCliente').focus();
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        let respuesta = err.json();
+        this.toastr.error(respuesta.mensaje);
+      }
+    )
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -74,7 +99,6 @@ export class CuentaCorrienteComponent implements OnInit {
   }
   //declaramos los metodos para utilizar el Modal/Dialog
   public openDialog(elemento): void {
-    console.log(elemento);
     const dialogRef = this.dialog.open(ConsultarDetalleModal, {
       width: '1200px',
       data: { detalle: elemento },

@@ -23,7 +23,7 @@ import { VentaComponent } from './componentes/venta/venta.component';
 import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
 
 const routes: Routes = [
-  {path: '', component: CuentaCorrienteComponent}
+  {path: '', component: VentaComponent}
 ];
 
 @NgModule({
