@@ -22,17 +22,21 @@ export class CuentaCorrienteComponent implements OnInit {
   public indiceSeleccionado: number;
   //Define la pestania activia
   public pestaniaActiva: string;
+  //Define la lista de deudores
+  public deudores:Array<any> = [];
+  //Define la lista de historial de cliente
+  public listaHistorial:Array<any> = [];
+  //Define la lista de pestanias
+  private pestanias:Array<string> = ['Consultar', 'Deudores', 'Historial'];
   //Constructor
   constructor(private cuentaCorrienteServicio: CuentaCorrienteService, private cuentaCorrienteModelo: CuentaCorriente,
     private clientePropioServicio: ClientePropioService, public dialog: MatDialog, private toastr: ToastrService) {
-    //Establece el indice seleccionado por defecto
-    this.indiceSeleccionado = 1;
-    //Establece la pestania activa
-    this.pestaniaActiva = 'Consultar';
   }
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.cuentaCorrienteModelo.formulario;
+    //Establece la pestania por defecto
+    this.seleccionarPestania(1, 'Consultar');
     //Obtiene un cliente por alias
     this.formulario.get('clientePropio').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -41,10 +45,39 @@ export class CuentaCorrienteComponent implements OnInit {
         })
       }
     })
-    //Establece el foco en cliente
-    setTimeout(function() {
-      document.getElementById('idCliente').focus();
-    }, 20);
+  }
+  //Establece la pestania seleccionada
+  public seleccionarPestania(indice, nombre): void {
+    //Reestablece el formulario
+    this.reestablecerFormulario();
+    //Establece el indice seleccionado por defecto
+    this.indiceSeleccionado = indice;
+    //Establece la pestania activa
+    this.pestaniaActiva = nombre;
+    //Verifica que pestania es y llama a metedo correspondiente
+    switch(indice) {
+      case 1:
+        //Establece el foco en cliente
+        setTimeout(function () {
+          document.getElementById('idCliente').focus();
+        }, 20);
+        break;
+      case 2:
+        this.listarDeudores();
+        break;
+      case 3:
+        //Establece el foco en cliente
+        setTimeout(function () {
+          document.getElementById('idCliente').focus();
+        }, 20);
+        break;
+    }
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario(): void {
+    this.formulario.reset();
+    this.clientesDeudores = [];
+    this.listaHistorial = [];
   }
   //Obtiene la lista de deudas del cliente por fecha ascendente
   public listarPorClientePropioDeudor(): void {
@@ -78,6 +111,25 @@ export class CuentaCorrienteComponent implements OnInit {
       }
     )
   }
+  //Obtiene la lista de deudores
+  public listarDeudores(): void {
+    this.cuentaCorrienteServicio.listarDeudaClientes().subscribe(res => {
+      this.deudores = res.json();
+    })
+  }
+  //Cambia de pestania y muestra la ficha del cliente
+  public verFicha(elemento): void {
+    this.seleccionarPestania(1, 'Consultar');
+    this.formulario.get('clientePropio').setValue(elemento.clientePropio);
+    this.listarPorClientePropioDeudor();
+  }
+  //Obtiene el historial de cuenta corriente por cliente propio
+  public listarPorClientePropio(): void {
+    let idClientePropio = this.formulario.get('clientePropio').value.id;
+    this.cuentaCorrienteServicio.listarPorClientePropio(idClientePropio).subscribe(res => {
+      this.listaHistorial = res.json();
+    })
+  }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
     if (elemento != undefined) {
@@ -88,14 +140,14 @@ export class CuentaCorrienteComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    // var indice = this.indiceSeleccionado;
-    // if (keycode == 113) {
-    //   if (indice < this.pestanias.length) {
-    //     this.seleccionarPestania(indice + 1, this.pestanias[indice].pestania.nombre, 0);
-    //   } else {
-    //     this.seleccionarPestania(1, this.pestanias[0].pestania.nombre, 0);
-    //   }
-    // }
+    var indice = this.indiceSeleccionado;
+    if (keycode == 113) {
+      if (indice < 3) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice]);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0]);
+      }
+    }
   }
   //declaramos los metodos para utilizar el Modal/Dialog
   public openDialog(elemento): void {
