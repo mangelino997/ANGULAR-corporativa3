@@ -74,6 +74,8 @@ import { VentaComponent, FacturasVentaModal } from './componentes/venta/venta.co
 import { CuentaCorrienteComponent, ConsultarDetalleModal } from './componentes/cuenta-corriente/cuenta-corriente.component';
 import { CuentaCorrienteService } from './servicios/cuenta-corriente.service';
 import { CuentaCorriente } from './modelos/cuentaCorriente';
+import { Transferencia } from './modelos/transferencia';
+import { TransferenciaComponent } from './componentes/transferencia/transferencia.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +103,8 @@ import { CuentaCorriente } from './modelos/cuentaCorriente';
     VentaComponent,
     CuentaCorrienteComponent,
     ConsultarDetalleModal,
-    FacturasVentaModal
+    FacturasVentaModal,
+    TransferenciaComponent
   ],
   imports: [
     BrowserModule, 
@@ -176,7 +179,8 @@ import { CuentaCorriente } from './modelos/cuentaCorriente';
     Caja,
     CuentaCorrienteService,
     CuentaCorriente,
-    FormularioMostradorService
+    FormularioMostradorService,
+    Transferencia
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal]

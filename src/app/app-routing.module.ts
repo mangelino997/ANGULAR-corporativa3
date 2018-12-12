@@ -21,9 +21,10 @@ import { CajaComponent } from './componentes/caja/caja.component';
 import { FacturaCompraService } from './servicios/factura-compra.service';
 import { VentaComponent } from './componentes/venta/venta.component';
 import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
+import { TransferenciaComponent } from './componentes/transferencia/transferencia.component';
 
 const routes: Routes = [
-  {path: '', component: CuentaCorrienteComponent}
+  {path: '', component: TransferenciaComponent}
 ];
 
 @NgModule({

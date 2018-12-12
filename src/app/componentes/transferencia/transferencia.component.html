@@ -1,0 +1,198 @@
+<div id="agendatelefonica" class="container-fluid">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>Transferencia</a>
+        <a mat-tab-link (click)="indiceSeleccionado=1" [active]="activeLink== 1" >Almacén a Mostrador</a>
+        <a mat-tab-link (click)="indiceSeleccionado=2" [active]="activeLink== 2" >Mostrador a Almacén</a>
+      </nav>
+    </div>
+  </div>
+  <!--Pestaña Almacén a Mostrador-->
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado==1">
+    <div class="col-md-10 text-center">
+      <h5>Transferencia de Almacén a Mostrador</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label ">
+              <label for="idTipoFormulario" class="labelTipoFormulario">Tipo de Formulario</label>
+              <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="tipo"
+              type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
+              autocomplete="off" >
+              <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario)" (blur)="calcularImporte(0)">
+                  {{tipoFormulario.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label" >
+              <label for="idCantidad" class="labelCantidad">Cantidad</label>
+              <input id="idCantidad" type="number" [formControl]="cantidad" autocomplete="off" class="form-control form-control-sm" (blur)="calcularImporte(0)">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label" >
+              <label for="idPrecioTotal" class="labelPrecioTotal">Importe ($)</label>
+              <input id="idPrecioTotal" type="number" [formControl]="importe" autocomplete="off" class="form-control form-control-sm" >
+            </div>
+          </div>
+          <div class="col-md-3">
+            <button id="idBoton" class="btn btn-primary btn-sm" type="button" (click)="agregarElemento()">
+              Agregar
+            </button>
+          </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-md-12">
+              <h6>Formularios a Transferir</h6>
+                <table class="table table-bordered table-striped table-sm">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width:5%" scope="col">#</th>
+                        <th class="text-center" style="width:15%" scope="col">Tipo de Formulario</th>
+                        <th class="text-center" style="width:15%" scope="col">Precio c/u ($)</th>
+                        <th class="text-center" style="width:15%" scope="col">Numeración</th>
+                        <th class="text-center" style="width:15%" scope="col">Cantidad</th>
+                        <th class="text-center" style="width:20%" scope="col">Importe ($)</th>
+                        <th class="text-center" style="width:5%" scope="col" >
+                          <span class="" (click)="eliminarElemento()">-</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr  *ngFor="let a of listaAgregar; let i = index" > 
+                        <td class="td-edicion-tabla">
+                          <span>{{i+1}}</span>
+                        </td>
+                        <td class="td-edicion-tabla">
+                        </td>
+                        <td class="td-edicion-tabla">
+                        </td>
+                        <td class="td-edicion-tabla">
+                        </td>
+                        <td class="td-edicion-tabla">
+                        </td>
+                        <td class="td-edicion-tabla">
+                        </td>
+                        <td class="td-edicion-tabla">
+                          <span class="cursor-color" (click)="eliminarElemento(i)">X</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label" >
+                <label for="idCantidad" class="labelCantidad">Importe Total ($)</label>
+                <input id="idCantidad" type="number" formControlName="montoTotal" autocomplete="off" class="form-control form-control-sm" (blur)="aplicarAbona()">
+              </div>
+            </div>
+        </div>
+
+        <button id="idBoton" class="btn btn-primary" type="button" (click)="agregar()">
+          Transferir
+        </button>
+      </form>
+    </div>
+  </div>
+  <!--Pestaña Mostrador a Almacén-->
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado==2">
+      <div class="col-md-10 text-center">
+        <h5>Transferencia de Almacén a Mostrador</h5>
+        <form [formGroup]="formulario2" class="contenedor">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group has-float-label ">
+                <label for="idTipoFormulario" class="labelTipoFormulario">Tipo de Formulario</label>
+                <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="autoTipoFormulario"
+                type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
+                autocomplete="off" >
+                <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                  <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)">
+                    {{tipoFormulario.nombre}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label" >
+                <label for="idCantidad" class="labelCantidad">Cantidad</label>
+                <input id="idCantidad" type="number" [formControl]="cantidad" autocomplete="off" class="form-control form-control-sm" (blur)="calcularImporte()">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label" >
+                <label for="idPrecioTotal" class="labelPrecioTotal">Importe ($)</label>
+                <input id="idPrecioTotal" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+      
+          <div class="row">
+              <div class="col-md-12">
+                <h6>Formularios a Transferir</h6>
+                  <table class="table table-bordered table-striped table-sm">
+                      <thead>
+                        <tr>
+                          <th class="text-center" style="width:5%" scope="col">#</th>
+                          <th class="text-center" style="width:15%" scope="col">Tipo de Formulario</th>
+                          <th class="text-center" style="width:15%" scope="col">Precio c/u ($)</th>
+                          <th class="text-center" style="width:15%" scope="col">Numeración</th>
+                          <th class="text-center" style="width:15%" scope="col">Cantidad</th>
+                          <th class="text-center" style="width:20%" scope="col">Importe ($)</th>
+                          <th class="text-center" style="width:5%" scope="col" >
+                            <span class="" (click)="eliminarElemento()">-</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr   *ngFor="let a of listaAgregar; let i = index" > 
+                          <td class="td-edicion-tabla">
+                            <span>{{i+1}}</span>
+                          </td>
+                          <td class="td-edicion-tabla">
+                          </td>
+                          <td class="td-edicion-tabla">
+                          </td>
+                          <td class="td-edicion-tabla">
+                          </td>
+                          <td class="td-edicion-tabla">
+                          </td>
+                          <td class="td-edicion-tabla">
+                          </td>
+                          <td class="td-edicion-tabla">
+                            <span class="cursor-color" (click)="eliminarElemento(i)">X</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-md-3"></div>
+              <div class="col-md-3"></div>
+              <div class="col-md-3"></div>
+              <div class="col-md-3">
+                <div class="form-group has-float-label" >
+                  <label for="idCantidad" class="labelCantidad">Cantidad</label>
+                  <input id="idCantidad" type="number" formControlName="cantidad" autocomplete="off" class="form-control form-control-sm" (blur)="aplicarAbona()">
+                </div>
+              </div>
+          </div>
+  
+          <button id="idBoton" class="btn btn-primary" type="button" (click)="agregar()">
+            Transferir
+          </button>
+        </form>
+      </div>
+    </div>
+</div>
