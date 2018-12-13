@@ -9,23 +9,10 @@ export class Transferencia {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             version: new FormControl(),
-            fecha: new FormControl('', Validators.required),
-            montoTotal: new FormControl('', ),
+            fecha: new FormControl('',),
+            montoTotal: new FormControl(),
             tipo: new FormControl('', ),
-            importe: new FormControl('', ),
-            formulariosTransferencia: new FormGroup({
-                id: new FormControl(),
-                version: new FormControl(),
-                numeracion: new FormControl(),
-                cantidad: new FormControl(),
-                monto: new FormControl( ),
-                tipoFormulario: new FormGroup({
-                    id: new FormControl(),
-                    version: new FormControl(),
-                    nombre: new FormControl()
-                 })
-            })
-
+            formulariosTransferencia: new FormControl()
         })
         
     }

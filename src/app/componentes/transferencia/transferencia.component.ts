@@ -1,20 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray, FormBuilder } from '@angular/forms';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
-import { PestaniaService } from 'src/app/servicios/pestania.service';
-import { ListaPrecioVentaService } from 'src/app/servicios/lista-precio-venta.service';
 import { TipoFormularioService } from 'src/app/servicios/tipo-formulario.service';
-import { ListaPrecioService } from 'src/app/servicios/lista-precio.service';
-import { ModalidadPagoService } from 'src/app/servicios/modalidad-pago.service';
-import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { ListaPrecioCompraService } from 'src/app/servicios/lista-precio-compra.service';
-import { FacturaCompraService } from 'src/app/servicios/factura-compra.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { ClientePropioService } from 'src/app/servicios/cliente-propio.service';
-import { FormularioMostradorService } from 'src/app/servicios/formulario-mostrador.service';
-import { FacturaVentaService } from 'src/app/servicios/factura-venta.service';
 import { Transferencia } from 'src/app/modelos/transferencia';
+import { TransferenciaService } from 'src/app/servicios/transferencia.service';
 
 @Component({
   selector: 'app-transferencia',
@@ -58,7 +48,7 @@ export class TransferenciaComponent implements OnInit {
   //Define la lista de resultados de busqueda para tipos de formularios
   public resultadosTiposFormularios = [];
 
-  constructor(private listaPrecioCompraService: ListaPrecioCompraService, private transferencia: Transferencia, private tiposFormularios: TipoFormularioService, private formBuilder: FormBuilder, private toastr: ToastrService) {
+  constructor(private transferenciaService: TransferenciaService ,private listaPrecioCompraService: ListaPrecioCompraService, private transferencia: Transferencia, private tiposFormularios: TipoFormularioService, private formBuilder: FormBuilder, private toastr: ToastrService) {
     //Autocompletado - Buscar por Tipo de formulario
     this.buscarTipoFormulario.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -80,15 +70,18 @@ export class TransferenciaComponent implements OnInit {
     var dateDay = new Date().toISOString().substring(0,10);
     //inicializa el formulario y sus elementos
     this.formulario= this.transferencia.formulario;
+    this.formulario.get('fecha').setValue(dateDay);
+
     //inicializa el formulario y sus elementos
     this.formulario2= this.transferencia.formulario;
+    this.formulario.get('fecha').setValue(dateDay);
     //define el formulario de FormularioTransferencia que es de tipo array (puede tener varias filas)
     this.formulariosTransferencia = this.formBuilder.group({
-      id: new FormControl(),
-      version: new FormControl(),
-      numeracion: new FormControl(),
-      cantidad: new FormControl(),
-      monto: new FormControl( ),
+      id: '',
+      version: '',
+      numeracion: '',
+      cantidad: 0,
+      monto: 0,
       tipoFormulario: this.formBuilder.group({
         id: '',
         version: '',
@@ -101,30 +94,38 @@ export class TransferenciaComponent implements OnInit {
   public limpiarArray(){
     this.listaAgregar.splice(0, this.listaAgregar.length);
   }
-  //Agrega una fila a la segunda tabla
+  //Agrega una fila a la  tabla
   public agregarElemento() {
-    this.formulariosTransferencia.setValue(this.elemento);
     this.listaAgregar.push(this.formulariosTransferencia.value);
-    // if(this.listaAgregar.length<1){
-    //   this.listaPrecioDisable= true;
-    // }
-    // else{
-    //   this.listaPrecioDisable= false;
-    // }
+    let monto=<number>this.formulariosTransferencia.get('monto').value;
+    let montoTotal= <number>this.formulario.get('montoTotal').value;
+    let importeTotal: number= montoTotal + monto;
+    this.formulario.get('montoTotal').setValue(importeTotal);
+    this.buscarTipoFormulario.reset();
+    this.cantidad.reset();
+    this.importe.reset();
+    document.getElementById('idTipoFormulario').focus();
+  }
+  //Elimina una fila de la segunda tabla
+  public eliminarElemento(indice, montoRestar) {
+    let montoTotal= this.formulario.get('montoTotal').value;
+    this.formulario.get('montoTotal').setValue(montoTotal-montoRestar);
+    this.listaAgregar.splice(indice, 1); 
   }
   //Manejo de cambio de autocompletado de tipo formulario
   public cambioAutocompletadoTipoFormulario(elemento) {
-    this.formulariosTransferencia= elemento;
+    this.formulariosTransferencia.get('tipoFormulario').setValue(elemento);
     console.log(this.formulariosTransferencia);
   }
   //calcula el importe recibiendo como parametro el tipo, si es 0 estamos en la pestaña "Transf de alm a mostrador"
   public calcularImporte(tipo){
-    if(this.formulariosTransferencia.get('id').value!=null&& this.cantidad.value!=null){
-      this.formulario.get('formulariosTransferencia.cantidad').setValue(this.cantidad.value);
+    if(this.formulariosTransferencia.get('tipoFormulario.id').value!=null&& this.cantidad.value!=null){
+      this.formulariosTransferencia.get('cantidad').setValue(this.cantidad.value);
       //obtenemos el importe (lo calcula el servidor al pasarle como parametros el idTipoFormulario, cantidad y tipo)
-      this.listaPrecioCompraService.obtenerPorTipoFormularioYCantidadYTipo(this.formulario.get('formulariosTransferencia.tipoFormulario.id').value, this.cantidad.value, tipo).subscribe(response =>{
+      this.listaPrecioCompraService.obtenerPorTipoFormularioYCantidadYTipo(this.formulariosTransferencia.get('tipoFormulario.id').value, this.cantidad.value, tipo).subscribe(response =>{
         this.importe.setValue(response.json());
-        console.log(response.json());
+        this.formulariosTransferencia.get('monto').setValue(this.importe.value);
+        console.log(this.formulariosTransferencia.value);
       })
     }
     else{
@@ -140,4 +141,42 @@ export class TransferenciaComponent implements OnInit {
       return elemento;
     }
   }
+  //Agrega un registro 
+public agregar(tipo){
+  this.formulario.get('tipo').setValue(tipo); //el 0 corresponde al tipo de Numeracion de "almacen a mostrador", el 1 de "mostrador a almacen"
+  this.formulario.get('formulariosTransferencia').setValue(this.listaAgregar);// Agrego el array de formularios a transferir agregados
+  console.log(this.formulario.value);
+  this.transferenciaService.agregar(this.formulario.value).subscribe(
+    res => {
+      var respuesta = res.json();
+      if(respuesta.codigo == 201) {
+        this.buscarTipoFormulario.reset();
+        this.cantidad.reset();
+        this.importe.reset();
+        this.formulario.reset();
+        this.reestablecerFormulario();
+        setTimeout(function() {
+          document.getElementById('idTipoFormulario').focus();
+        }, 20);
+        this.toastr.success(respuesta.mensaje);
+      }
+    },
+    err => {
+      var respuesta = err.json();
+      if(respuesta.codigo == 11002) {
+        document.getElementById("idTipoFormulario").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+    }
+  );
+}
+//Reestablece los campos formularios
+private reestablecerFormulario() {
+  this.formulario.reset();
+  // this.formulario.get('id').setValue(id);
+  this.autocompletado.setValue(undefined);
+  this.listaAgregar = [];
+}
+
+
 }
