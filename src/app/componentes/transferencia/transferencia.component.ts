@@ -5,6 +5,8 @@ import { TipoFormularioService } from 'src/app/servicios/tipo-formulario.service
 import { ListaPrecioCompraService } from 'src/app/servicios/lista-precio-compra.service';
 import { Transferencia } from 'src/app/modelos/transferencia';
 import { TransferenciaService } from 'src/app/servicios/transferencia.service';
+import { FormularioMostradorService } from 'src/app/servicios/formulario-mostrador.service';
+import { FormularioAlmacenService } from 'src/app/servicios/formulario-almacen.service';
 
 @Component({
   selector: 'app-transferencia',
@@ -32,6 +34,10 @@ export class TransferenciaComponent implements OnInit {
   public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
   public mostrarAutocompletado:boolean = null;
+
+  //Define si habilita el boton agregar
+  public habilitado:boolean = false;
+  
   //Define si el campo es de solo lectura
   public soloLectura:boolean = true;
   //Define el indice seleccionado de pestania
@@ -48,7 +54,7 @@ export class TransferenciaComponent implements OnInit {
   //Define la lista de resultados de busqueda para tipos de formularios
   public resultadosTiposFormularios = [];
 
-  constructor(private transferenciaService: TransferenciaService ,private listaPrecioCompraService: ListaPrecioCompraService, private transferencia: Transferencia, private tiposFormularios: TipoFormularioService, private formBuilder: FormBuilder, private toastr: ToastrService) {
+  constructor(private formularioMostradorService: FormularioMostradorService, private formularioAlmacenService: FormularioAlmacenService, private transferenciaService: TransferenciaService ,private listaPrecioCompraService: ListaPrecioCompraService, private transferencia: Transferencia, private tiposFormularios: TipoFormularioService, private formBuilder: FormBuilder, private toastr: ToastrService) {
     //Autocompletado - Buscar por Tipo de formulario
     this.buscarTipoFormulario.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -118,18 +124,85 @@ export class TransferenciaComponent implements OnInit {
     console.log(this.formulariosTransferencia);
   }
   //calcula el importe recibiendo como parametro el tipo, si es 0 estamos en la pestaña "Transf de alm a mostrador"
-  public calcularImporte(tipo){
+  public calcularImporte(tipoPestaña){
     if(this.formulariosTransferencia.get('tipoFormulario.id').value!=null&& this.cantidad.value!=null){
       this.formulariosTransferencia.get('cantidad').setValue(this.cantidad.value);
       //obtenemos el importe (lo calcula el servidor al pasarle como parametros el idTipoFormulario, cantidad y tipo)
-      this.listaPrecioCompraService.obtenerPorTipoFormularioYCantidadYTipo(this.formulariosTransferencia.get('tipoFormulario.id').value, this.cantidad.value, tipo).subscribe(response =>{
+      this.listaPrecioCompraService.obtenerPorTipoFormularioYCantidadYTipo(this.formulariosTransferencia.get('tipoFormulario.id').value, this.cantidad.value, tipoPestaña).subscribe(response =>{
         this.importe.setValue(response.json());
         this.formulariosTransferencia.get('monto').setValue(this.importe.value);
         console.log(this.formulariosTransferencia.value);
-      })
+      });
+      if(tipoPestaña==0){
+        this.formularioAlmacenService.listarNumeracionDesdeHasta(this.formulariosTransferencia.get('tipoFormulario.id').value, this.cantidad.value).subscribe(
+          response=>{
+          let primerIndice=0;
+          let segundoIndice=1;
+          let mostrarNumeracion="";
+          try{
+            let respuesta= response.json();
+            for(let i=0; i<response.json().length; i++){
+              while(response.json()[segundoIndice]!= undefined){
+                mostrarNumeracion=mostrarNumeracion+response.json()[primerIndice]+"->"+response.json()[segundoIndice]+ ", ";
+                primerIndice+=2;
+                segundoIndice+=2;
+              }
+              (<HTMLInputElement>document.getElementById("idBotonAgregar")).disabled=false;
+            }
+            this.formulariosTransferencia.get('numeracion').setValue(mostrarNumeracion);
+          }catch(e){
+            this.buscarTipoFormulario.reset();
+            this.cantidad.reset();
+            document.getElementById("idTipoFormulario").focus();
+            this.toastr.error("No existe numeración");
+            (<HTMLInputElement>document.getElementById("idBotonAgregar")).disabled=true;
+          }
+        },
+        err => {
+          var respuesta = err.json();
+          document.getElementById("idTipoFormulario").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        )
+      }
+      else{
+        this.formularioMostradorService.listarNumeracionDesdeHasta(this.formulariosTransferencia.get('tipoFormulario.id').value, this.cantidad.value).subscribe(
+          response=>{
+          let primerIndice=0;
+          let segundoIndice=1;
+          let mostrarNumeracion="";
+          
+          try{
+            let respuesta= response.json();
+            for(let i=0; i<response.json().length; i++){
+              while(response.json()[segundoIndice]!= undefined){
+                mostrarNumeracion=mostrarNumeracion+response.json()[primerIndice]+"->"+response.json()[segundoIndice]+ ", ";
+                primerIndice+=2;
+                segundoIndice+=2;
+              }
+              (<HTMLInputElement>document.getElementById("idBotonAgregar")).disabled=false;
+            }
+            this.formulariosTransferencia.get('numeracion').setValue(mostrarNumeracion);
+          }catch(e){
+            this.buscarTipoFormulario.reset();
+            this.cantidad.reset();
+            document.getElementById("idTipoFormulario").focus();
+            this.toastr.error("No existe numeración");
+            (<HTMLInputElement>document.getElementById("idBotonAgregar")).disabled=true;
+          }
+        },
+        err => {
+          var respuesta = err.json();
+          document.getElementById("idTipoFormulario").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        )
+      }
     }
     else{
       this.importe.setValue(0);
+      (<HTMLInputElement>document.getElementById("idBotonAgregar")).disabled=true;
+      
     }
     
   }

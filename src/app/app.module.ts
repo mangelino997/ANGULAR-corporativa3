@@ -76,6 +76,7 @@ import { CuentaCorrienteService } from './servicios/cuenta-corriente.service';
 import { CuentaCorriente } from './modelos/cuentaCorriente';
 import { Transferencia } from './modelos/transferencia';
 import { TransferenciaComponent } from './componentes/transferencia/transferencia.component';
+import { FormularioAlmacenService } from './servicios/formulario-almacen.service';
 
 @NgModule({
   declarations: [
@@ -180,7 +181,8 @@ import { TransferenciaComponent } from './componentes/transferencia/transferenci
     CuentaCorrienteService,
     CuentaCorriente,
     FormularioMostradorService,
-    Transferencia
+    Transferencia,
+    FormularioAlmacenService
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal]

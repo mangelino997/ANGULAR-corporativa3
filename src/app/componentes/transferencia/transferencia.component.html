@@ -3,8 +3,8 @@
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>Transferencia</a>
-        <a mat-tab-link (click)="indiceSeleccionado=1" [active]="activeLink== 1" >Almacén a Mostrador</a>
-        <a mat-tab-link (click)="indiceSeleccionado=2" [active]="activeLink== 2" >Mostrador a Almacén</a>
+        <a mat-tab-link (click)="indiceSeleccionado=1&&activeLink= 1" [active]="activeLink== 1" >Almacén a Mostrador</a>
+        <a mat-tab-link (click)="indiceSeleccionado=2&&activeLink= 2" [active]="activeLink== 2" >Mostrador a Almacén</a>
       </nav>
     </div>
   </div>
@@ -40,7 +40,7 @@
             </div>
           </div>
           <div class="col-md-3">
-            <button id="idBoton" class="btn btn-primary btn-sm" type="button" (click)="agregarElemento()">
+            <button id="idBotonAgregar" class="btn btn-primary btn-sm" type="button" (click)="agregarElemento()" >
               Agregar
             </button>
           </div>
@@ -118,7 +118,7 @@
                 type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
                 autocomplete="off" >
                 <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)">
+                  <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)" (blur)="calcularImporte(1)">
                     {{tipoFormulario.nombre}}
                   </mat-option>
                 </mat-autocomplete>
@@ -127,7 +127,7 @@
             <div class="col-md-3">
                 <div class="form-group has-float-label" >
                   <label for="idCantidad" class="labelCantidad">Cantidad</label>
-                  <input id="idCantidad" type="number" [formControl]="cantidad" autocomplete="off" class="form-control form-control-sm" (blur)="calcularImporte(0)">
+                  <input id="idCantidad" type="number" [formControl]="cantidad" autocomplete="off" class="form-control form-control-sm" (blur)="calcularImporte(1)">
                 </div>
               </div>
             <div class="col-md-3">
@@ -137,7 +137,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <button id="idBoton" class="btn btn-primary btn-sm" type="button" (click)="agregarElemento()">
+                <button id="idBotonAgregar" class="btn btn-primary btn-sm" type="button" (click)="agregarElemento()" >
                   Agregar
                 </button>
             </div>
