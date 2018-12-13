@@ -1,0 +1,75 @@
+<div id="agendatelefonica" class="container-fluid">
+    <div class="row justify-content-center contenedor" >
+      <div class="col-md-10 text-center">
+        <h5>Stock de Formularios</h5>
+        <form [formGroup]="formulario" class="contenedor">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelTipo" for="idTipo" class="tamanio-label">Tipo </label>
+                <mat-select class="form-control" placeholder="---" formControlName="tipo" >
+                  <mat-option [value]="0"> Almacén </mat-option>
+                  <mat-option [value]="1"> Mostrador </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <button id="idBoton" class="btn btn-primary " type="button" (click)="consultar()" >
+                Consultar
+              </button>
+            </div>
+          </div>
+          <div class="row" *ngIf="mostrarBarra&&listaCompleta.length==0">
+            <div class="col-md-12">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+              <div class="col-md-12">
+                  <table class="table table-bordered table-striped table-sm">
+                      <thead>
+                        <tr>
+                          <th class="text-center" style="width:5%" scope="col">#</th>
+                          <th class="text-center" style="width:15%" scope="col">Tipo de Formulario</th>
+                          <th class="text-center" style="width:15%" scope="col">Numeración</th>
+                          <th class="text-center" style="width:15%" scope="col">Cantidad</th>
+                          <th class="text-center" style="width:20%" scope="col">Importe ($)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr  *ngFor="let a of listaCompleta; let i = index" > 
+                          <td class="td-edicion-tabla">
+                            <span>{{i+1}}</span>
+                          </td>
+                          <td class="td-edicion-tabla">
+                            <span>{{a.tipoFormulario.nombre}}</span>
+                          </td>
+                          <td class="td-edicion-tabla">
+                              <span>{{a.numeracion}}</span>
+                          </td>
+                          <td class="td-edicion-tabla">
+                              <span>{{a.cantidad}}</span>
+                          </td>
+                          <td class="td-edicion-tabla">
+                              <span>{{a.monto}}</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-md-3"></div>
+              <div class="col-md-3"></div>
+              <div class="col-md-3"></div>
+              <div class="col-md-3">
+                <div class="form-group has-float-label" >
+                  <label for="idCantidad" class="labelCantidad">Importe Total ($)</label>
+                  <input id="idCantidad" type="number" formControlName="montoTotal" autocomplete="off" class="form-control form-control-sm" (blur)="aplicarAbona()">
+                </div>
+              </div>
+          </div>
+        </form>
+      </div>
+    </div>

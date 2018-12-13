@@ -77,6 +77,8 @@ import { CuentaCorriente } from './modelos/cuentaCorriente';
 import { Transferencia } from './modelos/transferencia';
 import { TransferenciaComponent } from './componentes/transferencia/transferencia.component';
 import { FormularioAlmacenService } from './servicios/formulario-almacen.service';
+import { StockFormularioService } from './servicios/stock-formulario.service';
+import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
 
 @NgModule({
   declarations: [
@@ -105,7 +107,8 @@ import { FormularioAlmacenService } from './servicios/formulario-almacen.service
     CuentaCorrienteComponent,
     ConsultarDetalleModal,
     FacturasVentaModal,
-    TransferenciaComponent
+    TransferenciaComponent,
+    StockFormularioComponent
   ],
   imports: [
     BrowserModule, 
@@ -182,7 +185,8 @@ import { FormularioAlmacenService } from './servicios/formulario-almacen.service
     CuentaCorriente,
     FormularioMostradorService,
     Transferencia,
-    FormularioAlmacenService
+    FormularioAlmacenService,
+    StockFormularioService
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal]

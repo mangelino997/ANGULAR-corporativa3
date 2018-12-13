@@ -22,9 +22,10 @@ import { FacturaCompraService } from './servicios/factura-compra.service';
 import { VentaComponent } from './componentes/venta/venta.component';
 import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
 import { TransferenciaComponent } from './componentes/transferencia/transferencia.component';
+import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
 
 const routes: Routes = [
-  {path: '', component: TransferenciaComponent}
+  {path: '', component: StockFormularioComponent}
 ];
 
 @NgModule({
