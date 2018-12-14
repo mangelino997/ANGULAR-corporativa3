@@ -46,7 +46,7 @@ export class FotoService {
   //cargar imagenes
   public postFileImagen(imagenParaSubir: File){
 		const formData = new FormData(); 
-		formData.append('file', imagenParaSubir, imagenParaSubir.name); 
+		formData.append('archivo', imagenParaSubir, imagenParaSubir.name); 
 		return this.http.post(this.url, formData);
 	}
 }

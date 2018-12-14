@@ -25,7 +25,7 @@ import { TransferenciaComponent } from './componentes/transferencia/transferenci
 import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
 
 const routes: Routes = [
-  {path: '', component: StockFormularioComponent}
+  {path: '', component: ClientePropioComponent}
 ];
 
 @NgModule({

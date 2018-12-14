@@ -103,29 +103,29 @@ constructor(private renderer: Renderer2, public dialog: MatDialog, private foto:
     }
   });
   //Escuchador del evento para cargar imagenes
-  $(function() {
-     $('#file-input').change(function(e) {
-         addImage(e); 
-        });
+  // $(function() {
+  //    $('#file-input').change(function(e) {
+  //        addImage(e); 
+  //       });
     
-        function addImage(e){
-         var file = e.target.files[0],
-         imageType = /image.*/;
+  //       function addImage(e){
+  //        var file = e.target.files[0],
+  //        imageType = /image.*/;
        
-         if (!file.type.match(imageType))
-          return;
+  //        if (!file.type.match(imageType))
+  //         return;
      
-         var reader = new FileReader();
-         reader.onload = fileOnload;
-         reader.readAsDataURL(file);
-        }
+  //        var reader = new FileReader();
+  //        reader.onload = fileOnload;
+  //        reader.readAsDataURL(file);
+  //       }
      
-        function fileOnload(e) {
-         var result=e.target.result;
-         $('#imgSalida').attr("src",result);
-         $('#imagen-nombre').empty().append('Foto cargada');
-        }
-    });
+  //       function fileOnload(e) {
+  //        var result=e.target.result;
+  //        $('#imgSalida').attr("src",result);
+  //        $('#imagen-nombre').empty().append('Foto cargada');
+  //       }
+  //   });
 
 }
 //declaramos los metodos para utilizar el Modal/Dialog
@@ -153,27 +153,27 @@ ngOnInit() {
   //Establece los valores, activando la primera pestania 
   this.seleccionarPestania(1, 'Agregar', 0);
   // obtiene la lista de autorizados
-  this.listarAutorizados();
+  // this.listarAutorizados();
   // inicializa en false
-  this.muestraImagenPc=false;
+  this.muestraImagenPc=true;
 }
 
 public mostrar(){
   console.log(this.listaAutorizadosAgregados);
 }
 
-// Carga los autorizados al campo Chips
-private listarAutorizados(){
-  this.autorizadoService.listar().subscribe(
-    res => {
-      this.listaAutorizados=res.json();
-      console.log(this.listaAutorizados);
-    },
-    err => {
-      console.log(err);
-    }
-  );
-}
+// // Carga los autorizados al campo Buscar Autorizados
+// private listarAutorizados(){
+//   this.autorizadoService.listar().subscribe(
+//     res => {
+//       this.listaAutorizados=res.json();
+//       console.log(this.listaAutorizados);
+//     },
+//     err => {
+//       console.log(err);
+//     }
+//   );
+// }
 
 //Establece el formulario al seleccionar elemento del autocompletado
 public cambioAutocompletado(elemento) {
@@ -232,7 +232,7 @@ case 2:
 case 3:
   this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
   this.mostrarFotoCliente(this.idFoto);
-  // this.muestraImagenPc=false;
+  this.muestraImagenPc=false;
   break;
 case 4:
   this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
@@ -307,6 +307,7 @@ public  deleteAutorizados(a) {
 
 //Agrega un registro 
 private agregar(){
+console.log(this.archivo);
 this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
   var respuesta = res.json();
   let foto = { 
@@ -518,14 +519,13 @@ this.autocompletadoAutorizados.setValue(undefined);
 this.resultados = [];
 this.listaAutorizados = [];
 this.borrarAgregados();
-this.idFoto=51;
-this.muestraImagenPc=false;
+// this.idFoto=51;
 // this.listarAutorizado(id);
 }
 //Manejo de colores de campos y labels
 public cambioCampo(id, label) {
-document.getElementById(id).classList.remove('is-invalid');
-document.getElementById(label).classList.remove('label-error');
+  document.getElementById(id).classList.remove('is-invalid');
+  document.getElementById(label).classList.remove('label-error');
 };
 //Muestra en la pestania buscar el elemento seleccionado de listar
 public activarConsultar(elemento) {
@@ -541,6 +541,7 @@ public activarConsultar(elemento) {
 }
 //mostrar Foto del Cliente en pestaña Actualizar, Consulat y Eliminar
 public mostrarFotoCliente(elemento){
+  console.log("datos de la foto "+elemento);
   if(elemento.foto!= null){
     this.idFoto=elemento.foto.id;
     this.fotoCliente=elemento.foto;
@@ -558,6 +559,8 @@ public activarActualizar(elemento) {
   this.listarAutorizado(elemento);
   this.mostrarFotoCliente(elemento);
   this.muestraImagenPc=false;
+
+  
 }
 //Maneja los evento al presionar una tacla (para pestanias y opciones)
 public manejarEvento(keycode) {
@@ -571,12 +574,26 @@ if(keycode == 113) {
 }
 }
 //metodo cargar imagen
-public cargandoImagen(files: FileList){
+public cargandoImagen(files: FileList, e){
+  this.archivo=null;
   this.archivo=files[0];
+
+  var reader = new FileReader();
+  reader.onload = this.fileOnload;
+  reader.readAsDataURL(this.archivo);
+
+  console.log(e);
   console.log('imagen adjuntada');
   this.bandera=true;
-  this.muestraImagenPc=true;
+  this.muestraImagenPc=false;
   
+  }
+
+  private fileOnload(e){
+    var result=e.target.result;
+    console.log(result);
+    $('#imgSalida').attr("src",result);
+    $('#imagen-nombre').empty().append('Foto cargada');
   }
   
 }
