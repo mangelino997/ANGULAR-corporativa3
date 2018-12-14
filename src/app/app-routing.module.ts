@@ -25,7 +25,24 @@ import { TransferenciaComponent } from './componentes/transferencia/transferenci
 import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
 
 const routes: Routes = [
-  {path: '', component: ClientePropioComponent}
+  {path: '', component: ClientePropioComponent},
+  {path: 'generalesclientes', component: ClientePropioComponent},
+  {path: 'generalesautorizados', component: AutorizadoComponent},
+  {path: 'generalesproveedores', component: ProveedorComponent},
+  {path: 'comprascompra', component: CompraComponent},
+  {path: 'compralistadeprecios', component: ListaPrecioCompraComponent},
+  {path: 'ventasventa', component: VentaComponent},
+  {path: 'ventaslistadeprecios', component: ListaPrecioVentaComponent},
+  {path: 'stockconsultar', component: StockFormularioComponent},
+  {path: 'stocktransferir', component: TransferenciaComponent},
+  {path: 'cuentacorrienteadministrar', component: CuentaCorrienteComponent},
+  {path: 'cajaadministrar', component: CajaComponent},
+  {path: 'extrastiposdefacturas', component: TipoFacturaComponent},
+  {path: 'extraslistadeprecios', component: ListaPrecioComponent},
+  {path: 'extrastiposdeformularios', component: TipoFormularioComponent},
+  {path: 'extrasmodalidadesdepagos', component: ModalidadPagoComponent},
+  {path: 'extrasgastos', component: GastoComponent},
+  {path: 'extrasbilletes', component: BilleteComponent}
 ];
 
 @NgModule({

@@ -152,8 +152,6 @@ ngOnInit() {
   );
   //Establece los valores, activando la primera pestania 
   this.seleccionarPestania(1, 'Agregar', 0);
-  // obtiene la lista de autorizados
-  // this.listarAutorizados();
   // inicializa en false
   this.muestraImagenPc=true;
 }
@@ -161,19 +159,6 @@ ngOnInit() {
 public mostrar(){
   console.log(this.listaAutorizadosAgregados);
 }
-
-// // Carga los autorizados al campo Buscar Autorizados
-// private listarAutorizados(){
-//   this.autorizadoService.listar().subscribe(
-//     res => {
-//       this.listaAutorizados=res.json();
-//       console.log(this.listaAutorizados);
-//     },
-//     err => {
-//       console.log(err);
-//     }
-//   );
-// }
 
 //Establece el formulario al seleccionar elemento del autocompletado
 public cambioAutocompletado(elemento) {
@@ -225,9 +210,6 @@ case 2:
   this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
   this.mostrarFotoCliente(this.idFoto);
   this.muestraImagenPc=false;
-  // this.tablaAutorizados.nativeElement.style.display="none";
-  // this.autorizadosPorCliente.nativeElement.style.display="block";
-  // this.listarAutorizadosPorCliente();listaAutorizadosPorCliente
   break;
 case 3:
   this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
@@ -589,12 +571,12 @@ public cargandoImagen(files: FileList, e){
   
   }
 
-  private fileOnload(e){
-    var result=e.target.result;
-    console.log(result);
-    $('#imgSalida').attr("src",result);
-    $('#imagen-nombre').empty().append('Foto cargada');
-  }
+private fileOnload(e){
+  var result=e.target.result;
+  console.log(result);
+  $('#imgSalida').attr("src",result);
+  $('#imagen-nombre').empty().append('Foto cargada');
+}
   
 }
 
