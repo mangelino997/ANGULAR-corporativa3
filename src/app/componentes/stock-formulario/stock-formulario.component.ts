@@ -33,24 +33,30 @@ export class StockFormularioComponent implements OnInit {
   public consultar(){
     this.mostrarBarra=true;
     this.listaCompleta=[];
+    this.formulario.get('montoTotal').setValue(0);
     console.log(this.listaCompleta);
-
 
     if(this.formulario.get('tipo').value==0){
       this.stockFormularioServices.listarFormulariosAlmacenAgrupadosPorTipoFormulario().subscribe(res=>{
         let respuesta= res.json();
         this.listaCompleta= respuesta;
-        console.log(this.listaCompleta);
+        let sumaTotal=0;
+        for(let i=0; i< this.listaCompleta.length; i++ ){
+          sumaTotal= sumaTotal+ this.listaCompleta[i].cantidad;
+        }
+        this.formulario.get('montoTotal').setValue(sumaTotal);
       })
     }
     else{
       this.stockFormularioServices.listarFormulariosMostradorAgrupadosPorTipoFormulario().subscribe(res=>{
         let respuesta= res.json();
         this.listaCompleta= respuesta;
-        console.log(this.listaCompleta);
+        let sumaTotal=0;
+        for(let i=0; i< this.listaCompleta.length; i++ ){
+          sumaTotal= sumaTotal+ this.listaCompleta[i].cantidad;
+        }
+        this.formulario.get('montoTotal').setValue(sumaTotal);
       })
     }
-    
-    
   }
 }
