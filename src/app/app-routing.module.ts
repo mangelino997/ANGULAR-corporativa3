@@ -30,7 +30,7 @@ const routes: Routes = [
   {path: 'generalesautorizados', component: AutorizadoComponent},
   {path: 'generalesproveedores', component: ProveedorComponent},
   {path: 'comprascompra', component: CompraComponent},
-  {path: 'compralistadeprecios', component: ListaPrecioCompraComponent},
+  {path: 'compraslistadeprecios', component: ListaPrecioCompraComponent},
   {path: 'ventasventa', component: VentaComponent},
   {path: 'ventaslistadeprecios', component: ListaPrecioVentaComponent},
   {path: 'stockconsultar', component: StockFormularioComponent},

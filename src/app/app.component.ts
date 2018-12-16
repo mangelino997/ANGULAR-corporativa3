@@ -33,9 +33,9 @@ export class AppComponent {
     );  
   }
   //Define la navegación en el menu
-  public navegar(subopcion, idSubopcion) {
-    this.setSubopcion(idSubopcion);
-    var pag = subopcion;
+  public navegar(modulo, subopcion) {
+    this.setSubopcion(subopcion.id);
+    var pag = modulo.modulo + subopcion.subopcion;
     var pagina = pag.toLowerCase();
     pagina = pagina.replace(new RegExp(/\s/g), "");
     pagina = pagina.replace(new RegExp(/[àá]/g), "a");

@@ -20,7 +20,7 @@
     <button mat-menu-item [matMenuTriggerFor]="lmodulo">{{modulo.modulo}}</button>
     <mat-menu #lmodulo="matMenu">
       <div *ngFor="let subopcion of modulo.subopciones">
-        <button mat-menu-item   (click)="navegar(subopcion.subopcion, subopcion.id)">{{subopcion.subopcion}}</button>
+        <button mat-menu-item (click)="navegar(modulo, subopcion)">{{subopcion.subopcion}}</button>
       </div>
     </mat-menu>
   </div>
