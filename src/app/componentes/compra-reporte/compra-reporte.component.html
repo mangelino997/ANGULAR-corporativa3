@@ -1,0 +1,175 @@
+<div id="agendatelefonica" class="container-fluid">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>REPORTE </a>
+      </nav>
+    </div>
+  </div>
+  
+  <!--Pestaña Consultar-->
+  <div class="row justify-content-center contenedor">
+    <div class="col-md-10 text-center">
+        <h5>Reporte Compra</h5>
+        <form [formGroup]="formulario" class="contenedor">
+                <div class="row">
+                        <div class="col-md-2">
+                          <div class="form-group has-float-label">
+                              <label id="labelEsContraReembolso" for="idEsContraReembolso" class="tamanio-label">Buscar Por</label>
+                              <mat-select class="form-control form-control-sm" formControlName="buscarPor" (selectionChange)="cambioBuscarPor()">
+                                <mat-option [value]="0">Fecha</mat-option>
+                                <mat-option [value]="1">Proveedor</mat-option>
+                                <mat-option [value]="2">Tipo de Formulario</mat-option>
+                              </mat-select>            
+                          </div>
+                        </div>
+                        <div class="col-md-3" *ngIf="mostrarFecha">
+                            <div class="form-group has-float-label">
+                              <label for="idFecha" class="labelNumeroFactura">Fecha</label>
+                              <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+                                >
+                            </div>
+                        </div>
+                        <div class="col-md-3" *ngIf="mostrarProveedor">
+                            <div class="form-group has-float-label ">
+                              <label for="idProveedor" class="labelidProveedor">Proveedor</label>
+                              <input id="idProveedor" class="form-control form-control-sm" [formControl]="buscarProveedor"
+                              type="text" matInput  [matAutocomplete]="auto" autocomplete="off" >
+                              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                                  <mat-option *ngFor="let proveedor of listaProveedores" [value]="proveedor" (onSelectionChange)="cambioAutocompletadoProveedor(proveedor)">
+                                  {{proveedor.nombre}}
+                                  </mat-option>
+                              </mat-autocomplete>
+                          </div>
+                        </div>
+                        <div class="col-md-3" *ngIf="mostrarTipoFormulario">
+                            <div class="form-group has-float-label ">
+                              <label for="idTipoFormulario" class="labelTipoFormulario">Tipo de Formulario</label>
+                              <input id="idTipoFormulario" class="form-control form-control-sm" 
+                              type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
+                              autocomplete="off" >
+                              <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                                <mat-option *ngFor="let tipoFormulario of listaTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario)">
+                                  {{tipoFormulario.nombre}}
+                                </mat-option>
+                              </mat-autocomplete>
+                            </div>
+                          </div>
+                        <div class="col-md-2">
+                          <div class="form-group has-float-label">
+                              <label id="labelEsContraReembolso" for="idEsContraReembolso" class="tamanio-label">Tipo</label>
+                              <mat-select class="form-control form-control-sm" formControlName="tipo" (selectionChange)="cambioTipo()">
+                                <mat-option [value]="0">Fecha</mat-option>
+                                <mat-option [value]="1">Mes y Año</mat-option>
+                                <mat-option [value]="2">Período</mat-option>
+                              </mat-select>            
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div *ngIf="mostrarTipoFecha">
+                            <div class="form-group has-float-label">
+                              <label for="idTipoFecha" class="">Fecha</label>
+                              <input id="idTipoFecha" type="date" formControlName="tipoFecha" class="form-control form-control-sm">
+                            </div>
+                          </div>
+                          <div class="row" *ngIf="mostrarTipoMesAnio">
+                            <div class="col-md-6">
+                              <div class="form-group has-float-label">
+                                  <label for="idFecha" class="labelNumeroFactura">Mes</label>
+                                  <mat-select class="form-control form-control-sm" formControlName="mes" (blur)="cambioTipo()">
+                                      <mat-option [value]="0">Enero</mat-option>
+                                      <mat-option [value]="1">Febrero</mat-option>
+                                      <mat-option [value]="2">Marzo</mat-option>
+                                      <mat-option [value]="3">Abril</mat-option>
+                                      <mat-option [value]="4">Mayo</mat-option>
+                                      <mat-option [value]="5">Junio</mat-option>
+                                      <mat-option [value]="6">Julio</mat-option>
+                                      <mat-option [value]="7">Agosto</mat-option>
+                                      <mat-option [value]="8">Septiembre</mat-option>
+                                      <mat-option [value]="9">Octubre</mat-option>
+                                      <mat-option [value]="10">Noviembre</mat-option>
+                                      <mat-option [value]="11">Diciembre</mat-option>
+                                  </mat-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group has-float-label">
+                                  <label for="idAnio" class="labelNumeroFactura">Año</label>
+                                  <input id="idAnio" type="text" formControlName="anio" pattern="[0-9]" maxlength="4" class="form-control form-control-sm" >
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row" *ngIf="mostrarTipoPeriodo">
+                            <div class="col-md-6">
+                              <div class="form-group has-float-label">
+                                  <label for="idFecha" class="labelNumeroFactura">Desde</label>
+                                  <input id="idFecha"  type="date" formControlName="fechaInicio" class="form-control form-control-sm">
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group has-float-label">
+                                  <label for="idFecha" class="labelNumeroFactura">Hasta</label>
+                                  <input id="idFecha"  type="date" formControlName="fechaFin" class="form-control form-control-sm">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button id="idBoton" class="btn btn-primary btn-sm" type="button" (click)="buscar()">
+                                Buscar
+                            </button>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                            <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width:10%" scope="col">#</th>
+                                    <th class="text-center" style="width:20%" scope="col">Fecha</th>
+                                    <th class="text-center" style="width:20%" scope="col">N° de Recibo</th>
+                                    <th class="text-center" style="width:20%" scope="col">Proveedor</th>
+                                    <th class="text-center" style="width:15%" scope="col">Formularios</th>
+                                    <th class="text-center" style="width:15%" scope="col">Importe ($)</th>
+                                </tr>
+                            </thead>
+                              <tbody>
+                                <tr *ngFor="let factura of listaCompleta; let i = index" > 
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.id}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.fecha}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.numero}}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.proveedor.nombre}</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                      <span class="cursor-color" (click)="openDialog(factura.formulariosCompra)">ver</span>
+                                  </td>
+                                  <td class="td-edicion-tabla">
+                                    <span>{{factura.monto}}</span>
+                                  </td>
+                                </tr>
+                              </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3"></div>
+                <div class="col-md-3">
+                  <div class="form-group has-float-label" >
+                    <label for="idCantidad" class="labelCantidad">Importe Total ($)</label>
+                    <input id="idCantidad" type="number" formControlName="montoTotal" autocomplete="off" class="form-control form-control-sm" (blur)="aplicarAbona()">
+                  </div>
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>

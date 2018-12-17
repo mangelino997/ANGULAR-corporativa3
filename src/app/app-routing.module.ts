@@ -23,9 +23,10 @@ import { VentaComponent } from './componentes/venta/venta.component';
 import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-corriente.component';
 import { TransferenciaComponent } from './componentes/transferencia/transferencia.component';
 import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
+import { CompraReporteComponent } from './componentes/compra-reporte/compra-reporte.component';
 
 const routes: Routes = [
-  {path: '', component: ClientePropioComponent},
+  {path: '', component: CompraReporteComponent},
   {path: 'generalesclientes', component: ClientePropioComponent},
   {path: 'generalesautorizados', component: AutorizadoComponent},
   {path: 'generalesproveedores', component: ProveedorComponent},

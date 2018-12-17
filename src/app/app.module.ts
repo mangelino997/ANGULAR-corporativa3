@@ -79,6 +79,7 @@ import { TransferenciaComponent } from './componentes/transferencia/transferenci
 import { FormularioAlmacenService } from './servicios/formulario-almacen.service';
 import { StockFormularioService } from './servicios/stock-formulario.service';
 import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
+import { CompraReporteComponent } from './componentes/compra-reporte/compra-reporte.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +109,8 @@ import { StockFormularioComponent } from './componentes/stock-formulario/stock-f
     ConsultarDetalleModal,
     FacturasVentaModal,
     TransferenciaComponent,
-    StockFormularioComponent
+    StockFormularioComponent,
+    CompraReporteComponent
   ],
   imports: [
     BrowserModule, 

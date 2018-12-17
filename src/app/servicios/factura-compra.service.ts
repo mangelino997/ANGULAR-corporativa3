@@ -31,6 +31,22 @@ export class FacturaCompraService {
   public listar() {
     return this.http.get(this.url);
   }
+  //lista por fecha
+  public listarPorFecha(elemento) {
+    return this.http.get(this.url+'/listarPorFecha/'+elemento);
+  }
+  //lista por mes
+  public listarPorMes(elemento) {
+    return this.http.get(this.url+'/listarPorMes/'+elemento);
+  }
+  //lista por año
+  public listarPorAnio(elemento) {
+    return this.http.get(this.url+'/listarPorAnio/'+elemento);
+  }
+  //lista por periodo
+  public listarPorPeriodo(elemento) {
+    return this.http.get(this.url+'/listarPorPeriodo/'+elemento);
+  }
   //agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento);
@@ -38,6 +54,14 @@ export class FacturaCompraService {
   //agrega un registro
   public listarPorFiltros(elemento) {
     return this.http.post(this.url+'/listarPorFiltros', elemento);
+  }
+  //listar por proveedor
+  public listarPorProveedor(elemento) {
+    return this.http.post(this.url+'/listarPorProveedor', elemento);
+  }
+  //listar por proveedor
+  public listarPortipoFormulario(elemento) {
+    return this.http.post(this.url+'/listarPortipoFormulario', elemento);
   }
   //actualiza un registro
   public actualizar(elemento) {
