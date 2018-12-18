@@ -7,17 +7,19 @@ import { TipoFormulario } from 'src/app/modelos/tipoFormulario';
 import { FacturaCompraService } from 'src/app/servicios/factura-compra.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { FacturaVentaService } from 'src/app/servicios/factura-venta.service';
+import { ClientePropioService } from 'src/app/servicios/cliente-propio.service';
 
 @Component({
-  selector: 'app-compra-reporte',
-  templateUrl: './compra-reporte.component.html',
-  styleUrls: ['./compra-reporte.component.scss']
+  selector: 'app-venta-reporte',
+  templateUrl: './venta-reporte.component.html',
+  styleUrls: ['./venta-reporte.component.scss']
 })
-export class CompraReporteComponent implements OnInit {
+export class VentaReporteComponent implements OnInit {
   // define el formulario de la pestaña "Transferencia de Almacen a Mostrador"
   public formulario: FormGroup;
   //Define la lista completa de Proveedores
-  public listaProveedores = [];
+  public listaClientes = [];
   //Define la lista completa de Tipos de Formularios
   public listaTiposFormularios = [];
   //Define la lista completa de registros
@@ -25,7 +27,7 @@ export class CompraReporteComponent implements OnInit {
   //Define si el input buscarPorFecha se muestra 
   public mostrarFecha:boolean = false;
   //Define si el input buscarProveedor se muestra 
-  public mostrarProveedor:boolean = false;
+  public mostrarCliente:boolean = false;
   //Define si el input combo box "Tipo" se muestra (si busco por Fecha no se debe mostrar)
   public mostrarTipo:boolean = false;
   //Define si el input buscar por TipoFormulario se muestra 
@@ -41,16 +43,14 @@ export class CompraReporteComponent implements OnInit {
   public buscarProveedor:FormControl = new FormControl();
   //Define el form control para las busquedas de Tipos de Formularios
   public buscarTipoFormulario:FormControl = new FormControl();
-  
-  
 
-  constructor(public dialog: MatDialog, private toastr: ToastrService, private facturaCompraService: FacturaCompraService, private proveedorService: ProveedorService, private tiposForulariosService: TipoFormularioService, private formBuilder: FormBuilder) {
+  constructor(public dialog: MatDialog, private toastr: ToastrService, private facturaVentaService: FacturaVentaService, private clienteService: ClientePropioService, private tiposForulariosService: TipoFormularioService, private formBuilder: FormBuilder) {
     //Autocompletado - Buscar por proveedor
     this.buscarProveedor.valueChanges
       .subscribe(data => {
         if(typeof data == 'string') {
-          this.proveedorService.listarPorAlias(data).subscribe(response =>{
-            this.listaProveedores = response.json();
+          this.clienteService.listarPorAlias(data).subscribe(response =>{
+            this.listaClientes = response.json();
             console.log(response.json());
           })
         }
@@ -64,31 +64,6 @@ export class CompraReporteComponent implements OnInit {
         })
       }
     });
-
-    //Controla cantidad de valores en el campo anio
-//     var inputQuantity = [];
-//     $(function() {
-//       $(".quantity").each(function(i) {
-//         inputQuantity[i]=this.defaultValue;
-//          $(this).data("idx",i); // save this field's index to access later
-//       });
-//       $(".quantity").on("keyup", function (e) {
-//         var $field = $(this),
-//             val=this.value,
-//             $thisIndex=parseInt($field.data("idx"),10); // retrieve the index
-// //        window.console && console.log($field.is(":invalid"));
-//           //  $field.is(":invalid") is for Safari, it must be the last to not error in IE8
-//         if (this.validity && this.validity.badInput || isNaN(val) || $field.is(":invalid") ) {
-//             this.value = inputQuantity[$thisIndex];
-//             return;
-//         } 
-//         if (val.length > Number($field.attr("maxlength"))) {
-//           val=val.slice(0, 5);
-//           $field.val(val);
-//         }
-//         inputQuantity[$thisIndex]=val;
-//       });      
-//     });
    }
 
   ngOnInit() {
@@ -98,7 +73,7 @@ export class CompraReporteComponent implements OnInit {
     this.formulario = this.formBuilder.group({
       buscarPor: new FormControl(),
       fecha: new FormControl(),
-      idProveedor: new FormControl(),
+      idClientePropio: new FormControl(),
       idTipoFormulario: new FormControl(),
       tipo: new FormControl(),
       tipoFecha: new FormControl(),
@@ -117,15 +92,15 @@ export class CompraReporteComponent implements OnInit {
     if(this.formulario.get('buscarPor').value==0){
       this.mostrarTipo= false;
       this.mostrarTipoFecha= true;
-      this.mostrarProveedor= false;
+      this.mostrarCliente= false;
       this.mostrarTipoFormulario= false;
-      this.formulario.get('idProveedor').setValue(null);
+      this.formulario.get('idClientePropio').setValue(null);
       this.formulario.get('idTipoFormulario').setValue(null);
     }
     if(this.formulario.get('buscarPor').value==1){
       this.mostrarTipo= true;
       this.mostrarTipoFecha= false;
-      this.mostrarProveedor= true;
+      this.mostrarCliente= true;
       this.mostrarTipoFormulario= false;
       this.formulario.get('fecha').setValue(null);
       this.formulario.get('idTipoFormulario').setValue(null);
@@ -133,9 +108,9 @@ export class CompraReporteComponent implements OnInit {
     if(this.formulario.get('buscarPor').value==2){
       this.mostrarTipo= true;
       this.mostrarTipoFecha= false;
-      this.mostrarProveedor= false;
+      this.mostrarCliente= false;
       this.mostrarTipoFormulario= true;
-      this.formulario.get('idProveedor').setValue(null);
+      this.formulario.get('idClientePropio').setValue(null);
       this.formulario.get('fecha').setValue(null);
     }
   }
@@ -180,8 +155,8 @@ export class CompraReporteComponent implements OnInit {
     this.formulario.get('idTipoFormulario').setValue(tipoDeFormulario.id);
   }
   //asigna a proveedor el valor del autocompletado
-  public cambioAutocompletadoProveedor(proveedor){
-    this.formulario.get('idProveedor').setValue(proveedor.id);
+  public cambioAutocompletadoCliente(cliente){
+    this.formulario.get('idClientePropio').setValue(cliente.id);
   }
   // metodo buscar 
   public buscar(){
@@ -189,9 +164,9 @@ export class CompraReporteComponent implements OnInit {
     this.listaCompleta=[];
     console.log(this.formulario.value);
     //buscar en el servicio de Proveedor
-    if (this.formulario.get('idProveedor').value!=null){
+    if (this.formulario.get('idClientePropio').value!=null){
       console.log("buscar por prov");
-        this.facturaCompraService.listarPorProveedor(this.formulario.value).subscribe(response =>{
+        this.facturaVentaService.listarPorClientePropio(this.formulario.value).subscribe(response =>{
           this.listaCompleta = response.json();
           console.log(response.json());
           if(response.json().length==0){
@@ -213,7 +188,7 @@ export class CompraReporteComponent implements OnInit {
     //Buscar en el servicio de Tipo Formulario
     if (this.formulario.get('idTipoFormulario').value!=null){
       console.log("buscar por tf");
-      this.facturaCompraService.listarPortipoFormulario(this.formulario.value).subscribe(response =>{
+      this.facturaVentaService.listarPortipoFormulario(this.formulario.value).subscribe(response =>{
         this.listaCompleta = response.json();
         console.log(response.json());
         if(response.json().length==0){
@@ -235,7 +210,7 @@ export class CompraReporteComponent implements OnInit {
     //Buscar en el servicio de Fecha
     if (this.formulario.get('fecha').value!=null){
       console.log("buscar por fecha");
-      this.facturaCompraService.listarPorFecha(this.formulario.get('fecha').value).subscribe(response =>{
+      this.facturaVentaService.listarPorFecha(this.formulario.get('fecha').value).subscribe(response =>{
         this.listaCompleta = response.json();
         if(response.json().length==0){
           this.toastr.error("No se encontraron datos..");
@@ -257,11 +232,11 @@ export class CompraReporteComponent implements OnInit {
   }
   //declaramos los metodos para utilizar el Modal/Dialog
   public openDialog(formulariosFacturas, fechaVenta): void {
-    const dialogRef = this.dialog.open(ReportesModal, {
+    const dialogRef = this.dialog.open(ReportesVentaModal, {
       width: '950px',
       //los formularios que paso desde el html en cada ver son asignados a la variable formularios para que pueda leerlos desde la ventana factura-modal.html
       data: {formularios: formulariosFacturas,
-              fecha: fechaVenta},
+             fecha: fechaVenta},
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -270,10 +245,10 @@ export class CompraReporteComponent implements OnInit {
   }
 }
 @Component({
-  selector: 'reporte-modal',
-  templateUrl: 'reporte-modal.html',
+  selector: 'reporte-venta-modal',
+  templateUrl: 'reporte-venta-modal.html',
 })
-export class ReportesModal{
+export class ReportesVentaModal{
   //Define la lista completa de registros
   public listaCompletaDeFormularios:FormArray ;
   // Define la fecha 
@@ -281,7 +256,7 @@ export class ReportesModal{
   //Define elñ improte Total
   public importeTotal: number=0;
 
-  constructor(public dialogRef: MatDialogRef<ReportesModal>, @Inject(MAT_DIALOG_DATA) public data) {}
+  constructor(public dialogRef: MatDialogRef<ReportesVentaModal>, @Inject(MAT_DIALOG_DATA) public data) {}
   ngOnInit() {
     this.listaCompletaDeFormularios=this.data.formularios;
     this.fecha= this.data.fecha;

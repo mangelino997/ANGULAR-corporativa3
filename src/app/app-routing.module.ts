@@ -24,6 +24,7 @@ import { CuentaCorrienteComponent } from './componentes/cuenta-corriente/cuenta-
 import { TransferenciaComponent } from './componentes/transferencia/transferencia.component';
 import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
 import { CompraReporteComponent } from './componentes/compra-reporte/compra-reporte.component';
+import { VentaReporteComponent } from './componentes/venta-reporte/venta-reporte.component';
 
 const routes: Routes = [
   {path: '', component: CompraReporteComponent},

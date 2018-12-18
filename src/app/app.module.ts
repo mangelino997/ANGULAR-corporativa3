@@ -80,6 +80,7 @@ import { FormularioAlmacenService } from './servicios/formulario-almacen.service
 import { StockFormularioService } from './servicios/stock-formulario.service';
 import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
 import { CompraReporteComponent, ReportesModal } from './componentes/compra-reporte/compra-reporte.component';
+import { VentaReporteComponent, ReportesVentaModal } from './componentes/venta-reporte/venta-reporte.component';
 
 @NgModule({
   declarations: [
@@ -111,7 +112,9 @@ import { CompraReporteComponent, ReportesModal } from './componentes/compra-repo
     TransferenciaComponent,
     StockFormularioComponent,
     CompraReporteComponent,
-    ReportesModal
+    ReportesModal,
+    VentaReporteComponent,
+    ReportesVentaModal
   ],
   imports: [
     BrowserModule, 
@@ -192,6 +195,6 @@ import { CompraReporteComponent, ReportesModal } from './componentes/compra-repo
     StockFormularioService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal, ReportesModal]
+  entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal, ReportesModal, ReportesVentaModal]
 })
 export class AppModule { }

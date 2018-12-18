@@ -1,6 +1,6 @@
 <div class="row justify-content-center contenedor" >
     <div class="col-md-10 text-center">
-            <h5>Formularios Compra</h5>
+            <h5>Formularios Venta</h5>
             <div class="row">
                     <div class="col-md-12">
                         <table class="table table-bordered table-striped table-sm">
@@ -40,20 +40,20 @@
             </div>
         </div>
         <div class="row">
-          <div class="col-md-3"></div>
-          <div class="col-md-3"></div>
-          <div class="col-md-3"></div>
-          <div class="col-md-3">
-            <div class="form-group has-float-label" >
-              <label for="idCantidad" class="labelCantidad">Importe Total ($)</label>
-              <input id="idCantidad" type="number" class="form-control form-control-sm" value="{{importeTotal}}">
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3"></div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label" >
+                <label for="idCantidad" class="labelCantidad">Importe Total ($)</label>
+                <input id="idCantidad" type="number" class="form-control form-control-sm" value="{{importeTotal}}">
+              </div>
+              <div class="text-right" >
+                  <button id="idBoton" class="btn btn-primary btn-sm" type="button" (click)="generarPdf()">
+                    Generar PDF
+                  </button>
+              </div>
             </div>
-            <div class="text-right" >
-                <button id="idBoton" class="btn btn-primary btn-sm" type="button" (click)="generarPdf()">
-                  Generar PDF
-                </button>
-            </div>
-          </div>
-      </div>
+        </div>
     </div>
 </div>
