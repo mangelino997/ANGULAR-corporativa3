@@ -5,6 +5,8 @@ import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { TipoFormularioService } from 'src/app/servicios/tipo-formulario.service';
 import { TipoFormulario } from 'src/app/modelos/tipoFormulario';
 import { FacturaCompraService } from 'src/app/servicios/factura-compra.service';
+import { ToastrService } from 'ngx-toastr';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-compra-reporte',
@@ -24,6 +26,8 @@ export class CompraReporteComponent implements OnInit {
   public mostrarFecha:boolean = false;
   //Define si el input buscarProveedor se muestra 
   public mostrarProveedor:boolean = false;
+  //Define si el input combo box "Tipo" se muestra (si busco por Fecha no se debe mostrar)
+  public mostrarTipo:boolean = false;
   //Define si el input buscar por TipoFormulario se muestra 
   public mostrarTipoFormulario:boolean = false;
   //Define si el input Tipo Fecha se muestra 
@@ -40,7 +44,7 @@ export class CompraReporteComponent implements OnInit {
   
   
 
-  constructor(private facturaCompraService: FacturaCompraService, private proveedorService: ProveedorService, private tiposForulariosService: TipoFormularioService, private formBuilder: FormBuilder) {
+  constructor(public dialog: MatDialog, private toastr: ToastrService, private facturaCompraService: FacturaCompraService, private proveedorService: ProveedorService, private tiposForulariosService: TipoFormularioService, private formBuilder: FormBuilder) {
     //Autocompletado - Buscar por proveedor
     this.buscarProveedor.valueChanges
       .subscribe(data => {
@@ -111,21 +115,24 @@ export class CompraReporteComponent implements OnInit {
   public cambioBuscarPor(){
     
     if(this.formulario.get('buscarPor').value==0){
-      this.mostrarFecha= true;
+      this.mostrarTipo= false;
+      this.mostrarTipoFecha= true;
       this.mostrarProveedor= false;
       this.mostrarTipoFormulario= false;
       this.formulario.get('idProveedor').setValue(null);
       this.formulario.get('idTipoFormulario').setValue(null);
     }
     if(this.formulario.get('buscarPor').value==1){
-      this.mostrarFecha= false;
+      this.mostrarTipo= true;
+      this.mostrarTipoFecha= false;
       this.mostrarProveedor= true;
       this.mostrarTipoFormulario= false;
       this.formulario.get('fecha').setValue(null);
       this.formulario.get('idTipoFormulario').setValue(null);
     }
     if(this.formulario.get('buscarPor').value==2){
-      this.mostrarFecha= false;
+      this.mostrarTipo= true;
+      this.mostrarTipoFecha= false;
       this.mostrarProveedor= false;
       this.mostrarTipoFormulario= true;
       this.formulario.get('idProveedor').setValue(null);
@@ -137,16 +144,26 @@ export class CompraReporteComponent implements OnInit {
     if(this.formulario.get('tipo').value==0){
       this.mostrarTipoFecha= true;
       this.mostrarTipoMesAnio= false;
+      this.formulario.get('mes').setValue(null);
+      this.formulario.get('anio').setValue(null);
       this.mostrarTipoPeriodo= false;
+      this.formulario.get('fechaInicio').setValue(null);
+      this.formulario.get('fechaFin').setValue(null);
     }
     if(this.formulario.get('tipo').value==1){
       this.mostrarTipoFecha= false;
+      this.formulario.get('fecha').setValue(null);
       this.mostrarTipoMesAnio= true;
       this.mostrarTipoPeriodo= false;
+      this.formulario.get('fechaInicio').setValue(null);
+      this.formulario.get('fechaFin').setValue(null);
     }
     if(this.formulario.get('tipo').value==2){
       this.mostrarTipoFecha= false;
+      this.formulario.get('fecha').setValue(null);
       this.mostrarTipoMesAnio= false;
+      this.formulario.get('mes').setValue(null);
+      this.formulario.get('anio').setValue(null);
       this.mostrarTipoPeriodo= true;
     }
   }
@@ -168,29 +185,104 @@ export class CompraReporteComponent implements OnInit {
   }
   // metodo buscar 
   public buscar(){
+    let sumaTotal=0;
     this.listaCompleta=[];
     console.log(this.formulario.value);
+    //buscar en el servicio de Proveedor
     if (this.formulario.get('idProveedor').value!=null){
       console.log("buscar por prov");
-      this.facturaCompraService.listarPorProveedor(this.formulario.value).subscribe(response =>{
-        this.listaCompleta = response.json();
-        console.log(response.json());
-      });
+        this.facturaCompraService.listarPorProveedor(this.formulario.value).subscribe(response =>{
+          this.listaCompleta = response.json();
+          console.log(response.json());
+          if(response.json().length==0){
+            this.toastr.error("No se encontraron datos..");
+            this.formulario.get('montoTotal').setValue(0);
+          }
+          else{
+            for(let i=0; i< this.listaCompleta.length; i++ ){ //calculo el monto total sumando los montos de cada fila
+              sumaTotal= sumaTotal+ this.listaCompleta[i].monto;
+            }
+            this.formulario.get('montoTotal').setValue(sumaTotal);
+          }
+        },
+        err => {
+          var respuesta = err.json();
+          this.toastr.error(respuesta.mensaje);
+        });
     }
+    //Buscar en el servicio de Tipo Formulario
     if (this.formulario.get('idTipoFormulario').value!=null){
       console.log("buscar por tf");
       this.facturaCompraService.listarPortipoFormulario(this.formulario.value).subscribe(response =>{
         this.listaCompleta = response.json();
-        console.log(response);
-      });
+        console.log(response.json());
+        if(response.json().length==0){
+          this.toastr.error("No se encontraron datos..");
+          this.formulario.get('montoTotal').setValue(0);
+        }
+        else{
+          for(let i=0; i< this.listaCompleta.length; i++ ){ //calculo el monto total sumando los montos de cada fila
+            sumaTotal= sumaTotal+ this.listaCompleta[i].monto;
+          }
+          this.formulario.get('montoTotal').setValue(sumaTotal);
+        }
+      },
+        err => {
+          var respuesta = err.json();
+          this.toastr.error(respuesta.mensaje);
+        });
     }
+    //Buscar en el servicio de Fecha
     if (this.formulario.get('fecha').value!=null){
       console.log("buscar por fecha");
-      this.facturaCompraService.listarPorFecha(this.formulario.value).subscribe(response =>{
+      this.facturaCompraService.listarPorFecha(this.formulario.get('fecha').value).subscribe(response =>{
         this.listaCompleta = response.json();
-        console.log(response.json);
+        if(response.json().length==0){
+          this.toastr.error("No se encontraron datos..");
+          this.formulario.get('montoTotal').setValue(0);
+        }
+        else{
+          for(let i=0; i< this.listaCompleta.length; i++ ){ //calculo el monto total sumando los montos de cada fila
+            sumaTotal= sumaTotal+ this.listaCompleta[i].monto;
+          }
+          this.formulario.get('montoTotal').setValue(sumaTotal);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 405) {
+        this.toastr.error(respuesta.mensaje);}
       });
     }
   }
-  
+  //declaramos los metodos para utilizar el Modal/Dialog
+  public openDialog(formulariosFacturas): void {
+    const dialogRef = this.dialog.open(ReportesModal, {
+      width: '950px',
+      //los formularios que paso desde el html en cada ver son asignados a la variable formularios para que pueda leerlos desde la ventana factura-modal.html
+      data: {formularios: formulariosFacturas},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
+  }
+}
+@Component({
+  selector: 'reporte-modal',
+  templateUrl: 'reporte-modal.html',
+})
+export class ReportesModal{
+  //Define la lista completa de registros
+  public listaCompletaDeFormularios:FormArray ;
+
+  constructor(public dialogRef: MatDialogRef<ReportesModal>, @Inject(MAT_DIALOG_DATA) public data) {}
+  ngOnInit() {
+    this.listaCompletaDeFormularios=this.data.formularios;
+    console.log(this.listaCompletaDeFormularios);
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
 }

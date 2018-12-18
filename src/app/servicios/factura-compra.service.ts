@@ -61,7 +61,7 @@ export class FacturaCompraService {
   }
   //listar por proveedor
   public listarPortipoFormulario(elemento) {
-    return this.http.post(this.url+'/listarPortipoFormulario', elemento);
+    return this.http.post(this.url+'/listarPorTipoFormulario', elemento);
   }
   //actualiza un registro
   public actualizar(elemento) {

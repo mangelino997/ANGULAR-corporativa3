@@ -1,12 +1,4 @@
 <div id="agendatelefonica" class="container-fluid">
-  <div class="row">
-    <div class="col" class="centrar">
-      <nav mat-tab-nav-bar>
-        <a mat-tab-link disabled>REPORTE </a>
-      </nav>
-    </div>
-  </div>
-  
   <!--Pestaña Consultar-->
   <div class="row justify-content-center contenedor">
     <div class="col-md-10 text-center">
@@ -22,13 +14,6 @@
                                 <mat-option [value]="2">Tipo de Formulario</mat-option>
                               </mat-select>            
                           </div>
-                        </div>
-                        <div class="col-md-3" *ngIf="mostrarFecha">
-                            <div class="form-group has-float-label">
-                              <label for="idFecha" class="labelNumeroFactura">Fecha</label>
-                              <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
-                                >
-                            </div>
                         </div>
                         <div class="col-md-3" *ngIf="mostrarProveedor">
                             <div class="form-group has-float-label ">
@@ -55,7 +40,7 @@
                               </mat-autocomplete>
                             </div>
                           </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2" *ngIf="mostrarTipo">
                           <div class="form-group has-float-label">
                               <label id="labelEsContraReembolso" for="idEsContraReembolso" class="tamanio-label">Tipo</label>
                               <mat-select class="form-control form-control-sm" formControlName="tipo" (selectionChange)="cambioTipo()">
@@ -69,7 +54,7 @@
                           <div *ngIf="mostrarTipoFecha">
                             <div class="form-group has-float-label">
                               <label for="idTipoFecha" class="">Fecha</label>
-                              <input id="idTipoFecha" type="date" formControlName="tipoFecha" class="form-control form-control-sm">
+                              <input id="idTipoFecha" type="date" formControlName="fecha" class="form-control form-control-sm">
                             </div>
                           </div>
                           <div class="row" *ngIf="mostrarTipoMesAnio">
@@ -77,18 +62,18 @@
                               <div class="form-group has-float-label">
                                   <label for="idFecha" class="labelNumeroFactura">Mes</label>
                                   <mat-select class="form-control form-control-sm" formControlName="mes" (blur)="cambioTipo()">
-                                      <mat-option [value]="0">Enero</mat-option>
-                                      <mat-option [value]="1">Febrero</mat-option>
-                                      <mat-option [value]="2">Marzo</mat-option>
-                                      <mat-option [value]="3">Abril</mat-option>
-                                      <mat-option [value]="4">Mayo</mat-option>
-                                      <mat-option [value]="5">Junio</mat-option>
-                                      <mat-option [value]="6">Julio</mat-option>
-                                      <mat-option [value]="7">Agosto</mat-option>
-                                      <mat-option [value]="8">Septiembre</mat-option>
-                                      <mat-option [value]="9">Octubre</mat-option>
-                                      <mat-option [value]="10">Noviembre</mat-option>
-                                      <mat-option [value]="11">Diciembre</mat-option>
+                                      <mat-option [value]="01">Enero</mat-option>
+                                      <mat-option [value]="02">Febrero</mat-option>
+                                      <mat-option [value]="03">Marzo</mat-option>
+                                      <mat-option [value]="04">Abril</mat-option>
+                                      <mat-option [value]="05">Mayo</mat-option>
+                                      <mat-option [value]="06">Junio</mat-option>
+                                      <mat-option [value]="07">Julio</mat-option>
+                                      <mat-option [value]="08">Agosto</mat-option>
+                                      <mat-option [value]="09">Septiembre</mat-option>
+                                      <mat-option [value]="10">Octubre</mat-option>
+                                      <mat-option [value]="11">Noviembre</mat-option>
+                                      <mat-option [value]="12">Diciembre</mat-option>
                                   </mat-select>
                               </div>
                             </div>
@@ -145,7 +130,7 @@
                                     <span>{{factura.numero}}</span>
                                   </td>
                                   <td class="td-edicion-tabla">
-                                    <span>{{factura.proveedor.nombre}</span>
+                                    <span>{{factura.proveedor.nombre}}</span>
                                   </td>
                                   <td class="td-edicion-tabla">
                                       <span class="cursor-color" (click)="openDialog(factura.formulariosCompra)">ver</span>
