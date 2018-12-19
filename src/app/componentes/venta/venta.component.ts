@@ -45,6 +45,9 @@ export class VentaComponent implements OnInit {
   public montoPrecioFactura: number=0;
   //Define el form control para las busquedas vendedor
   public buscarTipoFormulario:FormControl = new FormControl();
+  //Define el form control para guardar los datos completos del cliente propio
+  public infoClientePropio:FormControl = new FormControl();
+  
   //Define la pestania actual seleccionada
   public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
@@ -301,8 +304,9 @@ public mostrarInputTipoCliente(){
   }
 }
 //Establece el valor del id del Cliente propio seleccionado 
-public cambioAutocompletadoClientePropio(idCliente){
+public cambioAutocompletadoClientePropio(idCliente, cliente){
   this.formulario.get('clientePropio.id').setValue(idCliente);
+  this.infoClientePropio= cliente;
 }
 //Establece el valor del id de la Lista de Precio seleccionada
 public cambioAutocompletadoListaPrecio(idListaPrecio){
@@ -393,30 +397,31 @@ public aplicarAbona(){
 public agregar(){
   //pregunto si el campo IncreDesc es nulo o no, porque no se realizará el agregar registro si dicho campo es nulo
   //si es nulo le seteo como valor 0
-  if(this.formulario.get('increDesc').value==null){
-    this.formulario.get('increDesc').setValue(0);
-  }
+  // if(this.formulario.get('increDesc').value==null){
+  //   this.formulario.get('increDesc').setValue(0);
+  // }
   console.log(this.formulario.value);
-  this.facturaVentaService.agregar(this.formulario.value).subscribe(
-    res => {
-      var respuesta = res.json();
-      if(respuesta.codigo == 201) {
-        this.reestablecerFormulario(respuesta.id);
-        this.formulario.reset();
-        setTimeout(function() {
-          document.getElementById('idFecha').focus();
-        }, 20);
-        this.toastr.success(respuesta.mensaje);
-      }
-    },
-    err => {
-      var respuesta = err.json();
-      if(respuesta.codigo == 11002) {
-        document.getElementById("idFecha").focus();
-        this.toastr.error(respuesta.mensaje);
-      }
-    }
-  );
+  // this.facturaVentaService.agregar(this.formulario.value).subscribe(
+  //   res => {
+  //     var respuesta = res.json();
+  //     if(respuesta.codigo == 201) {
+  //       this.reestablecerFormulario(respuesta.id);
+  //       this.formulario.reset();
+  //       setTimeout(function() {
+  //         document.getElementById('idFecha').focus();
+  //       }, 20);
+  //       this.toastr.success(respuesta.mensaje);
+  //     }
+  //   },
+  //   err => {
+  //     var respuesta = err.json();
+  //     if(respuesta.codigo == 11002) {
+  //       document.getElementById("idFecha").focus();
+  //       this.toastr.error(respuesta.mensaje);
+  //     }
+  //   }
+  // );
+  this.openDialogPdf(this.formulario.value, this.infoClientePropio);
 }
 //buscar Factura Compra de la pestaña consultar
 public buscar(){
@@ -446,6 +451,21 @@ private reestablecerFormulario(id) {
   this.autocompletado.setValue(undefined);
   this.resultados = [];
   }
+
+//declaramos los metodos para utilizar el Modal/Dialog "ventana-pdf.html"
+public openDialogPdf(formulario, clientePropio): void {
+  const dialogRef = this.dialog.open(PdfModal, {
+    width: '950px',
+    height: '600px',
+    //le paso la lista completa de ventas para generar la tabla en el modal del pdf
+    data: {listaCompleta: formulario, infoCliente: clientePropio}
+    
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    console.log('The dialog was closed');
+  });
+}
 }
 
 @Component({
@@ -455,7 +475,6 @@ private reestablecerFormulario(id) {
 export class FacturasVentaModal{
   //Define la lista completa de registros
   public listaCompletaDeFormulariosVenta:FormArray ;
-
   constructor(public dialogRef: MatDialogRef<FacturasVentaModal>, @Inject(MAT_DIALOG_DATA) public data) {}
   ngOnInit() {
     this.listaCompletaDeFormulariosVenta=this.data.formularios;
@@ -464,5 +483,84 @@ export class FacturasVentaModal{
   onNoClick(): void {
     this.dialogRef.close();
   }
+}
+//modal imprimir PDF
+@Component({
+  selector: 'pdf-modal',
+  templateUrl: 'pdf-modal.html',
+})
+export class PdfModal{
+  //Define la lista completa de los datos enviados en "nueva venta" 
+  public formularioEnviado;
+  //Define la lista completa de las filas de formularios 
+  public formulariosFila: Array<any>=[] ;
+  //Define la fecha actual
+  public fechaActual: string;
+  //Define el atributo Modalidad de pago a mostrar
+  public modalidadPago;
+  //Define el form control para guardar los datos completos del cliente propio
+  public infoClientePropio:FormControl = new FormControl();
 
+  constructor(public dialogRef: MatDialogRef<PdfModal>, @Inject(MAT_DIALOG_DATA) public data) {}
+  ngOnInit() {
+    //obtenemos la fecha actual
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var mes="";
+    if(mm=1)
+     mes= "Enero";
+    if(mm=1)
+     mes= "Febrero";
+    if(mm=1)
+     mes= "Marzo";
+    if(mm=1)
+     mes= "Abril";
+    if(mm=1)
+     mes= "Mayo";
+    if(mm=1)
+     mes= "Junio";
+    if(mm=1)
+     mes= "Julio";
+    if(mm=1)
+     mes= "Agosto";
+    if(mm=1)
+     mes= "Septiembre";
+    if(mm=1)
+     mes= "Octubre";
+    if(mm=1)
+     mes= "Noviembre";
+    if(mm=1)
+     mes= "Diciembre";
+
+    var yyyy = today.getFullYear();
+    var hoy = dd + " de " + mes + " del " + yyyy;
+
+    this.fechaActual= hoy;
+    this.formularioEnviado=this.data.listaCompleta;
+    this.modalidadPago= this.formularioEnviado.modalidadPago.id;
+    let idModalidadPago= this.formularioEnviado.modalidadPago.id;
+    this.formulariosFila= this.formularioEnviado.formulariosVenta;
+    console.log(this.modalidadPago);
+    console.log(this.formulariosFila.length);
+    for(let i=0; i< this.formulariosFila.length; i++){
+      this.formulariosFila[i].modalidadPago=idModalidadPago.value;
+    }
+    this.infoClientePropio= this.data.infoCliente;
+    console.log(this.formularioEnviado);
+    
+    // console.log(this.listaCompletaDeFormularios);
+    // let sumaTotal=0;
+    // for(let i=0; i< this.listaCompletaDeFormularios.length; i++){
+    //   sumaTotal= sumaTotal+ this.listaCompletaDeFormularios[i].montoTotal;
+    // }
+    // this.importeTotal= sumaTotal;
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  public imprimirPdf(){
+    window.print();
+  }
 }

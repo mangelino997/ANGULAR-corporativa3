@@ -26,6 +26,9 @@ export class VentaReporteComponent implements OnInit {
   public listaCompleta:Array<any> = [];
   //Define si el input buscarPorFecha se muestra 
   public mostrarFecha:boolean = false;
+  //Define si el input buscarPorFecha se muestra 
+  public mostrarGenerarPdf:boolean = true;
+  
   //Define si el input buscarProveedor se muestra 
   public mostrarCliente:boolean = false;
   //Define si el input combo box "Tipo" se muestra (si busco por Fecha no se debe mostrar)
@@ -230,7 +233,11 @@ export class VentaReporteComponent implements OnInit {
       });
     }
   }
-  //declaramos los metodos para utilizar el Modal/Dialog
+  //imprimir pantalla
+  public imprimir(){
+    window.print();
+  }
+  //declaramos los metodos para utilizar el Modal/Dialog "reporte-venta-modal.html"
   public openDialog(formulariosFacturas, fechaVenta): void {
     const dialogRef = this.dialog.open(ReportesVentaModal, {
       width: '950px',
@@ -243,6 +250,7 @@ export class VentaReporteComponent implements OnInit {
       console.log('The dialog was closed');
     });
   }
+  
 }
 @Component({
   selector: 'reporte-venta-modal',

@@ -70,7 +70,7 @@ import { FacturaCompraService } from './servicios/factura-compra.service';
 import { FacturaVentaService } from './servicios/factura-venta.service';
 import { FormularioMostradorService } from './servicios/formulario-mostrador.service';
 import { Caja } from './modelos/caja';
-import { VentaComponent, FacturasVentaModal } from './componentes/venta/venta.component';
+import { VentaComponent, FacturasVentaModal, PdfModal } from './componentes/venta/venta.component';
 import { CuentaCorrienteComponent, ConsultarDetalleModal } from './componentes/cuenta-corriente/cuenta-corriente.component';
 import { CuentaCorrienteService } from './servicios/cuenta-corriente.service';
 import { CuentaCorriente } from './modelos/cuentaCorriente';
@@ -114,7 +114,8 @@ import { VentaReporteComponent, ReportesVentaModal } from './componentes/venta-r
     CompraReporteComponent,
     ReportesModal,
     VentaReporteComponent,
-    ReportesVentaModal
+    ReportesVentaModal,
+    PdfModal
   ],
   imports: [
     BrowserModule, 
@@ -195,6 +196,6 @@ import { VentaReporteComponent, ReportesVentaModal } from './componentes/venta-r
     StockFormularioService
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal, ReportesModal, ReportesVentaModal]
+  entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal, ReportesModal, ReportesVentaModal, PdfModal]
 })
 export class AppModule { }

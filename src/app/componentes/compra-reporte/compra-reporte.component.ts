@@ -255,6 +255,10 @@ export class CompraReporteComponent implements OnInit {
       });
     }
   }
+  //imprimir pantalla
+  public imprimir(){
+    window.print();
+  }
   //declaramos los metodos para utilizar el Modal/Dialog
   public openDialog(formulariosFacturas, fechaVenta): void {
     const dialogRef = this.dialog.open(ReportesModal, {

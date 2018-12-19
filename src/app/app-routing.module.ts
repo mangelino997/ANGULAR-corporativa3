@@ -27,7 +27,7 @@ import { CompraReporteComponent } from './componentes/compra-reporte/compra-repo
 import { VentaReporteComponent } from './componentes/venta-reporte/venta-reporte.component';
 
 const routes: Routes = [
-  {path: '', component: CompraReporteComponent},
+  {path: '', component: VentaReporteComponent},
   {path: 'generalesclientes', component: ClientePropioComponent},
   {path: 'generalesautorizados', component: AutorizadoComponent},
   {path: 'generalesproveedores', component: ProveedorComponent},
