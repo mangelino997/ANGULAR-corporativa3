@@ -1,4 +1,4 @@
-<div class="row justify-content-center contenedor" >
+<div class="row justify-content-center contenedor" id="pdf">
         <div class="col-md-10 text-center">
             <div class="row">
                 <div class="col">
@@ -14,10 +14,17 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="existeClientePropio">
                 <div class="col">
                     <div class="text-left" >
-                    {{this.infoClientePropio.nombreCompleto}} - DNI: {{this.infoClientePropio.dni}} - Dirección: {{this.infoClientePropio.direccion}}
+                    Cliente: {{this.infoClientePropio.nombreCompleto}} - DNI: {{this.infoClientePropio.dni}} - Dirección: {{this.infoClientePropio.direccion}}
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="existeClienteEventual">
+                <div class="col">
+                    <div class="text-left" >
+                    Cliente: {{this.formularioEnviado.nombre}} - DNI: {{this.formularioEnviado.dni}} - Dirección: {{this.formularioEnviado.domicilio}}
                     </div>
                 </div>
             </div>
@@ -37,7 +44,7 @@
                           <tbody>
                             <tr *ngFor="let formularios of formulariosFila; let i = index" > 
                               <td class="td-edicion-tabla">
-                                <span>{{formularios.idModalidadPago}}</span>
+                                <span>{{formularios.modalidadPago}}</span>
                               </td>
                               <td class="td-edicion-tabla">
                                 <span>{{formularios.tipoFormulario.id}}</span>
@@ -59,7 +66,27 @@
                     </table>
                 </div>
             </div>
-        
-            <button (click)="imprimirPdf()">Print this page</button>
+            <div class="row">
+                <div class="col">
+                    <div class="text-left" >
+                    Total Recibido: ... ${{formularioEnviado.monto}}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="text-left" >
+                    Son Pesos: ... {{montoTotalEnLetra}}
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="mostrarSaldoCuentaCorriente">
+                <div class="col">
+                    <div class="text-left" >
+                    Observaciones: ... Saldo en Cuenta Corriente = ${{formularioEnviado.pago}}
+                    </div>
+                </div>
+            </div>
+            <button (click)="imprimir()">Generar PDF</button>
     </div>
 </div>

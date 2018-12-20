@@ -77,8 +77,10 @@ export class VentaComponent implements OnInit {
   public idListaPrecio:number = 0;
   //Define el id del Tipo de formulario
   public idTipoFormulario:number = 0;
-  //Define el id de la modalidad de pago seleccionada (si es CuentaCorriente el id=0 y mostrará el input "Abona($)", sino lo oculta)
+  //Define el id de la modalidad de pago seleccionada (si es CuentaCorriente el id=5 y mostrará el input "Abona($)", sino lo oculta)
   public modalidadPago:boolean = false;
+  //Define el atributo Modalidad de pago para guardar el nombre de la modalidad elegida y pasarla a la ventana modal que se abre al agregar registro
+  public nombreModalidadPago;
   
 
   public elementoFila:FormArray;
@@ -120,6 +122,16 @@ export class VentaComponent implements OnInit {
   public idModalidadPagoConsultar: FormControl=new FormControl();
   //campo proveedorConsulta como un FormControl
   public idProveedorConsultar: FormControl=new FormControl();
+
+  //VARIABLES PARA EL CLIENTE EVENTUAL
+  //Define el form control para el nombre del cliente eventual
+  public nombre:FormControl = new FormControl();
+  //Define el form control para el dni del cliente eventual
+  public dni:FormControl = new FormControl();
+  //Define el form control para el domicilio del cliente eventual
+  public domicilio:FormControl = new FormControl();
+  //Define el form control para el telefono del cliente eventual
+  public telefono:FormControl = new FormControl();
   
   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
   constructor(public dialog: MatDialog, private formularioMostradorServices: FormularioMostradorService, private clienteService: ClientePropioService, private listaPrecioService: ListaPrecioService, private listaPrecioVentaService: ListaPrecioVentaService, private formBuilder: FormBuilder, private toastr: ToastrService, private facturaCompraService: FacturaCompraService, private facturaVentaService: FacturaVentaService, private listaPrecioCompraService: ListaPrecioCompraService, private tiposFormularios: TipoFormularioService, private modalidadPagoService: ModalidadPagoService, private proveedorService: ProveedorService) {
@@ -197,16 +209,18 @@ export class VentaComponent implements OnInit {
       fecha: new FormControl(),
       increDesc: new FormControl(),
       monto: new FormControl(),
-      nombre: new FormControl(),
-      dni: new FormControl(),
-      domicilio: new FormControl(),
-      telefono: new FormControl(),
       pago: new FormControl(),
       modalidadPago: this.formBuilder.group({
         id: ""
       }),
       clientePropio: this.formBuilder.group({
         id: ""
+      }),
+      clienteEventual: this.formBuilder.group({
+        nombre: '',
+        dni: '',
+        domicilio: '',
+        telefono: ''
       }),
       formulariosVenta: this.formBuilder.array([this.crearformulariosVenta()])
     });
@@ -247,6 +261,8 @@ private crearformulariosVenta(): FormGroup {
     autoTipoFormulario: '',
     precioUnitario: '',
     numeracion: '',
+    numeracionDesde: '',
+    numeracionHasta: '',
     cantidad: '',
     montoTotal: '',
     tipoFormulario: this.formBuilder.group({
@@ -276,6 +292,8 @@ public cambioAutocompletadoProveedor(elemento) {
 }
 //Establece el valor del titulo en el campo "Incremento/Descuento ($)"
 public cambioIncrementoDescuento(elemento){
+  this.formulario.get('monto').setValue(this.montoPrecioFactura);// reestablezco el monto si el usuario cambia la modalidad de pago
+  this.formulario.get('increDesc').setValue(0);// y elimino el descuento o incremento que habia cargado anteriormente
   this.tipoModalidadPago="";
   if(elemento.tipo==0){
     this.tipoModalidadPago= "Descuento";
@@ -284,23 +302,34 @@ public cambioIncrementoDescuento(elemento){
     this.tipoModalidadPago= "Incremento";
   }
   this.formulario.get('modalidadPago.id').setValue(elemento.id);
-  console.log(elemento.id);
-  if(elemento.id==5){
-    this.modalidadPago= true; //si es cuenta corriente muestro el input "Abona ($)". El Id de CuentaCorriente esta seteado en 5
+  console.log(elemento);
+  if(elemento.id==1){
+    this.modalidadPago= true; //si es cuenta corriente muestro el input "Abona ($)". El Id de CuentaCorriente esta seteado en 1
   }
   else{
     this.modalidadPago= false;
   }
+  this.nombreModalidadPago=elemento.nombre;
+  console.log(this.nombreModalidadPago);
 }
 //Establece los inputs segund el tipo de cliente
 public mostrarInputTipoCliente(){
   if(this.tipoCliente.value==0){
     this.inputClientePropio= true;
     this.inputsClienteEventual= false;
+    this.formulario.get('clienteEventual').setValue(null);
+    this.formulario.get('clientePropio.id').setValue("");
+    this.infoClientePropio=null;
   }
   else{
     this.inputClientePropio= false;
     this.inputsClienteEventual= true;
+    this.formulario.get('clienteEventual.nombre').setValue("");
+    this.formulario.get('clienteEventual.dni').setValue("");
+    this.formulario.get('clienteEventual.domicilio').setValue("");
+    this.formulario.get('clienteEventual.telefono').setValue("");
+    this.formulario.get('clientePropio').setValue(null);
+    this.infoClientePropio=null;
   }
 }
 //Establece el valor del id del Cliente propio seleccionado 
@@ -367,6 +396,9 @@ public calcularCantidad(indice){
     let primerIndice=0;
     let segundoIndice=1;
     let mostrarNumeracion="";
+    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracionDesde').setValue(response.json()[0]);
+    let ultimaNumeracion= response.json().length;
+    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracionHasta').setValue(response.json()[ultimaNumeracion-1]);
     for(let i=0; i<response.json().length; i++){
       while(response.json()[segundoIndice]!= undefined){
         mostrarNumeracion=mostrarNumeracion+response.json()[primerIndice]+"->"+response.json()[segundoIndice]+ ", ";
@@ -389,39 +421,35 @@ public aplicarDescuentoIncremento(){
   }
   console.log(this.formulario.value)
 }
-//Aplica un descuento segun lo que abona el cliente (solo cuando la modalidad de pago es cuentaCorriente)
-public aplicarAbona(){
-  this.formulario.get('monto').setValue(this.formulario.get('monto').value-this.formulario.get('pago').value);
-}
 //Agrega un registro 
 public agregar(){
   //pregunto si el campo IncreDesc es nulo o no, porque no se realizará el agregar registro si dicho campo es nulo
   //si es nulo le seteo como valor 0
-  // if(this.formulario.get('increDesc').value==null){
-  //   this.formulario.get('increDesc').setValue(0);
-  // }
+  if(this.formulario.get('increDesc').value==null){
+    this.formulario.get('increDesc').setValue(0);
+  }
   console.log(this.formulario.value);
-  // this.facturaVentaService.agregar(this.formulario.value).subscribe(
-  //   res => {
-  //     var respuesta = res.json();
-  //     if(respuesta.codigo == 201) {
-  //       this.reestablecerFormulario(respuesta.id);
-  //       this.formulario.reset();
-  //       setTimeout(function() {
-  //         document.getElementById('idFecha').focus();
-  //       }, 20);
-  //       this.toastr.success(respuesta.mensaje);
-  //     }
-  //   },
-  //   err => {
-  //     var respuesta = err.json();
-  //     if(respuesta.codigo == 11002) {
-  //       document.getElementById("idFecha").focus();
-  //       this.toastr.error(respuesta.mensaje);
-  //     }
-  //   }
-  // );
-  this.openDialogPdf(this.formulario.value, this.infoClientePropio);
+  this.facturaVentaService.agregar(this.formulario.value).subscribe(
+    res => {
+      var respuesta = res.json();
+      if(respuesta.codigo == 201) {
+        this.reestablecerFormulario(respuesta.id);
+        this.formulario.reset();
+        setTimeout(function() {
+          document.getElementById('idFecha').focus();
+        }, 20);
+        this.toastr.success(respuesta.mensaje);
+      }
+    },
+    err => {
+      var respuesta = err.json();
+      if(respuesta.codigo == 11002) {
+        document.getElementById("idFecha").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+    }
+  );
+  this.openDialogPdf(this.formulario.value, this.infoClientePropio, this.nombreModalidadPago);
 }
 //buscar Factura Compra de la pestaña consultar
 public buscar(){
@@ -453,12 +481,12 @@ private reestablecerFormulario(id) {
   }
 
 //declaramos los metodos para utilizar el Modal/Dialog "ventana-pdf.html"
-public openDialogPdf(formulario, clientePropio): void {
+public openDialogPdf(formulario, clientePropio, nombreModalidadPago): void {
   const dialogRef = this.dialog.open(PdfModal, {
     width: '950px',
     height: '600px',
     //le paso la lista completa de ventas para generar la tabla en el modal del pdf
-    data: {listaCompleta: formulario, infoCliente: clientePropio}
+    data: {listaCompleta: formulario, infoCliente: clientePropio, modalidad: nombreModalidadPago}
     
   });
 
@@ -497,16 +525,197 @@ export class PdfModal{
   //Define la fecha actual
   public fechaActual: string;
   //Define el atributo Modalidad de pago a mostrar
-  public modalidadPago;
+  public idModalidadPago;
   //Define el form control para guardar los datos completos del cliente propio
   public infoClientePropio:FormControl = new FormControl();
+  //Define si la fila mostrarSaldoCuentaCorriente se muestra o no
+  public mostrarSaldoCuentaCorriente:boolean = false;
+  //Define si la fila con los datos del Cliente Propio se muestra o no
+  public existeClientePropio:boolean = false;
+  //Define si la fila con los datos del Eventual Propio se muestra o no
+  public existeClienteEventual:boolean = false;
+  //Define el atributo resultados NumerosALetras
+  public resultNumerosALetras;
+  // Define el string que contiene el resultado de convertir Numeros a letras
+  public montoTotalEnLetra;
 
-  constructor(public dialogRef: MatDialogRef<PdfModal>, @Inject(MAT_DIALOG_DATA) public data) {}
+  constructor(public dialogRef: MatDialogRef<PdfModal>, @Inject(MAT_DIALOG_DATA) public data) {
+    this.resultNumerosALetras = (function () {
+      function Unidades(num) {
+      switch (num)
+      {
+      case 1:
+      return 'UN';
+      case 2:
+      return 'DOS';
+      case 3:
+      return 'TRES';
+      case 4:
+      return 'CUATRO';
+      case 5:
+      return 'CINCO';
+      case 6:
+      return 'SEIS';
+      case 7:
+      return 'SIETE';
+      case 8:
+      return 'OCHO';
+      case 9:
+      return 'NUEVE';
+      }
+      return '';
+      }//Unidades()
+      function Decenas(num) {
+      let decena = Math.floor(num / 10);
+      let unidad = num - (decena * 10);
+      switch (decena)
+      {
+      case 1:
+      switch (unidad)
+      {
+      case 0:
+      return 'DIEZ';
+      case 1:
+      return 'ONCE';
+      case 2:
+      return 'DOCE';
+      case 3:
+      return 'TRECE';
+      case 4:
+      return 'CATORCE';
+      case 5:
+      return 'QUINCE';
+      default:
+      return 'DIECI' + Unidades(unidad);
+      }
+      case 2:
+      switch (unidad)
+      {
+      case 0:
+      return 'VEINTE';
+      default:
+      return 'VEINTI' + Unidades(unidad);
+      }
+      case 3:
+      return DecenasY('TREINTA', unidad);
+      case 4:
+      return DecenasY('CUARENTA', unidad);
+      case 5:
+      return DecenasY('CINCUENTA', unidad);
+      case 6:
+      return DecenasY('SESENTA', unidad);
+      case 7:
+      return DecenasY('SETENTA', unidad);
+      case 8:
+      return DecenasY('OCHENTA', unidad);
+      case 9:
+      return DecenasY('NOVENTA', unidad);
+      case 0:
+      return Unidades(unidad);
+      }
+      }//Unidades()
+      function DecenasY(strSin, numUnidades) {
+      if (numUnidades > 0)
+      return strSin + ' Y ' + Unidades(numUnidades)
+      return strSin;
+      }//DecenasY()
+      function Centenas(num) {
+      let centenas = Math.floor(num / 100);
+      let decenas = num - (centenas * 100);
+      switch (centenas)
+      {
+      case 1:
+      if (decenas > 0)
+      return 'CIENTO ' + Decenas(decenas);
+      return 'CIEN';
+      case 2:
+      return 'DOSCIENTOS ' + Decenas(decenas);
+      case 3:
+      return 'TRESCIENTOS ' + Decenas(decenas);
+      case 4:
+      return 'CUATROCIENTOS ' + Decenas(decenas);
+      case 5:
+      return 'QUINIENTOS ' + Decenas(decenas);
+      case 6:
+      return 'SEISCIENTOS ' + Decenas(decenas);
+      case 7:
+      return 'SETECIENTOS ' + Decenas(decenas);
+      case 8:
+      return 'OCHOCIENTOS ' + Decenas(decenas);
+      case 9:
+      return 'NOVECIENTOS ' + Decenas(decenas);
+      }
+      return Decenas(decenas);
+      }//Centenas()
+      function Seccion(num, divisor, strSingular, strPlural) {
+      let cientos = Math.floor(num / divisor)
+      let resto = num - (cientos * divisor)
+      let letras = '';
+      if (cientos > 0)
+      if (cientos > 1)
+      letras = Centenas(cientos) + ' ' + strPlural;
+      else
+      letras = strSingular;
+      if (resto > 0)
+      letras += '';
+      return letras;
+      }//Seccion()
+      function Miles(num) {
+      let divisor = 1000;
+      let cientos = Math.floor(num / divisor)
+      let resto = num - (cientos * divisor)
+      let strMiles = Seccion(num, divisor, 'UN MIL', 'MIL');
+      let strCentenas = Centenas(resto);
+      
+      if (strMiles == '')
+      return strCentenas;
+      return strMiles + ' ' + strCentenas;
+      }//Miles()
+      function Millones(num) {
+      let divisor = 1000000;
+      let cientos = Math.floor(num / divisor)
+      let resto = num - (cientos * divisor)
+      let strMillones = Seccion(num, divisor, 'UN MILLON DE', 'MILLONES DE');
+      let strMiles = Miles(resto);
+      
+      if (strMillones == '')
+      return strMiles;
+      return strMillones + ' ' + strMiles;
+      }//Millones()
+      return function NumeroALetras(num, currency) {
+      currency = currency || {};
+      let data = {
+      numero: num,
+      enteros: Math.floor(num),
+      centavos: (((Math.round(num * 100)) - (Math.floor(num) * 100))),
+      letrasCentavos: '',
+      letrasMonedaPlural: currency.plural || '', //'PESOS', 'Dólares', 'Bolívares', 'etcs'
+      letrasMonedaSingular: currency.singular || '', //'PESO', 'Dólar', 'Bolivar', 'etc'
+      letrasMonedaCentavoPlural: currency.centPlural || '',
+      letrasMonedaCentavoSingular: currency.centSingular || ''
+      };
+      if (data.centavos > 0) {
+      data.letrasCentavos = 'CON ' + (function () {
+      if (data.centavos == 1)
+      return Millones(data.centavos) + ' ' + data.letrasMonedaCentavoSingular;
+      else
+      return Millones(data.centavos) + ' ' + data.letrasMonedaCentavoPlural;
+      })();
+      };
+      if (data.enteros == 0)
+      return 'CERO ' + data.letrasMonedaPlural + ' ' + data.letrasCentavos;
+      if (data.enteros == 1)
+      return Millones(data.enteros) + ' ' + data.letrasMonedaSingular + ' ' + data.letrasCentavos;
+      else
+      return Millones(data.enteros) + ' ' + data.letrasMonedaPlural + ' ' + data.letrasCentavos;
+      };
+      })();
+  }
   ngOnInit() {
     //obtenemos la fecha actual
     var today = new Date();
     var dd = today.getDate();
-    var mm = today.getMonth() + 1; //January is 0!
+    var mm = today.getMonth() + 1; //Enero es 0!
     var mes="";
     if(mm=1)
      mes= "Enero";
@@ -538,29 +747,56 @@ export class PdfModal{
 
     this.fechaActual= hoy;
     this.formularioEnviado=this.data.listaCompleta;
-    this.modalidadPago= this.formularioEnviado.modalidadPago.id;
-    let idModalidadPago= this.formularioEnviado.modalidadPago.id;
+    this.idModalidadPago= this.formularioEnviado.modalidadPago.id;//carga el id de la modalidad de pago elegida
+    let modalidadPago= this.data.modalidad;//carga todos los datos de la modlaidad de pago elegida
+
+    if(modalidadPago=="CuentaCorriente"){
+      this.mostrarSaldoCuentaCorriente=true;
+    } else{
+      this.mostrarSaldoCuentaCorriente=false;
+    }
+
     this.formulariosFila= this.formularioEnviado.formulariosVenta;
-    console.log(this.modalidadPago);
+    console.log(this.idModalidadPago);
     console.log(this.formulariosFila.length);
     for(let i=0; i< this.formulariosFila.length; i++){
-      this.formulariosFila[i].modalidadPago=idModalidadPago.value;
+      this.formulariosFila[i].modalidadPago=modalidadPago; //creo el atributo "modalidadPago" 
     }
-    this.infoClientePropio= this.data.infoCliente;
-    console.log(this.formularioEnviado);
-    
-    // console.log(this.listaCompletaDeFormularios);
-    // let sumaTotal=0;
-    // for(let i=0; i< this.listaCompletaDeFormularios.length; i++){
-    //   sumaTotal= sumaTotal+ this.listaCompletaDeFormularios[i].montoTotal;
-    // }
-    // this.importeTotal= sumaTotal;
+    this.infoClientePropio= this.data.infoCliente;//carga todos los datos del cliente
+    if(this.infoClientePropio==null){
+      this.existeClientePropio=false;
+      this.existeClienteEventual=true;
+    }
+    else{
+      this.existeClientePropio=true;
+      this.existeClienteEventual=false;
+    }
+    this.montoTotalEnLetra=this.resultNumerosALetras(this.formularioEnviado.monto).toLowerCase();
   }
+  //Cierra la ventana modal
   onNoClick(): void {
     this.dialogRef.close();
   }
-
+  // Imprime el modal como un PDF
   public imprimirPdf(){
+    var printContent = document.getElementById("pdf");
+    var windowUrl = 'about:blank';
+    var uniqueName = new Date();
+    var windowName = 'Print' + uniqueName.getTime();
+
+    var printWindow = window.open(windowUrl, windowName, 'left=50000,top=50000,width=0,height=0');
+
+    printWindow.document.write(printContent.innerHTML);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+    this.dialogRef.close();
+      }
+  public imprimir(){
     window.print();
+    window.close();
+    this.dialogRef.close();
   }
+  
 }
