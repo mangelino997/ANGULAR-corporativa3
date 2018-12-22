@@ -45,8 +45,10 @@ export class VentaComponent implements OnInit {
   public montoPrecioFactura: number=0;
   //Define el form control para las busquedas vendedor
   public buscarTipoFormulario:FormControl = new FormControl();
-  //Define el form control para guardar los datos completos del cliente propio
+
+  //Define el form control para guardar los datos completos del cliente propio y del cliente eventual
   public infoClientePropio:FormControl = new FormControl();
+  public infoClienteEventual:FormControl = new FormControl();
   
   //Define la pestania actual seleccionada
   public pestaniaActual:string = null;
@@ -96,10 +98,7 @@ export class VentaComponent implements OnInit {
   public resultadosModalidadPago = [];
   //Define la lista de resultados de busqueda para Modalidad de Pago
   public resultadosCliente = [];
-  //Define el form control para las busquedas de Clientes
-  public idCliente:FormControl = new FormControl();
-  //Define el form control para las busquedas de Clientes en la pestaña Consultar
-  public idClienteConsultar:FormControl = new FormControl();
+  
   //Define el form control para las busquedas de Lista Precios
   public listaPrecio:FormControl = new FormControl();
   //Define el form control para las busquedas de Modalidad de Pagos
@@ -132,10 +131,62 @@ export class VentaComponent implements OnInit {
   public domicilio:FormControl = new FormControl();
   //Define el form control para el telefono del cliente eventual
   public telefono:FormControl = new FormControl();
+
+  //VARIABLES PARA EL CLIENTE PROPIO  
+  //Define el form control para las busquedas de Clientes
+  public idCliente:FormControl = new FormControl();
+  //Define el form control para las busquedas de Clientes en la pestaña Consultar
+  public idClienteConsultar:FormControl = new FormControl();
   
   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
   constructor(public dialog: MatDialog, private formularioMostradorServices: FormularioMostradorService, private clienteService: ClientePropioService, private listaPrecioService: ListaPrecioService, private listaPrecioVentaService: ListaPrecioVentaService, private formBuilder: FormBuilder, private toastr: ToastrService, private facturaCompraService: FacturaCompraService, private facturaVentaService: FacturaVentaService, private listaPrecioCompraService: ListaPrecioCompraService, private tiposFormularios: TipoFormularioService, private modalidadPagoService: ModalidadPagoService, private proveedorService: ProveedorService) {
 
+    //Establece la pestania activa por defecto
+    this.activeLink = 1;
+    //Establece el indice activo por defecto
+    this.indiceSeleccionado = 1;
+    //
+   }
+
+  
+  ngOnInit() {
+    //obtenemos la fecha actual
+    var dateDay = new Date().toISOString().substring(0,10);
+    //Define los campos para validaciones
+    this.formulario = this.formBuilder.group({
+      numero: new FormControl(),
+      numeroA: new FormControl('', Validators.required),
+      numeroB: new FormControl('', Validators.required),
+      fecha: new FormControl('', Validators.required),
+      increDesc: new FormControl('', Validators.required),
+      monto: new FormControl('', Validators.required),
+      pago: new FormControl(),
+      modalidadPago: new FormControl('', Validators.required),
+      clientePropio: new FormControl(),
+      clienteEventual: this.formBuilder.group({
+        nombre: '',
+        dni: '',
+        direccion: '',
+        telefono: ''
+      }),
+      formulariosVenta: this.formBuilder.array([this.crearformulariosVenta()])
+    });
+    this.formularioConsulta = this.formBuilder.group({
+      fecha: new FormControl(),
+      numeroRecibo: new FormControl(),
+      modalidadPago: new FormControl(),
+      clientePropio: new FormControl()
+    });
+    this.formulario.get('fecha').setValue(dateDay);
+    this.formularioConsulta.get('fecha').setValue(dateDay);
+    this.formulario.get('increDesc').setValue(0);
+    //cargamos numero de recibo
+    this.facturaVentaService.obtenerSiguienteNumero().subscribe(res=>{
+      this.formulario.get('numero').setValue(res.json().numeroCompleto);
+      this.formulario.get('numeroA').setValue(res.json().numeroCompleto.split('-')[0]);
+      this.formulario.get('numeroB').setValue(res.json().numeroCompleto.split('-')[1]);
+    });
+  
     //Autocompletado - Buscar por proveedor
     this.listaPrecio.valueChanges
       .subscribe(data => {
@@ -146,7 +197,7 @@ export class VentaComponent implements OnInit {
         }
     })
     //Autocompletado - Buscar por cliente propio
-    this.idCliente.valueChanges
+    this.formulario.get('clientePropio').valueChanges
       .subscribe(data => {
         if(typeof data == 'string') {
           this.clienteService.listarPorAlias(data).subscribe(response =>{
@@ -164,11 +215,20 @@ export class VentaComponent implements OnInit {
         }
     })
     //Autocompletado - Buscar por modalidad de Pago
-    this.idModalidadPago.valueChanges
+    this.formulario.get('modalidadPago').valueChanges
       .subscribe(data => {
         if(typeof data == 'string') {
           this.modalidadPagoService.listarPorAlias(data).subscribe(response =>{
-            this.resultadosModalidadPago = response.json();
+            console.log(this.formulario.get('clientePropio').value);
+            if(this.formulario.get('clientePropio').value==null){
+              this.resultadosModalidadPago = response.json();
+              this.resultadosModalidadPago.splice(0,1);
+              console.log("cli prop es nulo");
+            }else{
+              this.resultadosModalidadPago=[];
+              this.resultadosModalidadPago = response.json();
+              console.log("cli prop no es nulo");
+            }
           })
         }
     })
@@ -190,56 +250,6 @@ export class VentaComponent implements OnInit {
         })
       }
     })
-    //Establece la pestania activa por defecto
-    this.activeLink = 1;
-    //Establece el indice activo por defecto
-    this.indiceSeleccionado = 1;
-    //
-   }
-
-  
-  ngOnInit() {
-    //obtenemos la fecha actual
-    var dateDay = new Date().toISOString().substring(0,10);
-    //Define los campos para validaciones
-    this.formulario = this.formBuilder.group({
-      numero: new FormControl(),
-      numeroA: new FormControl(),
-      numeroB: new FormControl(),
-      fecha: new FormControl(),
-      increDesc: new FormControl(),
-      monto: new FormControl(),
-      pago: new FormControl(),
-      modalidadPago: this.formBuilder.group({
-        id: ""
-      }),
-      clientePropio: this.formBuilder.group({
-        id: ""
-      }),
-      clienteEventual: this.formBuilder.group({
-        nombre: '',
-        dni: '',
-        domicilio: '',
-        telefono: ''
-      }),
-      formulariosVenta: this.formBuilder.array([this.crearformulariosVenta()])
-    });
-    this.formularioConsulta = this.formBuilder.group({
-      fecha: new FormControl(),
-      numeroRecibo: new FormControl(),
-      modalidadPago: new FormControl(),
-      clientePropio: new FormControl()
-    });
-    this.formulario.get('fecha').setValue(dateDay);
-    this.formularioConsulta.get('fecha').setValue(dateDay);
-    this.formulario.get('increDesc').setValue(0);
-    //cargamos numero de recibo
-    this.facturaVentaService.obtenerSiguienteNumero().subscribe(res=>{
-      this.formulario.get('numero').setValue(res.json().numeroCompleto);
-      this.formulario.get('numeroA').setValue(res.json().numeroCompleto.split('-')[0]);
-      this.formulario.get('numeroB').setValue(res.json().numeroCompleto.split('-')[1]);
-    });
-  
   }
 
   //declaramos los metodos para utilizar el Modal/Dialog
@@ -263,13 +273,13 @@ private crearformulariosVenta(): FormGroup {
     numeracion: '',
     numeracionDesde: '',
     numeracionHasta: '',
-    cantidad: '',
-    montoTotal: '',
+    cantidad: new FormControl('', Validators.required),
+    montoTotal: new FormControl('', Validators.required),
     tipoFormulario: this.formBuilder.group({
-      id: ""
+      id: new FormControl('', Validators.required)
     }),
     listaPrecio: this.formBuilder.group({
-      id: ""
+      id: new FormControl('', Validators.required)
     })
   })
 }
@@ -301,7 +311,7 @@ public cambioIncrementoDescuento(elemento){
   else{
     this.tipoModalidadPago= "Incremento";
   }
-  this.formulario.get('modalidadPago.id').setValue(elemento.id);
+  // this.formulario.get('modalidadPago.id').setValue(elemento.id);
   console.log(elemento);
   if(elemento.id==1){
     this.modalidadPago= true; //si es cuenta corriente muestro el input "Abona ($)". El Id de CuentaCorriente esta seteado en 1
@@ -314,27 +324,39 @@ public cambioIncrementoDescuento(elemento){
 }
 //Establece los inputs segund el tipo de cliente
 public mostrarInputTipoCliente(){
+  this.formulario.get('modalidadPago').reset();
   if(this.tipoCliente.value==0){
     this.inputClientePropio= true;
     this.inputsClienteEventual= false;
-    this.formulario.get('clienteEventual').setValue(null);
-    this.formulario.get('clientePropio.id').setValue("");
-    this.infoClientePropio=null;
+    // this.formulario.get('clienteEventual').setValue(null);
+    this.formulario.get('clienteEventual.nombre').setValue(null);
+    this.formulario.get('clienteEventual.dni').setValue(null);
+    this.formulario.get('clienteEventual.direccion').setValue(null);
+    this.formulario.get('clienteEventual.telefono').setValue(null);
+    this.infoClienteEventual=null;
   }
   else{
     this.inputClientePropio= false;
     this.inputsClienteEventual= true;
-    this.formulario.get('clienteEventual.nombre').setValue("");
-    this.formulario.get('clienteEventual.dni').setValue("");
-    this.formulario.get('clienteEventual.domicilio').setValue("");
-    this.formulario.get('clienteEventual.telefono').setValue("");
+    this.formulario.get('clienteEventual.nombre').setValue(null);
+    this.formulario.get('clienteEventual.dni').setValue(null);
+    this.formulario.get('clienteEventual.direccion').setValue(null);
+    this.formulario.get('clienteEventual.telefono').setValue(null);
     this.formulario.get('clientePropio').setValue(null);
     this.infoClientePropio=null;
   }
 }
+// Establece los atributos del clienteEventual
+public cargarDatosCliEventual(){
+  this.formulario.get('clienteEventual.nombre').setValue(this.nombre.value);
+  this.formulario.get('clienteEventual.dni').setValue(this.dni.value);
+  this.formulario.get('clienteEventual.direccion').setValue(this.domicilio.value);
+  this.formulario.get('clienteEventual.telefono').setValue(this.telefono.value);
+  this.infoClienteEventual= this.formulario.get('clienteEventual').value;
+}
 //Establece el valor del id del Cliente propio seleccionado 
 public cambioAutocompletadoClientePropio(idCliente, cliente){
-  this.formulario.get('clientePropio.id').setValue(idCliente);
+  // this.formulario.get('clientePropio.id').setValue(idCliente);
   this.infoClientePropio= cliente;
 }
 //Establece el valor del id de la Lista de Precio seleccionada
@@ -352,9 +374,9 @@ public agregarElemento() {
 public eliminarElemento(indice) {
   //restar el montoTotal de la fila que se elimina 
   let calculoMontoTotal=(<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('montoTotal').value;
-  this.formulario.get('monto').setValue(this.formulario.get('monto').value-calculoMontoTotal)
+  this.formulario.get('monto').setValue(this.formulario.get('monto').value-calculoMontoTotal);
   //luego eliminamos la fila
-  this.listaAgregar.removeAt(indice);
+  (<FormArray>this.formulario.get('formulariosVenta')).removeAt(indice);
   
 }
 //Elimina una fila de la tabla Consultar
@@ -365,13 +387,14 @@ public anular(indice) {
 }
 //Manejo de cambio de autocompletado de tipo formulario
 public cambioAutocompletadoTipoFormulario(elemento, indice) {
-  // this.formulario.get('tipoFormulario').setValue(elemento);
+ 
+  console.log(elemento);
   this.idTipoFormulario = elemento.id;
   console.log("id del tipo de formulario seleccionado: "+this.idTipoFormulario);
   (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('listaPrecio.id').setValue(this.idListaPrecio);
   (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue(elemento.id);
   //obtenemos el precio de ListaPrecioVenta al tener los id (idListaPrecio, idTipoDeFormulario) necesarios para la consulta
-  this.listaPrecioCompraService.obtenerPorListaPrecioYTipoFormulario(this.idListaPrecio, elemento.id).subscribe(response =>{
+  this.listaPrecioVentaService.obtenerPorListaPrecioYTipoFormulario(this.idListaPrecio, elemento.id).subscribe(response =>{
     (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(response.json().precio);
     console.log((<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').value);
   })
@@ -393,21 +416,32 @@ public calcularCantidad(indice){
   
   //calcular la Numeracion
   this.formularioMostradorServices.listarNumeracionDesdeHasta(this.idTipoFormulario, cantidad).subscribe(response =>{
-    let primerIndice=0;
-    let segundoIndice=1;
-    let mostrarNumeracion="";
-    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracionDesde').setValue(response.json()[0]);
-    let ultimaNumeracion= response.json().length;
-    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracionHasta').setValue(response.json()[ultimaNumeracion-1]);
-    for(let i=0; i<response.json().length; i++){
-      while(response.json()[segundoIndice]!= undefined){
-        mostrarNumeracion=mostrarNumeracion+response.json()[primerIndice]+"->"+response.json()[segundoIndice]+ ", ";
-        primerIndice+=2;
-        segundoIndice+=2;
+    try{
+      let respuesta= response.json();
+      let primerIndice=0;
+      let segundoIndice=1;
+      let mostrarNumeracion="";
+      (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracionDesde').setValue(response.json()[0]);
+      let ultimaNumeracion= response.json().length;
+      (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracionHasta').setValue(response.json()[ultimaNumeracion-1]);
+      for(let i=0; i<response.json().length; i++){
+        while(response.json()[segundoIndice]!= undefined){
+          mostrarNumeracion=mostrarNumeracion+response.json()[primerIndice]+"->"+response.json()[segundoIndice]+ ", ";
+          primerIndice+=2;
+          segundoIndice+=2;
+        }
       }
-    }
-    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracion').setValue(mostrarNumeracion);
-    console.log(mostrarNumeracion);
+      (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('numeracion').setValue(mostrarNumeracion);
+      console.log(mostrarNumeracion);
+      }catch(e){
+        this.toastr.error("No existe este tipo de Formulario Venta");
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('listaPrecio.id').setValue("");
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue("");
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue("");
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').enable();
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('autoTipoFormulario').enable();
+      }
+    
   })
 }
 //Aplica descuento o incremento dependiendo el tipo de modalidad de Pago seleccionado
@@ -423,7 +457,9 @@ public aplicarDescuentoIncremento(){
 }
 //Agrega un registro 
 public agregar(){
-  //pregunto si el campo IncreDesc es nulo o no, porque no se realizará el agregar registro si dicho campo es nulo
+  //si formulariosVenta no esta vacio, se pasa al metodo agregar
+  if((<FormArray>this.formulario.get('formulariosVenta')).length!=0){
+    //pregunto si el campo IncreDesc es nulo o no, porque no se realizará el agregar registro si dicho campo es nulo
   //si es nulo le seteo como valor 0
   if(this.formulario.get('increDesc').value==null){
     this.formulario.get('increDesc').setValue(0);
@@ -449,7 +485,12 @@ public agregar(){
       }
     }
   );
-  this.openDialogPdf(this.formulario.value, this.infoClientePropio, this.nombreModalidadPago);
+  this.openDialogPdf(this.formulario.value, this.infoClientePropio, this.infoClienteEventual, this.nombreModalidadPago);
+  }
+  else{
+    this.toastr.error("Debe agregar al menos un formulario de venta");
+  } 
+  
 }
 //buscar Factura Compra de la pestaña consultar
 public buscar(){
@@ -481,12 +522,12 @@ private reestablecerFormulario(id) {
   }
 
 //declaramos los metodos para utilizar el Modal/Dialog "ventana-pdf.html"
-public openDialogPdf(formulario, clientePropio, nombreModalidadPago): void {
+public openDialogPdf(formulario, clientePropio, clienteEventual, nombreModalidadPago): void {
   const dialogRef = this.dialog.open(PdfModal, {
     width: '950px',
     height: '600px',
     //le paso la lista completa de ventas para generar la tabla en el modal del pdf
-    data: {listaCompleta: formulario, infoCliente: clientePropio, modalidad: nombreModalidadPago}
+    data: {listaCompleta: formulario, infoCliente: clientePropio, infoClienteEv: clienteEventual, modalidad: nombreModalidadPago}
     
   });
 
@@ -528,6 +569,9 @@ export class PdfModal{
   public idModalidadPago;
   //Define el form control para guardar los datos completos del cliente propio
   public infoClientePropio:FormControl = new FormControl();
+  //Define el form control para guardar los datos completos del cliente eventual
+  public infoClienteEventual:FormControl = new FormControl();
+  
   //Define si la fila mostrarSaldoCuentaCorriente se muestra o no
   public mostrarSaldoCuentaCorriente:boolean = false;
   //Define si la fila con los datos del Cliente Propio se muestra o no
@@ -762,8 +806,9 @@ export class PdfModal{
     for(let i=0; i< this.formulariosFila.length; i++){
       this.formulariosFila[i].modalidadPago=modalidadPago; //creo el atributo "modalidadPago" 
     }
-    this.infoClientePropio= this.data.infoCliente;//carga todos los datos del cliente
-    if(this.infoClientePropio==null){
+    this.infoClientePropio= this.data.infoCliente;//carga todos los datos del cliente propio
+    this.infoClienteEventual= this.data.infoClienteEv;
+    if(this.data.infoCliente==null){ //si el id cliente propio es nulo
       this.existeClientePropio=false;
       this.existeClienteEventual=true;
     }

@@ -37,6 +37,7 @@ export class AppComponent {
     this.setSubopcion(subopcion.id);
     var pag = modulo.modulo + subopcion.subopcion;
     var pagina = pag.toLowerCase();
+    console.log(pagina);
     pagina = pagina.replace(new RegExp(/\s/g), "");
     pagina = pagina.replace(new RegExp(/[àá]/g), "a");
     pagina = pagina.replace(new RegExp(/[èé]/g), "e");

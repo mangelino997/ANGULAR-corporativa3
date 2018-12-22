@@ -45,7 +45,7 @@
           <div class="col-md-3" *ngIf="inputClientePropio">
             <div class="form-group has-float-label ">
               <label for="idCliente" class="labelidProveedor">Cliente</label>
-              <input id="idCliente" class="form-control form-control-sm color-busqueda" [formControl]="idCliente"
+              <input id="idCliente" class="form-control form-control-sm color-busqueda" [formControl]="formulario.get('clientePropio')"
                     type="text" matInput  [matAutocomplete]="auto" autocomplete="off" >
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                   <mat-option *ngFor="let cliente of resultadosCliente" [value]="cliente" (onSelectionChange)="cambioAutocompletadoClientePropio(cliente.id, cliente)">
@@ -155,7 +155,7 @@
             <div class="col-md-3">
               <div class="form-group has-float-label ">
                 <label for="idModalidadPago" class="labelModalidadPago">modalidad de Pago</label>
-                <input id="idModalidadPago" class="form-control form-control-sm color-busqueda" [formControl]="idModalidadPago"
+                <input id="idModalidadPago" class="form-control form-control-sm color-busqueda" [formControl]="formulario.get('modalidadPago') "
                   type="text" matInput [matAutocomplete]="auto2" autocomplete="off" >
                 <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayFn.bind(this)" >
                   <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad" (click)="cambioIncrementoDescuento(modalidad)">
@@ -188,7 +188,7 @@
               </div>
             </div>
         </div>
-        <button id="idBoton" class="btn btn-primary" type="button" (click)="agregar()">
+        <button id="idBoton" class="btn btn-primary" type="button" (click)="agregar()" [disabled]="!formulario.valid" >
           Guardar
         </button>
       </form>

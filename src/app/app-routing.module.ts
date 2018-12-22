@@ -27,14 +27,14 @@ import { CompraReporteComponent } from './componentes/compra-reporte/compra-repo
 import { VentaReporteComponent } from './componentes/venta-reporte/venta-reporte.component';
 
 const routes: Routes = [
-  {path: '', component: VentaReporteComponent},
+  {path: '', component: VentaComponent},
   {path: 'generalesclientes', component: ClientePropioComponent},
   {path: 'generalesautorizados', component: AutorizadoComponent},
   {path: 'generalesproveedores', component: ProveedorComponent},
   {path: 'comprascompra', component: CompraComponent},
   {path: 'compraslistadeprecios', component: ListaPrecioCompraComponent},
   {path: 'ventasventa', component: VentaComponent},
-  {path: 'ventaslistadeprecios', component: ListaPrecioVentaComponent},
+  {path: 'ventaslistasdeprecios', component: ListaPrecioVentaComponent},
   {path: 'stockconsultar', component: StockFormularioComponent},
   {path: 'stocktransferir', component: TransferenciaComponent},
   {path: 'cuentacorrienteadministrar', component: CuentaCorrienteComponent},
