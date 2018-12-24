@@ -31,6 +31,10 @@ export class UsuarioService {
   public listarPorRol(idRol) {
     return this.http.get(this.url+ '/listarPorRol/'+idRol);
   }
+  //Obtiene por username
+  public obtenerPorUsername(username) {
+    return this.http.get(this.url + '/obtenerPorUsername/' + username);
+  }
   //obtiene la lista completa de registros
   public listar() {
     return this.http.get(this.url);

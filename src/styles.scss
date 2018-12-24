@@ -56,3 +56,9 @@ input::-webkit-inner-spin-button {
     cursor: pointer;
     color: blue;
 }
+/* Centra la card del login en la pantalla */
+.vcontainer {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}

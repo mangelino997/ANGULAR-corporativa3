@@ -8,10 +8,21 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  public usuario: any;
   public menu: Array<any>;
   public subopcion: any;
   constructor(private moduloServicio: ModuloService, private router: Router) {
     this.obtenerMenu();
+    
+  }
+  //obtener el usuario logueado
+  public getUsuario(){
+    return this.usuario;
+  }
+  //cargar el usuario 
+  public setUsuario(usuario){
+    this.usuario = usuario;
+    console.log(this.usuario);
   }
   //Obtiene la subopcion
   public getSubopcion() {

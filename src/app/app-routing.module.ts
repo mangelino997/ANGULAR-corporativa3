@@ -25,9 +25,12 @@ import { TransferenciaComponent } from './componentes/transferencia/transferenci
 import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
 import { CompraReporteComponent } from './componentes/compra-reporte/compra-reporte.component';
 import { VentaReporteComponent } from './componentes/venta-reporte/venta-reporte.component';
+import { LoginComponent } from './componentes/login/login.component';
+import { HomeComponent } from './componentes/home/home.component';
 
 const routes: Routes = [
-  {path: '', component: VentaComponent},
+  {path: '', component: LoginComponent},
+  {path: 'login', component: LoginComponent},
   {path: 'generalesclientes', component: ClientePropioComponent},
   {path: 'generalesautorizados', component: AutorizadoComponent},
   {path: 'generalesproveedores', component: ProveedorComponent},
@@ -44,7 +47,8 @@ const routes: Routes = [
   {path: 'extrastiposdeformularios', component: TipoFormularioComponent},
   {path: 'extrasmodalidadesdepagos', component: ModalidadPagoComponent},
   {path: 'extrasgastos', component: GastoComponent},
-  {path: 'extrasbilletes', component: BilleteComponent}
+  {path: 'extrasbilletes', component: BilleteComponent},
+  {path: 'home', component: HomeComponent}
 ];
 
 @NgModule({
