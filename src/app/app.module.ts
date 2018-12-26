@@ -79,6 +79,7 @@ import { TransferenciaComponent } from './componentes/transferencia/transferenci
 import { FormularioAlmacenService } from './servicios/formulario-almacen.service';
 import { StockFormularioService } from './servicios/stock-formulario.service';
 import { LoginService } from './servicios/login.service';
+import { GuardiaService } from './servicios/guardia.service';
 import { StockFormularioComponent } from './componentes/stock-formulario/stock-formulario.component';
 import { CompraReporteComponent, ReportesModal } from './componentes/compra-reporte/compra-reporte.component';
 import { VentaReporteComponent, ReportesVentaModal } from './componentes/venta-reporte/venta-reporte.component';
@@ -199,7 +200,8 @@ import { HomeComponent } from './componentes/home/home.component';
     Transferencia,
     FormularioAlmacenService,
     StockFormularioService,
-    LoginService
+    LoginService,
+    GuardiaService
   ],
   bootstrap: [AppComponent],
   entryComponents: [ClientePropioModal, FacturasModal, FacturasVentaModal, ConsultarDetalleModal, ReportesModal, ReportesVentaModal, PdfModal]

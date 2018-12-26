@@ -31,8 +31,7 @@ export class LoginComponent {
     this.loginService.login(this.elemento.username, this.elemento.password)
     .subscribe(res => {
       if(res.headers.get('authorization')) {
-        //Obtiene el menu
-        this.appComponent.obtenerMenu();
+        
         //Almacena el token en el local storage
         localStorage.setItem('token', res.headers.get('authorization'));
         //Establece logueado en true
@@ -41,7 +40,14 @@ export class LoginComponent {
         //Obtiene el usuario por username
         this.usuarioService.obtenerPorUsername(this.elemento.username).subscribe(
           res => {
+            //Obtiene el menu
+            this.appComponent.obtenerMenu();
             this.appComponent.setUsuario(res.json());
+
+            if(this.estaAutenticado === true) {
+              //Navega a la pagina principal (home)
+              this.router.navigate(['/home']);
+            }
           },
           err => {
             console.log(err);
@@ -54,9 +60,5 @@ export class LoginComponent {
 }
   //Define un metodo para ingreso una vez logueado el usuario y seleccionado una empresa
   public ingresar() {
-    if(this.estaAutenticado === true) {
-      //Navega a la pagina principal (home)
-      this.router.navigate(['/home']);
-    }
   }
 }

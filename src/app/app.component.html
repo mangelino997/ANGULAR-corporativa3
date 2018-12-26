@@ -1,11 +1,11 @@
 
-  <mat-toolbar class="alto-primer-toolbar" color="primary" >
+  <mat-toolbar class="alto-primer-toolbar" color="primary" *ngIf="visible">
     <mat-toolbar-row>
       <span>Gestoría</span>
       <span class="example-spacer"></span>
       <span class="example-spacer"></span>
       <div>
-        <button mat-raised-button [matMenuTriggerFor]="lusuario">Usuario</button>
+        <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.username}}</button>
         <mat-menu #lusuario="matMenu">
           <div class="container text-center titulo-menu">usuario</div>
           <mat-divider></mat-divider>
@@ -15,7 +15,7 @@
       </div>
     </mat-toolbar-row>
   </mat-toolbar>
-<mat-toolbar class="alto-segundo-toolbar" >
+<mat-toolbar class="alto-segundo-toolbar" *ngIf="visible">
   <div class="centrar" *ngFor="let modulo of menu">
     <button mat-menu-item [matMenuTriggerFor]="lmodulo">{{modulo.modulo}}</button>
     <mat-menu #lmodulo="matMenu">

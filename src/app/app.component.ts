@@ -8,12 +8,16 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  public visible:boolean = false;
   public usuario: any;
   public menu: Array<any>;
   public subopcion: any;
   constructor(private moduloServicio: ModuloService, private router: Router) {
-    this.obtenerMenu();
+    //this.obtenerMenu();
     
+  }
+  public setVisible(valor) {
+    this.visible = valor;
   }
   //obtener el usuario logueado
   public getUsuario(){

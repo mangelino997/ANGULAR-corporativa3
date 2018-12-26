@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { GuardiaService } from './servicios/guardia.service';
 import { Routes, RouterModule } from '@angular/router';
 import { ModuloComponent } from './componentes/modulo/modulo.component';
 import { SubopcionComponent } from './componentes/subopcion/subopcion.component';
@@ -31,24 +32,24 @@ import { HomeComponent } from './componentes/home/home.component';
 const routes: Routes = [
   {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'generalesclientes', component: ClientePropioComponent},
-  {path: 'generalesautorizados', component: AutorizadoComponent},
-  {path: 'generalesproveedores', component: ProveedorComponent},
-  {path: 'comprascompra', component: CompraComponent},
-  {path: 'compraslistadeprecios', component: ListaPrecioCompraComponent},
-  {path: 'ventasventa', component: VentaComponent},
-  {path: 'ventaslistasdeprecios', component: ListaPrecioVentaComponent},
-  {path: 'stockconsultar', component: StockFormularioComponent},
-  {path: 'stocktransferir', component: TransferenciaComponent},
-  {path: 'cuentacorrienteadministrar', component: CuentaCorrienteComponent},
-  {path: 'cajaadministrar', component: CajaComponent},
-  {path: 'extrastiposdefacturas', component: TipoFacturaComponent},
-  {path: 'extraslistadeprecios', component: ListaPrecioComponent},
-  {path: 'extrastiposdeformularios', component: TipoFormularioComponent},
-  {path: 'extrasmodalidadesdepagos', component: ModalidadPagoComponent},
-  {path: 'extrasgastos', component: GastoComponent},
-  {path: 'extrasbilletes', component: BilleteComponent},
-  {path: 'home', component: HomeComponent}
+  {path: 'generalesclientes', component: ClientePropioComponent, canActivate: [GuardiaService]},
+  {path: 'generalesautorizados', component: AutorizadoComponent, canActivate: [GuardiaService]},
+  {path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService]},
+  {path: 'comprascompra', component: CompraComponent, canActivate: [GuardiaService]},
+  {path: 'compraslistadeprecios', component: ListaPrecioCompraComponent, canActivate: [GuardiaService]},
+  {path: 'ventasventa', component: VentaComponent, canActivate: [GuardiaService]},
+  {path: 'ventaslistasdeprecios', component: ListaPrecioVentaComponent, canActivate: [GuardiaService]},
+  {path: 'stockconsultar', component: StockFormularioComponent, canActivate: [GuardiaService]},
+  {path: 'stocktransferir', component: TransferenciaComponent, canActivate: [GuardiaService]},
+  {path: 'cuentacorrienteadministrar', component: CuentaCorrienteComponent, canActivate: [GuardiaService]},
+  {path: 'cajaadministrar', component: CajaComponent, canActivate: [GuardiaService]},
+  {path: 'extrastiposdefacturas', component: TipoFacturaComponent, canActivate: [GuardiaService]},
+  {path: 'extraslistadeprecios', component: ListaPrecioComponent, canActivate: [GuardiaService]},
+  {path: 'extrastiposdeformularios', component: TipoFormularioComponent, canActivate: [GuardiaService]},
+  {path: 'extrasmodalidadesdepagos', component: ModalidadPagoComponent, canActivate: [GuardiaService]},
+  {path: 'extrasgastos', component: GastoComponent, canActivate: [GuardiaService]},
+  {path: 'extrasbilletes', component: BilleteComponent, canActivate: [GuardiaService]},
+  {path: 'home', component: HomeComponent, canActivate: [GuardiaService]}
 ];
 
 @NgModule({
