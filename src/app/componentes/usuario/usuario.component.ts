@@ -41,6 +41,8 @@ export class UsuarioComponent implements OnInit {
   public indiceSeleccionado:number = null;
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
+  // define passwordRepeat como un formControl
+  public passwordRepeat: FormControl=new FormControl();
   
   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
   constructor(private rolServicio: RolService,private usuario: Usuario, private subopcionPestaniaServicio: SubopcionPestaniaService, private usuarioServicio: UsuarioService, private toastr: ToastrService) {
@@ -69,6 +71,7 @@ export class UsuarioComponent implements OnInit {
     this.listarRoles();
     //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
     this.listar();
+    
   }
 
   //Establece el formulario al seleccionar elemento del autocompletado
@@ -157,6 +160,7 @@ public accion(indice) {
     this.usuarioServicio.listar().subscribe(
       res => {
         this.listaCompleta=res.json();
+        console.log(this.listaCompleta);
       },
       err => {
         console.log(err);
