@@ -149,9 +149,6 @@
         <div class="row">
           <div class="col-md-8">
               <div class="form-group has-float-label">
-                  <!-- <label id="" for="idAutorizado" class="tamanio-label">Autorizado</label>
-                  <input id="idAutorizado" type="text"  autocomplete="off" 
-                  class="form-control form-control-sm" [readonly]="soloLectura"> -->
                   <label for="idAutocompletadoAut" class="tamanio-label">Buscar autorizado</label>
                   <input id="idAutocompletadoAut" class="form-control form-control-sm color-busqueda"  #inputAutorizado
                     type="text" matInput [formControl]="autocompletadoAutorizados" [matAutocomplete]="autoAut" autocomplete="off" [readonly]="soloLectura">
@@ -163,10 +160,10 @@
               </div>
           </div>
           <div class="col-md-2">
-                <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" (click)="openDialog()" *ngIf="mostrarBoton" (keydown.tab)="focoImagen($event.target.value)">
-                  Nuevo Autorizado
-                </button>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" (click)="openDialog()" *ngIf="mostrarBoton" (keydown.tab)="focoImagen($event.target.value)">
+                Nuevo Autorizado
+            </button>
           </div>
         </div>
         <!--tabla para mostrar los autorizados que selecciono de la lista autocompletado-->
@@ -192,7 +189,7 @@
                 </table>
               </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" tabindex="1"
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" 
           formnovalidate (click)="accion(indiceSeleccionado)" >
           {{pestaniaActual}}
         </button>
@@ -201,8 +198,8 @@
     <div class="col-md-3 align-self-end">
       <form [formGroup]="formularioFoto">
         <div class="justify-content-center" style="text-align: center;">
-        <img id="imgSalida" width="50%" height="50%" src="http://localhost:8081/hibanaws/auth/foto/obtenerPorId/{{idFoto}}" *ngIf="indiceSeleccionado>1 && !muestraImagenPc"/> <!-- 192.168.0.99 || localhost-->
-        <img id="imgSalida" width="50%" height="50%" src="assets/User.png" *ngIf="indiceSeleccionado==1 || muestraImagenPc">
+        <img id="imgSalida" width="50%" height="50%" src="http://192.168.0.99:8081/hibanaws/auth/foto/obtenerPorId/{{idFoto}}" *ngIf="indiceSeleccionado>0 && !muestraImagenPc"/> <!-- 192.168.0.99 || localhost-->
+        <img id="imgSalida" width="50%" height="50%" src="assets/User.png" *ngIf="indiceSeleccionado>0 && muestraImagenPc">
         </div>
         <div class="input-group">
             <div class="custom-file">

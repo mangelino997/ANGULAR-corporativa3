@@ -101,7 +101,7 @@
                 <div class="form-group ">
                     <div class="form-group has-float-label">
                         <label for="idtipoFactura" class="tamanio-label">Tipo de Factura</label>
-                        <mat-select class="form-control" id="idtipoFactura" placeholder="tipo de Factura" formControlName="tipoFactura" [compareWith]="compareFn">
+                        <mat-select class="form-control" id="idtipoFactura" formControlName="tipoFactura" [compareWith]="compareFn">
                             <mat-option *ngFor="let factura of listaTipoFactura" [value]="factura"> {{factura.nombre }}</mat-option>
                         </mat-select>
                       </div>
@@ -111,7 +111,7 @@
                   <div class="form-group ">
                       <div class="form-group has-float-label">
                           <label for="idListaPrecio" class="tamanio-label">Lista de Precios</label>
-                          <mat-select class="form-control" id="idListaPrecio" placeholder="Lista de Precios" formControlName="listaPrecio" [compareWith]="compareFn">
+                          <mat-select class="form-control" id="idListaPrecio" formControlName="listaPrecio" [compareWith]="compareFn">
                               <mat-option *ngFor="let precio of listaPrecio" [value]="precio"> {{precio.nombre }}</mat-option>
                           </mat-select>
                         </div>
@@ -126,7 +126,7 @@
     </div>
   </div>
     <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-      <div class="col-md-6">
+      <div class="col-md-12">
         <table class="table table-bordered table-striped table-sm">
           <thead>
             <tr>

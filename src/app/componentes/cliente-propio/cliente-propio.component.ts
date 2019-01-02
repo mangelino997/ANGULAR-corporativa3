@@ -55,7 +55,7 @@ public mostrarAutocompletado:boolean = null;
 //Define si el campo es de solo lectura
 public soloLectura:boolean = false;
 //Define si el segundo <img> en subir imagen se muestra o no
-public muestraImagenPc: boolean=null;
+public muestraImagenPc: boolean=true;
 //Define si mostrar el boton
 public mostrarBoton:boolean = null;
 //Define el indice seleccionado de pestania
@@ -68,7 +68,7 @@ public archivo: File=null;
 public respuestaImagenEnviada;
 public resultadoCarga;
 //id de la foto del cliente para mostrarla en Consultar, Actualizar y Eliminar
-public idFoto: number=51;
+public idFoto: number=8;
 // guarda el json del campo Foto del cliente que se selecciono/actualizo
 public fotoCliente: number;
 // lista de Autorizados seleccionados por el usuario
@@ -103,6 +103,7 @@ constructor(private renderer: Renderer2, public dialog: MatDialog, private foto:
     }
   });
   
+  console.log(this.muestraImagenPc);
 
 }
 //declaramos los metodos para utilizar el Modal/Dialog
@@ -147,8 +148,9 @@ public focoImagen(e) {
 //Pasa el foco a la tabla de autorizados agregados
 public focoBtnAgregar() { 
   console.log("tabb");
+  document.getElementById("idBoton").focus();
   setTimeout(function () {
-    document.getElementById('idBoton').focus();
+    document.getElementById("idBoton").focus();
   }, 20);
 }
 
@@ -282,8 +284,6 @@ public  deleteAutorizados(a) {
     
   }
 }
-
-
 //Agrega un registro 
 private agregar(){
 console.log(this.archivo);
@@ -343,9 +343,7 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
     }
   );
 });
-
 }
-
 //Actualiza un registro
 private actualizar(){
 //obtiene el array de autorizados agregados y los guarda en el campo 'autorizados' del formulario
@@ -501,6 +499,7 @@ this.formularioFoto.reset();
 this.formularioFoto.get('foto').setValue(null);
 this.formulario.get('foto').setValue(null);
 this.muestraImagenPc=true;
+console.log(this.idFoto);
 //this.idFoto=51;
 // this.listarAutorizado(id);
 }
@@ -529,11 +528,12 @@ public mostrarFotoCliente(elemento){
     this.fotoCliente=elemento.foto;
   }else
   {
-    this.idFoto=51;
+    this.idFoto=1;
   }
 }
 //Muestra en la pestania actualizar el elemento seleccionado de listar
 public activarActualizar(elemento) {
+  console.log(elemento);
   this.seleccionarPestania(3, this.pestanias[2].pestania.nombre, 1);
   this.autocompletado.setValue(elemento);
   this.formulario.patchValue(elemento);
@@ -557,6 +557,8 @@ if(keycode == 113) {
 public cargandoImagen(files: FileList, e){
   this.archivo=null;
   this.archivo=files[0];
+  this.muestraImagenPc=false;
+
 
   var reader = new FileReader();
   reader.onload = this.fileOnload;
@@ -565,7 +567,6 @@ public cargandoImagen(files: FileList, e){
   console.log(e);
   console.log('imagen adjuntada');
   this.bandera=true;
-  this.muestraImagenPc=false;
   
   }
 

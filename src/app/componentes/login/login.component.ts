@@ -30,10 +30,8 @@ export class LoginComponent {
     console.log(this.elemento.username+"---"+ this.elemento.password);
     this.loginService.login(this.elemento.username, this.elemento.password)
     .subscribe(res => {
-      var resp= res.json();
-      console.log(resp);
+      console.log(res);
       if(res.headers.get('authorization')) {
-        
         //Almacena el token en el local storage
         localStorage.setItem('token', res.headers.get('authorization'));
         //Establece logueado en true

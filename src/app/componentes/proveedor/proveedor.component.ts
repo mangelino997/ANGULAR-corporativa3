@@ -116,14 +116,17 @@ public cambioAutocompletado(elemento) {
     this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
     break;
   case 2:
+    this.reestablecerFormulario(undefined);
     this.establecerSoloLectura(false);
     this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
     break;
   case 3:
+    this.reestablecerFormulario(undefined);
     this.establecerSoloLectura(true);
     this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
     break;
   case 4:
+    this.reestablecerFormulario(undefined);
     this.establecerSoloLectura(false);
     this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
     break;
@@ -151,7 +154,7 @@ public cambioAutocompletado(elemento) {
   private obtenerSiguienteId(){
   this.proveedorService.obtenerSiguienteId().subscribe(
     res => {
-      console.log(res);
+      console.log(res.json());
       this.formulario.get('id').setValue(res.json());
     },
     err => {

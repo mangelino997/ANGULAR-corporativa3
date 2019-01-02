@@ -5,9 +5,9 @@
       <span class="example-spacer"></span>
       <span class="example-spacer"></span>
       <div>
-        <button mat-raised-button [matMenuTriggerFor]="lusuario"><!-- {{usuario.nombreCompleto}} --></button>
+        <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.nombreCompleto}}</button>
         <mat-menu #lusuario="matMenu">
-          <div class="container text-center titulo-menu">usuario</div>
+          <div class="container text-center titulo-menu">Usuario</div>
           <mat-divider></mat-divider>
           <a href="http://localhost:4200/login" target="_blank"><button mat-menu-item>Nuevo Ingreso</button></a>
           <a href="http://localhost:4200/login"><button mat-menu-item>Salir</button></a>

@@ -79,7 +79,7 @@
           </div>
           </div>
       </div>
-      <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+      <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" [disabled]="!formulario.valid" 
         formnovalidate (click)="accion(indiceSeleccionado)" >
         {{pestaniaActual}}
       </button>

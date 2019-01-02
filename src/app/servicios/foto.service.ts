@@ -34,6 +34,10 @@ export class FotoService {
   public listar() {
     return this.http.get(this.url);
   }
+  //obtiene registro por un id
+  public obtenerPorId(idFoto) {
+    return this.http.get(this.url + '/obtenerPorId/' + idFoto);
+  }
   
   //actualiza un registro
   public actualizar(elemento) {
