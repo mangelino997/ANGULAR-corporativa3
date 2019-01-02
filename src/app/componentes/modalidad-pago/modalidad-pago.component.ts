@@ -104,6 +104,7 @@ export class ModalidadPagoComponent implements OnInit {
     this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.listar();
     /*
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
@@ -175,6 +176,7 @@ public accion(indice) {
   }
   //Agrega un registro 
   private agregar(){
+    console.log(this.formulario.value);
     this.modalidadPagoService.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

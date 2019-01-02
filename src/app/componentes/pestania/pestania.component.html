@@ -23,7 +23,7 @@
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
               <mat-option *ngFor="let item of resultados" [value]="item"
                 (onSelectionChange)="cambioAutocompletado(item)">
-                {{item.nombre}}
+                {{item.alias}}
               </mat-option>
             </mat-autocomplete>
           </div>
@@ -49,7 +49,7 @@
         <table class="table table-bordered table-striped table-sm">
           <thead>
             <tr>
-              <th class="text-center" style="width:20%" scope="col">id</th>
+              <th class="text-center" style="width:20%" scope="col">#</th>
               <th class="text-center" style="width:80%" scope="col">Nombre</th>
               <th class="text-center" style="width:10%" scope="col">-</th>
               <th class="text-center" style="width:10%" scope="col">-</th>

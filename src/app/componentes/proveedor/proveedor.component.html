@@ -19,7 +19,7 @@
         <div class="row ">
           <div class="col-md-8">
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
-              <label for="idAutocompletado" class="tamanio-label">Buscar por Alias</label>
+              <label for="idAutocompletado" class="tamanio-label">Buscar</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
                 type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
@@ -59,7 +59,7 @@
         <div class="row ">
             <div class="col-md-4">
               <div class="form-group has-float-label">
-                <label id="labelNombre" for="idNombre" class="tamanio-label">Código de Area</label>
+                <label id="labelNombre" for="idNombre" class="tamanio-label">Cod. Area</label>
                 <input id="idNombre" type="number" formControlName="codigoArea" autocomplete="off"
                   class="form-control form-control-sm" [readonly]="soloLectura"
                   (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
@@ -130,15 +130,15 @@
         <table class="table table-bordered table-striped table-sm">
           <thead>
             <tr>
-              <th class="text-center" style="width:20%" scope="col">id</th>
-              <th class="text-center" style="width:40%" scope="col">Nombre</th>
-              <th class="text-center" style="width:20%" scope="col">CUIT</th>
-              <th class="text-center" style="width:20%" scope="col">Teléfono</th>
-              <th class="text-center" style="width:20%" scope="col">Dirección</th>
-              <th class="text-center" style="width:20%" scope="col">Correo Electrónico</th>
-              <th class="text-center" style="width:20%" scope="col">Página Web</th>
-              <th class="text-center" style="width:20%" scope="col">tipo Factura </th>
-              <th class="text-center" style="width:20%" scope="col">Lista Precio</th>
+              <th class="text-center" style="width:5%" scope="col">#</th>
+              <th class="text-center" style="width:5%" scope="col">Nombre</th>
+              <th class="text-center" style="width:10%" scope="col">CUIT</th>
+              <th class="text-center" style="width:10%" scope="col">Teléfono</th>
+              <th class="text-center" style="width:10%" scope="col">Dirección</th>
+              <th class="text-center" style="width:10%" scope="col">Correo Electrónico</th>
+              <th class="text-center" style="width:10%" scope="col">Página Web</th>
+              <th class="text-center" style="width:10%" scope="col">tipo Factura </th>
+              <th class="text-center" style="width:10%" scope="col">Lista Precio</th>
               <th class="text-center" style="width:10%" scope="col">-</th>
               <th class="text-center" style="width:10%" scope="col">-</th>
             </tr>

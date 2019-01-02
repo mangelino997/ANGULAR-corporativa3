@@ -38,7 +38,7 @@
                   type="text" matInput [formControl]="idModalidadPago" [matAutocomplete]="auto" autocomplete="off" >
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                   <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad" (click)="cambioIncrementoDescuento(modalidad)">
-                    {{modalidad.nombre}}
+                    {{modalidad.alias}}
                   </mat-option>
                 </mat-autocomplete>
             </div>
@@ -50,7 +50,7 @@
                 type="text" matInput [formControl]="idProveedor" [matAutocomplete]="auto2" autocomplete="off" >
                 <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayFn.bind(this)">
                     <mat-option *ngFor="let proveedor of resultadosProveedor" [value]="proveedor" (onSelectionChange)="cambioAutocompletadoProveedor(proveedor)">
-                    {{proveedor.nombre}}
+                    {{proveedor.alias}}
                     </mat-option>
                 </mat-autocomplete>
             </div>
@@ -92,7 +92,7 @@
                             autocomplete="off" >
                           <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
                             <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)">
-                              {{tipoFormulario.nombre}}
+                              {{tipoFormulario.alias}}
                             </mat-option>
                           </mat-autocomplete>
                         </td>
@@ -170,7 +170,7 @@
                               type="text" matInput formControlName="modalidadPago" [matAutocomplete]="auto1" autocomplete="off" >
                             <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFn.bind(this)">
                               <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad">
-                                {{modalidad.nombre}}
+                                {{modalidad.alias}}
                               </mat-option>
                             </mat-autocomplete>
                         </div>
@@ -182,7 +182,7 @@
                             type="text" matInput formControlName="proveedor" [matAutocomplete]="auto" autocomplete="off" >
                             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                 <mat-option *ngFor="let proveedor of resultadosProveedor" [value]="proveedor">
-                                {{proveedor.nombre}}
+                                {{proveedor.alias}}
                                 </mat-option>
                             </mat-autocomplete>
                         </div>

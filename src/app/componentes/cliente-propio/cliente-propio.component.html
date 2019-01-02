@@ -22,7 +22,7 @@
         <div class="row ">
           <div class="col-md-8">
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
-              <label for="idAutocompletado" class="tamanio-label">Buscar por Alias</label>
+              <label for="idAutocompletado" class="tamanio-label">Buscar</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
                 type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
@@ -108,7 +108,7 @@
         <div class="row">
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label id="" for="idCodigoArea" class="tamanio-label">Código de Area</label>
+              <label id="" for="idCodigoArea" class="tamanio-label">Cod. Area</label>
               <input id="idCodigoArea" type="text" formControlName="codigoArea" autocomplete="off"
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -122,14 +122,14 @@
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label id="" for="idCodigoAreaAlt" class="tamanio-label">Cód. Area Alternativo</label>
+              <label id="" for="idCodigoAreaAlt" class="tamanio-label">Cod. Area Alt.</label>
               <input id="idCodigoAreaAlt" type="text" formControlName="codigoAreaAlt" autocomplete="off"
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="" for="idTelefonoAlt" class="tamanio-label">Teléfono Alternativo</label>
+              <label id="" for="idTelefonoAlt" class="tamanio-label">Teléfono Alt.</label>
               <input id="idtelefonoAlt" type="number" formControlName="telefonoAlt" autocomplete="off"
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -164,7 +164,7 @@
           </div>
           <div class="col-md-2">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" (click)="openDialog()" *ngIf="mostrarBoton">
+                <button type="button" class="btn btn-primary" (click)="openDialog()" *ngIf="mostrarBoton" (keydown.tab)="focoImagen($event.target.value)">
                   Nuevo Autorizado
                 </button>
           </div>
@@ -172,7 +172,7 @@
         <!--tabla para mostrar los autorizados que selecciono de la lista autocompletado-->
         <div class="row">
             <div class="col-md-8">
-                <table class="table table-bordered table-striped table-sm" #tablaAutorizados >
+                <table class="table table-bordered table-striped table-sm" #tablaAutorizados  >
                   <thead>
                     <tr>
                       <th class="text-center" style="width:80%" scope="col">Nombre</th>
@@ -192,30 +192,7 @@
                 </table>
               </div>
         </div>
-        <!--tabla para mostrar los autorizados seleccionados por un Cliente-->
-        <!-- <div class="row" #autorizadosPorCliente style="display: none;">
-          <div class="col-md-8">
-              <table class="table table-bordered table-striped table-sm"  >
-                <thead>
-                  <tr>
-                    <th class="text-center" style="width:80%" scope="col">Nombre</th>
-                    <th class="text-center" style="width:10%" scope="col">Eliminar</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let ac of listaAutorizadosPorCliente">
-                    <td >
-                      <input type="text" class="centrado" value="{{ac.nombre}}" [readonly]="soloLectura" DISABLED>
-                    </td>
-                    <td >
-                      <input type="button" class="centrado" value="X" (click)="deleteAutorizados(ac)" [readonly]="soloLectura" >
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-      </div> -->
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" tabindex="1"
           formnovalidate (click)="accion(indiceSeleccionado)" >
           {{pestaniaActual}}
         </button>
@@ -224,12 +201,12 @@
     <div class="col-md-3 align-self-end">
       <form [formGroup]="formularioFoto">
         <div class="justify-content-center" style="text-align: center;">
-        <img id="imgSalida" width="50%" height="50%" src="http://192.168.0.99:8081/hibanaws/auth/foto/obtenerPorId/{{idFoto}}" *ngIf="indiceSeleccionado>1 && !muestraImagenPc"/>
+        <img id="imgSalida" width="50%" height="50%" src="http://localhost:8081/hibanaws/auth/foto/obtenerPorId/{{idFoto}}" *ngIf="indiceSeleccionado>1 && !muestraImagenPc"/> <!-- 192.168.0.99 || localhost-->
         <img id="imgSalida" width="50%" height="50%" src="assets/User.png" *ngIf="indiceSeleccionado==1 || muestraImagenPc">
         </div>
         <div class="input-group">
             <div class="custom-file">
-              <input type="file" class="custom-file-input" name="file-input" id="file-input" placeholder="Subir Foto" formControlName="foto" (change)="cargandoImagen($event.target.files, $event)" multiple *ngIf="!soloLectura">
+              <input type="file" class="custom-file-input" name="file-input" id="file-input" placeholder="Subir Foto" formControlName="foto" (change)="cargandoImagen($event.target.files, $event)" (keydown.tab)="focoBtnAgregar()" multiple *ngIf="!soloLectura">
               <label class="custom-file-label" id="imagen-nombre"></label>
             </div>
           </div>
@@ -242,7 +219,7 @@
       <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
-            <th class="text-center" style="width:20%" scope="col">id</th>
+            <th class="text-center" style="width:20%" scope="col">#</th>
             <th class="text-center" style="width:80%" scope="col">Nombre</th>
             <th class="text-center" style="width:10%" scope="col">-</th>
             <th class="text-center" style="width:10%" scope="col">-</th>

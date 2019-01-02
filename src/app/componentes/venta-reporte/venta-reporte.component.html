@@ -22,7 +22,7 @@
                               type="text" matInput  [matAutocomplete]="auto" autocomplete="off" >
                               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                   <mat-option *ngFor="let cliente of listaClientes" [value]="cliente" (onSelectionChange)="cambioAutocompletadoCliente(cliente)">
-                                  {{cliente.nombre}}
+                                  {{cliente.alias}}
                                   </mat-option>
                               </mat-autocomplete>
                           </div>
@@ -35,7 +35,7 @@
                               autocomplete="off" >
                               <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                 <mat-option *ngFor="let tipoFormulario of listaTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario)">
-                                  {{tipoFormulario.nombre}}
+                                  {{tipoFormulario.alias}}
                                 </mat-option>
                               </mat-autocomplete>
                             </div>

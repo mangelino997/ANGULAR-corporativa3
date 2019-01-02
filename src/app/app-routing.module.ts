@@ -30,7 +30,7 @@ import { LoginComponent } from './componentes/login/login.component';
 import { HomeComponent } from './componentes/home/home.component';
 
 const routes: Routes = [
-  {path: '', component: UsuarioComponent},
+  {path: '', component: ClientePropioComponent},
   {path: 'login', component: LoginComponent},
   {path: 'generalesclientes', component: ClientePropioComponent, canActivate: [GuardiaService]},
   {path: 'generalesautorizados', component: AutorizadoComponent, canActivate: [GuardiaService]},

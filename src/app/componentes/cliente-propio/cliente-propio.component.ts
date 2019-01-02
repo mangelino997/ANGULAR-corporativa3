@@ -102,30 +102,7 @@ constructor(private renderer: Renderer2, public dialog: MatDialog, private foto:
       })
     }
   });
-  //Escuchador del evento para cargar imagenes
-  // $(function() {
-  //    $('#file-input').change(function(e) {
-  //        addImage(e); 
-  //       });
-    
-  //       function addImage(e){
-  //        var file = e.target.files[0],
-  //        imageType = /image.*/;
-       
-  //        if (!file.type.match(imageType))
-  //         return;
-     
-  //        var reader = new FileReader();
-  //        reader.onload = fileOnload;
-  //        reader.readAsDataURL(file);
-  //       }
-     
-  //       function fileOnload(e) {
-  //        var result=e.target.result;
-  //        $('#imgSalida').attr("src",result);
-  //        $('#imagen-nombre').empty().append('Foto cargada');
-  //       }
-  //   });
+  
 
 }
 //declaramos los metodos para utilizar el Modal/Dialog
@@ -152,12 +129,27 @@ ngOnInit() {
   );
   //Establece los valores, activando la primera pestania 
   this.seleccionarPestania(1, 'Agregar', 0);
-  // inicializa en false
+  // inicializa en true
   this.muestraImagenPc=true;
 }
 
 public mostrar(){
   console.log(this.listaAutorizadosAgregados);
+}
+
+//Pasa el foco a cargar foto al apretar tab en "nuevo autorizado"
+public focoImagen(e) { 
+  setTimeout(function () {
+    document.getElementById('file-input').focus();
+  }, 20);
+}
+
+//Pasa el foco a la tabla de autorizados agregados
+public focoBtnAgregar() { 
+  console.log("tabb");
+  setTimeout(function () {
+    document.getElementById('idBoton').focus();
+  }, 20);
 }
 
 //Establece el formulario al seleccionar elemento del autocompletado
@@ -191,6 +183,7 @@ this.formulario.reset();
 this.indiceSeleccionado = id;
 this.activeLink = nombre;
 this.borrarAgregados();
+this.listar();
 /*
 * Se vacia el formulario solo cuando se cambia de pestania, no cuando
 * cuando se hace click en ver o mod de la pestania lista
@@ -205,20 +198,24 @@ switch (id) {
 case 1:
   this.obtenerSiguienteId();
   this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+  this.reestablecerFormulario(undefined);
   break;
 case 2:
   this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
   this.mostrarFotoCliente(this.idFoto);
+  this.reestablecerFormulario(undefined);
   this.muestraImagenPc=false;
   break;
 case 3:
   this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
   this.mostrarFotoCliente(this.idFoto);
+  this.reestablecerFormulario(undefined);
   this.muestraImagenPc=false;
   break;
 case 4:
   this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
   this.mostrarFotoCliente(this.idFoto);
+  this.reestablecerFormulario(undefined);
   this.muestraImagenPc=false;
   break;
 case 5:
@@ -295,8 +292,6 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
   let foto = { 
     id: respuesta.id
   }
-  console.log(foto); //imprime el id de la foto que se va a cargar
-  console.log(this.listaAutorizadosAgregados.values);
   this.formulario.get('foto').setValue(foto);
   //obtiene el array de autorizados agregados y los guarda en el campo 'autorizados' del formulario
   this.formulario.get('autorizados').setValue(this.listaAutorizadosAgregados);
@@ -304,8 +299,9 @@ this.fotoService.postFileImagen(this.archivo).subscribe(res=>{
   this.clientePropioService.agregar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
+      this.muestraImagenPc=false;
       if(respuesta.codigo == 201) {
-        this.reestablecerFormulario(respuesta.id);
+        this.reestablecerFormulario(undefined);
         setTimeout(function() {
           document.getElementById('idNombre').focus();
         }, 20);
@@ -501,7 +497,11 @@ this.autocompletadoAutorizados.setValue(undefined);
 this.resultados = [];
 this.listaAutorizados = [];
 this.borrarAgregados();
-// this.idFoto=51;
+this.formularioFoto.reset();
+this.formularioFoto.get('foto').setValue(null);
+this.formulario.get('foto').setValue(null);
+this.muestraImagenPc=true;
+//this.idFoto=51;
 // this.listarAutorizado(id);
 }
 //Manejo de colores de campos y labels
@@ -541,8 +541,6 @@ public activarActualizar(elemento) {
   this.listarAutorizado(elemento);
   this.mostrarFotoCliente(elemento);
   this.muestraImagenPc=false;
-
-  
 }
 //Maneja los evento al presionar una tacla (para pestanias y opciones)
 public manejarEvento(keycode) {
