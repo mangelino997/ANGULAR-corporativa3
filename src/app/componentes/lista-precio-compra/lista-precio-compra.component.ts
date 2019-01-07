@@ -27,6 +27,11 @@ export class ListaPrecioCompraComponent implements OnInit {
   public activeLink: any;
   // define el autocompletado como un formControl
   public autocompletado: FormControl=new FormControl();
+  // define el autocompletado como un formControl
+  public autocompletadoPorId: FormControl=new FormControl();
+  // define el autocompletado como un formControl
+  public autocompletadoListarPorId: FormControl=new FormControl();
+  
   //Define el form control para las busquedas vendedor
   public buscarTipoFormulario:FormControl = new FormControl();
   //Define la pestania actual seleccionada
@@ -37,8 +42,7 @@ export class ListaPrecioCompraComponent implements OnInit {
   public mostrarAutocompletadoPorId:boolean = null;
   //Define si el campo es de solo lectura
   public soloLectura:boolean = false;
-  //Define si el campo listaPrecio se deshabilita o no
-  public listaPrecioDisable:boolean = true;
+  
   
   //Define si la tabla de datos se muestra o no
   public mostrarTabla:boolean = true;
@@ -68,6 +72,24 @@ export class ListaPrecioCompraComponent implements OnInit {
         })
       }
     })
+    this.autocompletadoPorId.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.listaPrecioCompraService.listarPorListaPrecio(data).subscribe(res => {
+          this.resultados = res.json();
+          console.log(res.json());
+        })
+      }
+    })
+    this.autocompletadoListarPorId.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.listaPrecioService.listarPorAlias(data).subscribe(res => {
+          this.resultados = res.json();
+          console.log(res.json());
+
+        })
+      }
+    })
+    
     //Autocompletado - Buscar por Tipo de formulario
     this.buscarTipoFormulario.valueChanges.subscribe(data => {
         if(typeof data == 'string') {
@@ -122,7 +144,18 @@ export class ListaPrecioCompraComponent implements OnInit {
     );
     this.formulario.patchValue(elemento);
   }
-
+  
+  public cambioAutocompletadoListarPorId(elemento) {
+    // console.log(elemento);
+    this.listaPrecioCompraService.listarPorListaPrecio(elemento.id).subscribe(
+      res => {
+        this.listaAgregar=res.json().value;
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
     if(elemento != undefined) {
@@ -139,6 +172,7 @@ export class ListaPrecioCompraComponent implements OnInit {
     this.mostrarBoton = boton;
     this.mostrarTipoFormulario= mostrarTipoFormulario;
     this.mostrarAutocompletadoPorId= autocompletadoPorId;
+    this.reestablecerFormulario(undefined);
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -225,7 +259,7 @@ private establecerAccionTabla(estado){
     this.listaPrecioCompraService.listar().subscribe(
       res => {
         this.listaCompleta=res.json();
-        
+        console.log(this.listaCompleta);
       },
       err => {
         console.log(err);
@@ -304,6 +338,7 @@ private establecerAccionTabla(estado){
     this.formulario.reset();
     // this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
+    this.buscarTipoFormulario.setValue(undefined);
     this.resultados = [];
   }
   //Manejo de colores de campos y labels
@@ -345,21 +380,31 @@ private establecerAccionTabla(estado){
   public agregarElemento() {
     this.listaAgregar.push(this.formulario.value);
     if(this.listaAgregar.length<1){
-      this.listaPrecioDisable= true;
+      this.autocompletado.enable();
     }
     else{
-      this.listaPrecioDisable= false;
+      this.autocompletado.disable();
     }
+    this.buscarTipoFormulario.setValue(undefined);
+    this.formulario.reset();
+    setTimeout(function() {
+      document.getElementById('idTipoFormulario').focus();
+    }, 20);
   }
   //Elimina una fila de la segunda tabla
   public eliminarElemento(indice) {
     this.listaAgregar.splice(indice, indice+1);
     if(this.listaAgregar.length<1){
-      this.listaPrecioDisable= true;
+      this.autocompletado.enable();
     }
     else{
-      this.listaPrecioDisable= false;
+      this.autocompletado.disable();
     }
+    this.buscarTipoFormulario.setValue(undefined);
+    this.formulario.reset();
+    setTimeout(function() {
+      document.getElementById('idTipoFormulario').focus();
+    }, 20);
   }
   //Manejo de cambio de autocompletado de tipo formulario
   public cambioAutocompletadoListaPrecioCompra(elemento) {

@@ -16,6 +16,7 @@ import {MatAutocompleteSelectedEvent, MatChipInputEvent, MatAutocomplete} from '
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import * as $ from 'jquery';
+import { AppService } from 'src/app/servicios/app.service';
 
 
 @Component({
@@ -50,6 +51,8 @@ public autocompletado: FormControl=new FormControl();
 public autocompletadoAutorizados: FormControl=new FormControl();
 //Define la pestania actual seleccionada
 public pestaniaActual:string = null;
+//Define la URL BASE
+public urlBase:string = null;
 //Define si mostrar el autocompletado
 public mostrarAutocompletado:boolean = null;
 //Define si el campo es de solo lectura
@@ -84,7 +87,7 @@ public autorizadoSeleccionado:Array<any> = [];
   bandera: boolean= false;
 
 //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
-constructor(private renderer: Renderer2, public dialog: MatDialog, private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
+constructor(private appService: AppService ,private renderer: Renderer2, public dialog: MatDialog, private foto:Foto, private fotoService: FotoService ,private autorizado: Autorizado, private autorizadoService: AutorizadoService, private clientePropioService: ClientePropioService, private clientePropio: ClientePropio, private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService) { 
   this.autocompletado.valueChanges.subscribe(data => {
     if(typeof data == 'string') {
       this.clientePropioService.listarPorAlias(data).subscribe(res => {
@@ -132,6 +135,8 @@ ngOnInit() {
   this.seleccionarPestania(1, 'Agregar', 0);
   // inicializa en true
   this.muestraImagenPc=true;
+  //Cargamos la URL BASE para mostrar las imagenes
+  this.urlBase=this.appService.URL_BASE;
 }
 
 public mostrar(){
@@ -182,6 +187,9 @@ setTimeout(function () {
 //Establece valores al seleccionar una pestania
 public seleccionarPestania(id, nombre, opcion) {
 this.formulario.reset();
+this.formularioFoto.reset();
+this.muestraImagenPc=true;
+this.idFoto=0;
 this.indiceSeleccionado = id;
 this.activeLink = nombre;
 this.borrarAgregados();
@@ -489,7 +497,7 @@ public listarAutorizadosPorCliente(a){
 //Reestablece los campos formularios
 private reestablecerFormulario(id) {
 this.formulario.reset();
-this.formulario.get('id').setValue(id);
+this.obtenerSiguienteId();
 this.autocompletado.setValue(undefined);
 this.autocompletadoAutorizados.setValue(undefined);
 this.resultados = [];
@@ -528,7 +536,7 @@ public mostrarFotoCliente(elemento){
     this.fotoCliente=elemento.foto;
   }else
   {
-    this.idFoto=1;
+    this.idFoto=1; //La primera imagen que se debe cargar debe ser la del Usuario por defecto
   }
 }
 //Muestra en la pestania actualizar el elemento seleccionado de listar
@@ -548,6 +556,7 @@ var indice = this.indiceSeleccionado;
 if(keycode == 113) {
   if(indice < this.pestanias.length) {
     this.seleccionarPestania(indice+1, this.pestanias[indice].pestania.nombre, 0);
+    this.formularioFoto.reset();
   } else {
     this.seleccionarPestania(1, this.pestanias[0].pestania.nombre, 0);
   }
@@ -636,8 +645,9 @@ public agregarAutorizado(){
   //Reestablece los campos formularios
 private reestablecerFormulario(id) {
   this.formularioAgregarAutorizado.reset();
-  this.formularioAgregarAutorizado.get('id').setValue(id);
+  this.obtenerSiguienteIdAutorizado();  // this.formularioAgregarAutorizado.get('id').setValue(id);
   // this.autocompletado.setValue(undefined);
   // this.resultados = [];
+  
   }
 }

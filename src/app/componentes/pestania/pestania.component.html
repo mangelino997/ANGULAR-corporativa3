@@ -17,7 +17,7 @@
         <h5>{{pestaniaActual}} Pestañas</h5>
         <form [formGroup]="formulario" class="contenedor">
           <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-            <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+            <label for="idAutocompletado" class="tamanio-label">Buscar</label>
             <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
               type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
             <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
