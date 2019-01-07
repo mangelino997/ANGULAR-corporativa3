@@ -36,6 +36,8 @@ export class ModalidadPagoComponent implements OnInit {
    public activeLink: any;
    // define el autocompletado como un formControl
    public autocompletado: FormControl=new FormControl();
+   // define el autocompletado como un formControl
+   public id: FormControl=new FormControl();
    //Define la pestania actual seleccionada
    public pestaniaActual:string = null;
    //Define si mostrar el autocompletado
@@ -156,7 +158,7 @@ public accion(indice) {
     this.modalidadPagoService.obtenerSiguienteId().subscribe(
       res => {
         console.log(res);
-        this.formulario.get('id').setValue(res.json());
+        this.id.setValue(res.json());
       },
       err => {
         console.log(err);
@@ -175,7 +177,7 @@ public accion(indice) {
     );
   }
   //Agrega un registro 
-  private agregar(){
+  public agregar(){
     console.log(this.formulario.value);
     this.modalidadPagoService.agregar(this.formulario.value).subscribe(
       res => {
@@ -187,7 +189,8 @@ public accion(indice) {
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
-      },
+      }
+      ,
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
@@ -238,7 +241,7 @@ public accion(indice) {
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
-    this.formulario.get('id').setValue(id);
+    // this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.resultados = [];
   }
@@ -252,12 +255,15 @@ public accion(indice) {
     this.seleccionarPestania(2, this.pestanias[1].pestania.nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.id.setValue(elemento.id);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].pestania.nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.id.setValue(elemento.id);
+
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
