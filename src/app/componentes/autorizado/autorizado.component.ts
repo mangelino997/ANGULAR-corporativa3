@@ -61,11 +61,13 @@ export class AutorizadoComponent implements OnInit {
     this.subopcionPestaniaServicio.listarPestaniasPorSubopcion(1).subscribe(
       res => {
         this.pestanias= res.json();
+        console.log(this.pestanias);
+        this.pestanias.splice(0, 1); //Elimino la pestaña "Agregar"
         this.activeLink= this.pestanias[0].pestania.nombre;
       }
     );
     //Establece los valores, activando la primera pestania 
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(2, 'Buscar', 0);
     //Obtiene la lista completa de registros (los muestra en la pestaña Listar)
     this.listar();
   }
