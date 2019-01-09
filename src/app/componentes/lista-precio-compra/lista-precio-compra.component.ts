@@ -74,9 +74,9 @@ export class ListaPrecioCompraComponent implements OnInit {
     })
     this.autocompletadoPorId.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.listaPrecioCompraService.listarPorListaPrecio(data).subscribe(res => {
+        this.listaPrecioService.listarPorAlias(data).subscribe(res => {
           this.resultados = res.json();
-          console.log(res.json());
+          
         })
       }
     })
@@ -192,29 +192,44 @@ export class ListaPrecioCompraComponent implements OnInit {
     case 1:
       this.obtenerSiguienteId();
       this.mostrarTabla=true;
+      setTimeout(function() {
+        document.getElementById('idListaPrecio').focus();
+      }, 20);
       this.establecerAccionTabla(true);
       this.establecerValoresPestania(nombre, true, false, true, false, false, 'idNombre');
       this.limpiarArray();
       break;
     case 2:
       this.mostrarTabla=true;
+      setTimeout(function() {
+        document.getElementById('idListaPrecioId').focus();
+      }, 20);
       this.establecerAccionTabla(false);
       this.establecerValoresPestania(nombre, false, true, false, true, true, 'idAutocompletado');
       this.limpiarArray();
       break;
     case 3:
       this.mostrarTabla=true;
+      setTimeout(function() {
+        document.getElementById('idListaPrecioId').focus();
+      }, 20);
       this.establecerAccionTabla(true);
       this.establecerValoresPestania(nombre, false, false, true, true, true, 'idAutocompletado');
       this.limpiarArray();
       break;
     case 4:
       this.mostrarTabla=false;
+      setTimeout(function() {
+        document.getElementById('idListaPrecioId').focus();
+      }, 20);
       this.establecerValoresPestania(nombre, false, true, true, true, true, 'idAutocompletado');
       this.limpiarArray();
       break;
     case 5:
       this.mostrarTabla=true;
+      setTimeout(function() {
+        document.getElementById('idAutocompletado').focus();
+      }, 20);
       this.establecerAccionTabla(false);
       this.establecerValoresPestania(nombre, false, false, true, true, true,'idAutocompletado');
       this.limpiarArray();
@@ -279,8 +294,9 @@ private establecerAccionTabla(estado){
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.formulario.reset();
+          this.autocompletado.enable();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idListaPrecio').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.limpiarArray();
@@ -289,8 +305,8 @@ private establecerAccionTabla(estado){
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
-          document.getElementById("idPrecio").classList.add('is-invalid');
-          document.getElementById("idPrecio").focus();
+          document.getElementById("idListaPrecio").classList.add('is-invalid');
+          document.getElementById("idListaPrecio").focus();
           this.toastr.error(respuesta.mensaje);
         }
       }
@@ -304,8 +320,9 @@ private establecerAccionTabla(estado){
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
+          this.autocompletadoPorId.enable();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idListaPrecioId').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.limpiarArray();
@@ -314,9 +331,9 @@ private establecerAccionTabla(estado){
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
-          document.getElementById("labelPecio").classList.add('label-error');
-          document.getElementById("idPrecio").classList.add('is-invalid');
-          document.getElementById("idPrecio").focus();
+          document.getElementById("idListaPrecioId").classList.add('label-error');
+          document.getElementById("idListaPrecioId").classList.add('is-invalid');
+          document.getElementById("idListaPrecioId").focus();
           this.toastr.error(respuesta.mensaje);
         }
       }
@@ -338,6 +355,7 @@ private establecerAccionTabla(estado){
     this.formulario.reset();
     // this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
+    this.autocompletadoPorId.setValue(undefined);
     this.buscarTipoFormulario.setValue(undefined);
     this.resultados = [];
   }

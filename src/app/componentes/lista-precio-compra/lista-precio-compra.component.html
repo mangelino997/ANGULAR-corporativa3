@@ -119,7 +119,7 @@
                     type="text" matInput [formControl]="autocompletadoListarPorId" [matAutocomplete]="auto" autocomplete="off">
                   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                     <mat-option *ngFor="let item of resultados" [value]="item"
-                      (onSelectionChange)="cambioAutocompletadoListarPorId(item)">
+                      (onSelectionChange)="cambioAutocompletadoPorId(item)">
                       {{item.nombre}}
                     </mat-option>
                   </mat-autocomplete>

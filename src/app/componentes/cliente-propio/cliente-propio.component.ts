@@ -492,7 +492,13 @@ public añadirAutorizado(a){
 public listarAutorizadosPorCliente(a){
   this.autorizadoSeleccionado=a;
 }
-
+//
+public keyDownFunction(event, a) {
+  console.log(event.keyCode);
+  if(event.keyCode == "13") {
+    this.addAutorizados(a);
+  }
+}
 
 //Reestablece los campos formularios
 private reestablecerFormulario(id) {

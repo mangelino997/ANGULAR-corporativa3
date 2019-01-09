@@ -184,6 +184,10 @@ export class CompraComponent implements OnInit {
     this.formulario.get('fecha').setValue(dateDay);
     this.formularioConsulta.get('fecha').setValue(dateDay);
     this.formulario.get('increDesc').setValue(0);
+    setTimeout(function() {
+      document.getElementById('idFecha').focus();
+    }, 20);
+    
   }
 
 //declaramos los metodos para utilizar el Modal/Dialog
@@ -332,6 +336,7 @@ public buscar(){
   console.log(this.formularioConsulta.value);
   this.facturaCompraService.listarPorFiltros(this.formularioConsulta.value).subscribe(res =>{
     this.listaCompleta= res.json();
+    console.log(this.listaCompleta);
   });
 }
 //Reestablece los campos formularios

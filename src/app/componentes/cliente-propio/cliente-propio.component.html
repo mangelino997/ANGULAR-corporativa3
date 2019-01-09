@@ -153,7 +153,7 @@
                   <input id="idAutocompletadoAut" class="form-control form-control-sm color-busqueda"  #inputAutorizado
                     type="text" matInput [formControl]="autocompletadoAutorizados" [matAutocomplete]="autoAut" autocomplete="off" [readonly]="soloLectura">
                   <mat-autocomplete #autoAut="matAutocomplete" [displayWith]="displayFn.bind(this)" >
-                    <mat-option *ngFor="let a of listaAutorizados" [value]="a" (click)="addAutorizados(a)">
+                    <mat-option *ngFor="let a of listaAutorizados" [value]="a"  (onSelectionChange)="addAutorizados(a)">
                       {{a.alias}}
                     </mat-option>
                   </mat-autocomplete>

@@ -92,7 +92,7 @@
                             autocomplete="off" >
                           <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
                             <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)">
-                              {{tipoFormulario.alias}}
+                              {{tipoFormulario.nombre}}
                             </mat-option>
                           </mat-autocomplete>
                         </td>
