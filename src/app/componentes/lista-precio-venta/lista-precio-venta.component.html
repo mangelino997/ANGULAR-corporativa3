@@ -13,31 +13,31 @@
   </div>
   </div>
 <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-  <div class="col-md-12 text-center">
+  <div class="col-md-10 text-center">
     <h5>{{pestaniaActual}} Lista Precio Venta</h5>
     <form [formGroup]="formulario" class="contenedor">
       <div class="row ">
           <div class="col-md-4">
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
                 <label for="idListaPrecio" class="labelListaPrecio">Lista de Precio</label>
-                <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                <input id="idListaPrecio" class="form-control form-control-sm color-busqueda"
                   type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" *ngIf="listaPrecioDisable">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                   <mat-option *ngFor="let item of resultados" [value]="item"
                     (onSelectionChange)="cambioAutocompletado(item.alias)">
-                    {{item.alias}}
+                    {{item.nombre}}
                   </mat-option>
                 </mat-autocomplete>
             </div>
             <!--el siguiente bloque se activa solo en consultar, actualizar, eliminar y listar-->
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletadoPorId">
-              <label for="idListaPrecio" class="labelListaPrecio">Lista de Precio Por Id</label>
-              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+              <label for="idListaPrecioId" class="labelListaPrecio">Lista de Precio Por Id</label>
+              <input id="idListaPrecioId" class="form-control form-control-sm color-busqueda"
+                type="text" matInput [formControl]="autocompletadoPorId" [matAutocomplete]="auto" autocomplete="off">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="cambioAutocompletadoPorId(item)">
-                  {{item.alias}}
+                  {{item.nombre}}
                 </mat-option>
               </mat-autocomplete>
           </div>
@@ -51,8 +51,8 @@
             type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
             autocomplete="off"  required>
             <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
-              <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoListaPrecioCompra(tipoFormulario, i)">
-                {{tipoFormulario.alias}}
+              <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoListaPrecioVenta(tipoFormulario, i)">
+                {{tipoFormulario.nombre}}
               </mat-option>
             </mat-autocomplete>
           </div>
@@ -70,7 +70,7 @@
         </div>
       </div><br>
       <div class="row " *ngIf="mostrarTabla">
-        <div class="col-md-12">
+        <div class="col-md-10">
             <table class="table table-bordered table-striped table-sm">
                 <thead>
                   <tr>
@@ -109,7 +109,7 @@
   </div>
 </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-      <div class="col-md-12">
+      <div class="col-md-10">
         <div class="row">
           <div class="col-md-4">
               <div class="form-group has-float-label " *ngIf="mostrarAutocompletadoPorId">

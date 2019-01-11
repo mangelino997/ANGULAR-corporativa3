@@ -3,8 +3,8 @@
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>COMPRA</a>
-        <a mat-tab-link (click)="indiceSeleccionado=1" [active]="activeLink== 1" >Nueva</a>
-        <a mat-tab-link (click)="indiceSeleccionado=2" [active]="activeLink== 2" >Consultar</a>
+        <a mat-tab-link (click)="indiceSeleccionado=1&&activeLink= 1" [active]="activeLink== 1" >Nueva</a>
+        <a mat-tab-link (click)="indiceSeleccionado=2&&activeLink= 2" [active]="activeLink== 2" >Consultar</a>
       </nav>
     </div>
   </div>

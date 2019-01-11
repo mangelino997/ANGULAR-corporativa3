@@ -27,6 +27,8 @@ export class ListaPrecioVentaComponent implements OnInit {
   public activeLink: any;
   // define el autocompletado como un formControl
   public autocompletado: FormControl=new FormControl();
+  // define el autocompletado como un formControl
+  public autocompletadoPorId: FormControl=new FormControl();
   //Define el form control para las busquedas vendedor
   public buscarTipoFormulario:FormControl = new FormControl();
   //Define la pestania actual seleccionada
@@ -60,11 +62,20 @@ export class ListaPrecioVentaComponent implements OnInit {
   
   //declaramos en el constructor las clases de las cuales usaremos sus servicios/metodos
   constructor(private formBuilder: FormBuilder, private tiposFormularios: TipoFormularioService ,private subopcionPestaniaServicio: SubopcionPestaniaService, private toastr: ToastrService, private listaPrecioVentaService: ListaPrecioVentaService, private listaPrecioService: ListaPrecioService) {
+    //Autocompletado que se utiliza en la pestaña Agregar
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.listaPrecioService.listarPorAlias(data).subscribe(res => {
           this.resultados = res.json();
           console.log(res.json());
+        })
+      }
+    })
+    //Autocompletado que se utiliza en las demás Pestañas
+    this.autocompletadoPorId.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.listaPrecioService.listarPorAlias(data).subscribe(res => {
+          this.resultados = res.json();
         })
       }
     })
@@ -99,10 +110,6 @@ export class ListaPrecioVentaComponent implements OnInit {
     this.listarTiposFormularios();
     //Cargamos la listacompleta
     this.listar();
-  }
-  //mostrar datos formulario
-  public mostrar(){
-    console.log(this.formulario.value);
   }
   //Establece el formulario al seleccionar elemento del autocompletado (se ejecuta en la pestaña agregar)
   public cambioAutocompletado(elemento) {
@@ -158,27 +165,42 @@ export class ListaPrecioVentaComponent implements OnInit {
       this.mostrarTabla=true;
       this.establecerAccionTabla(true);
       this.establecerValoresPestania(nombre, true, false, true, false, false, 'idNombre');
+      setTimeout(function() {
+        document.getElementById('idListaPrecio').focus();
+      }, 20);
       this.limpiarArray();
       break;
     case 2:
       this.mostrarTabla=true;
       this.establecerAccionTabla(false);
       this.establecerValoresPestania(nombre, false, true, false, true, true, 'idAutocompletado');
+      setTimeout(function() {
+        document.getElementById('idListaPrecioId').focus();
+      }, 20);
       this.limpiarArray();
       break;
     case 3:
       this.mostrarTabla=true;
       this.establecerAccionTabla(true);
       this.establecerValoresPestania(nombre, false, false, true, true, true, 'idAutocompletado');
+      setTimeout(function() {
+        document.getElementById('idListaPrecioId').focus();
+      }, 20);
       this.limpiarArray();
       break;
     case 4:
       this.mostrarTabla=false;
       this.establecerValoresPestania(nombre, false, true, true, true, true, 'idAutocompletado');
+      setTimeout(function() {
+        document.getElementById('idListaPrecioId').focus();
+      }, 20);
       this.limpiarArray();
       break;
     case 5:
       this.mostrarTabla=true;
+      setTimeout(function() {
+        document.getElementById('idAutocompletado').focus();
+      }, 20);
       this.establecerAccionTabla(false);
       this.establecerValoresPestania(nombre, false, false, true, true, true,'idAutocompletado');
       this.limpiarArray();
@@ -244,7 +266,7 @@ private establecerAccionTabla(estado){
           this.reestablecerFormulario(respuesta.id);
           this.formulario.reset();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idListaPrecio').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.limpiarArray();
@@ -253,8 +275,8 @@ private establecerAccionTabla(estado){
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
-          document.getElementById("idPrecio").classList.add('is-invalid');
-          document.getElementById("idPrecio").focus();
+          document.getElementById("idListaPrecio").classList.add('is-invalid');
+          document.getElementById("idListaPrecio").focus();
           this.toastr.error(respuesta.mensaje);
         }
       }
@@ -268,8 +290,9 @@ private establecerAccionTabla(estado){
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
+          this.autocompletadoPorId.enable();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idListaPrecioId').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.limpiarArray();
@@ -278,9 +301,9 @@ private establecerAccionTabla(estado){
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
-          document.getElementById("labelPecio").classList.add('label-error');
-          document.getElementById("idPrecio").classList.add('is-invalid');
-          document.getElementById("idPrecio").focus();
+          document.getElementById("idListaPrecioId").classList.add('label-error');
+          document.getElementById("idListaPrecioId").classList.add('is-invalid');
+          document.getElementById("idListaPrecioId").focus();
           this.toastr.error(respuesta.mensaje);
         }
       }
@@ -300,9 +323,12 @@ private establecerAccionTabla(estado){
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
-    // this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
+    this.autocompletadoPorId.setValue(undefined);
+    this.buscarTipoFormulario.setValue(undefined);
     this.resultados = [];
+    this.autocompletado.enable();
+    this.autocompletadoPorId.enable();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -341,13 +367,25 @@ private establecerAccionTabla(estado){
    }
   //Agrega una fila a la segunda tabla
   public agregarElemento() {
+    if(this.autocompletadoPorId.value!= undefined){
+      this.formulario.get('listaPrecio').setValue(this.autocompletadoPorId.value);
+    }
+    if(this.autocompletado.value!= undefined){
+      this.formulario.get('listaPrecio').setValue(this.autocompletado.value);
+    }
     this.listaAgregar.push(this.formulario.value);
     if(this.listaAgregar.length<1){
-      this.listaPrecioDisable= true;
+      this.autocompletado.enable();
     }
     else{
-      this.listaPrecioDisable= false;
+      this.autocompletado.disable();
     }
+    this.obtenerSiguienteId();
+    this.buscarTipoFormulario.setValue(undefined);
+    this.formulario.reset();
+    setTimeout(function() {
+      document.getElementById('idTipoFormulario').focus();
+    }, 20);
   }
   //Elimina una fila de la segunda tabla
   public eliminarElemento(indice) {
@@ -360,7 +398,25 @@ private establecerAccionTabla(estado){
     }
   }
   //Manejo de cambio de autocompletado de tipo formulario
-  public cambioAutocompletadoListaPrecioCompra(elemento) {
+  public cambioAutocompletadoListaPrecioVenta(elemento) {
+    var bandera=false;
+    for(let i=0; i<this.listaAgregar.length;i++){
+      if(this.listaAgregar[i].tipoFormulario.id==elemento.id){
+        bandera= true;
+        this.toastr.error("El Tipo de Formulario elegido ya fue seleccionado anteriormente");
+      }
+      else{
+        bandera=false;
+      }
+      if(bandera== true){
+        (<HTMLInputElement>document.getElementById("idBoton")).disabled=true;
+        setTimeout(function() {
+          document.getElementById('idTipoFormulario').focus();
+        }, 20);
+      }
+      if(bandera== false)
+      (<HTMLInputElement>document.getElementById("idBoton")).disabled=false;
+    }
     this.formulario.get('listaPrecio').setValue(this.autocompletado.value);
     this.formulario.get('tipoFormulario').setValue(elemento);
   }

@@ -68,7 +68,6 @@ export class ListaPrecioCompraComponent implements OnInit {
       if(typeof data == 'string') {
         this.listaPrecioService.listarPorAlias(data).subscribe(res => {
           this.resultados = res.json();
-          console.log(res.json());
         })
       }
     })
@@ -76,7 +75,6 @@ export class ListaPrecioCompraComponent implements OnInit {
       if(typeof data == 'string') {
         this.listaPrecioService.listarPorAlias(data).subscribe(res => {
           this.resultados = res.json();
-          
         })
       }
     })
@@ -84,23 +82,18 @@ export class ListaPrecioCompraComponent implements OnInit {
       if(typeof data == 'string') {
         this.listaPrecioService.listarPorAlias(data).subscribe(res => {
           this.resultados = res.json();
-          console.log(res.json());
-
         })
       }
     })
-    
     //Autocompletado - Buscar por Tipo de formulario
     this.buscarTipoFormulario.valueChanges.subscribe(data => {
         if(typeof data == 'string') {
           this.tiposFormularios.listarPorNombre(data).subscribe(response =>{
             this.resultadosTiposFormularios = response.json();
-            console.log(response.json());
           })
         }
     })
    }
-
   ngOnInit() {
     //Define los campos para validaciones
     this.formulario = this.formBuilder.group({
@@ -123,17 +116,12 @@ export class ListaPrecioCompraComponent implements OnInit {
     this.listar();
     
   }
-  //mostrar datos formulario
-  public mostrar(){
-    console.log(this.formulario.value);
-  }
   //Establece el formulario al seleccionar elemento del autocompletado (se ejecuta en la pestaña agregar)
   public cambioAutocompletado(elemento) {
     this.formulario.patchValue(elemento);
   }
   //Establece el formulario al seleccionar elemento del autocompletado por Id listaPrecio (se ejecuta en las demás pestañas menos en "Agregar")
   public cambioAutocompletadoPorId(elemento) {
-    // console.log(elemento);
     this.listaPrecioCompraService.listarPorListaPrecio(elemento.id).subscribe(
       res => {
         this.listaAgregar=res.json();
@@ -144,9 +132,8 @@ export class ListaPrecioCompraComponent implements OnInit {
     );
     this.formulario.patchValue(elemento);
   }
-  
+  //Se ejecuta en pestaña Listar
   public cambioAutocompletadoListarPorId(elemento) {
-    // console.log(elemento);
     this.listaPrecioCompraService.listarPorListaPrecio(elemento.id).subscribe(
       res => {
         this.listaAgregar=res.json().value;
@@ -172,7 +159,6 @@ export class ListaPrecioCompraComponent implements OnInit {
     this.mostrarBoton = boton;
     this.mostrarTipoFormulario= mostrarTipoFormulario;
     this.mostrarAutocompletadoPorId= autocompletadoPorId;
-    this.reestablecerFormulario(undefined);
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -192,37 +178,37 @@ export class ListaPrecioCompraComponent implements OnInit {
     case 1:
       this.obtenerSiguienteId();
       this.mostrarTabla=true;
+      this.establecerAccionTabla(true);
+      this.establecerValoresPestania(nombre, true, false, true, false, false, 'idNombre');
       setTimeout(function() {
         document.getElementById('idListaPrecio').focus();
       }, 20);
-      this.establecerAccionTabla(true);
-      this.establecerValoresPestania(nombre, true, false, true, false, false, 'idNombre');
       this.limpiarArray();
       break;
     case 2:
       this.mostrarTabla=true;
+      this.establecerAccionTabla(false);
+      this.establecerValoresPestania(nombre, false, true, false, true, true, 'idAutocompletado');
       setTimeout(function() {
         document.getElementById('idListaPrecioId').focus();
       }, 20);
-      this.establecerAccionTabla(false);
-      this.establecerValoresPestania(nombre, false, true, false, true, true, 'idAutocompletado');
       this.limpiarArray();
       break;
     case 3:
       this.mostrarTabla=true;
+      this.establecerAccionTabla(true);
+      this.establecerValoresPestania(nombre, false, false, true, true, true, 'idAutocompletado');
       setTimeout(function() {
         document.getElementById('idListaPrecioId').focus();
       }, 20);
-      this.establecerAccionTabla(true);
-      this.establecerValoresPestania(nombre, false, false, true, true, true, 'idAutocompletado');
       this.limpiarArray();
       break;
     case 4:
       this.mostrarTabla=false;
+      this.establecerValoresPestania(nombre, false, true, true, true, true, 'idAutocompletado');
       setTimeout(function() {
         document.getElementById('idListaPrecioId').focus();
       }, 20);
-      this.establecerValoresPestania(nombre, false, true, true, true, true, 'idAutocompletado');
       this.limpiarArray();
       break;
     case 5:
@@ -274,7 +260,6 @@ private establecerAccionTabla(estado){
     this.listaPrecioCompraService.listar().subscribe(
       res => {
         this.listaCompleta=res.json();
-        console.log(this.listaCompleta);
       },
       err => {
         console.log(err);
@@ -287,7 +272,6 @@ private establecerAccionTabla(estado){
   }
   //Agrega un registro 
   private agregar(){
-    console.log(this.listaAgregar);
     this.listaPrecioCompraService.agregarLista(this.listaAgregar).subscribe(
       res => {
         var respuesta = res.json();
@@ -314,7 +298,6 @@ private establecerAccionTabla(estado){
   }
   //Actualiza un registro
   private actualizar(){
-    console.log(this.listaAgregar);
     this.listaPrecioCompraService.actualizarLista(this.listaAgregar).subscribe(
       res => {
         var respuesta = res.json();
@@ -343,21 +326,20 @@ private establecerAccionTabla(estado){
   private eliminar(){
     this.listaPrecioCompraService.agregar(this.formulario.get('id').value).subscribe(
       res => {
-        console.log(res);
       },
       err => {
-        console.log(err);
       }
     );
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
-    // this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.autocompletadoPorId.setValue(undefined);
     this.buscarTipoFormulario.setValue(undefined);
     this.resultados = [];
+    this.autocompletado.enable();
+    this.autocompletadoPorId.enable();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -396,6 +378,12 @@ private establecerAccionTabla(estado){
    }
   //Agrega una fila a la segunda tabla
   public agregarElemento() {
+    if(this.autocompletadoPorId.value!= undefined){
+      this.formulario.get('listaPrecio').setValue(this.autocompletadoPorId.value);
+    }
+    if(this.autocompletado.value!= undefined){
+      this.formulario.get('listaPrecio').setValue(this.autocompletado.value);
+    }
     this.listaAgregar.push(this.formulario.value);
     if(this.listaAgregar.length<1){
       this.autocompletado.enable();
@@ -403,6 +391,7 @@ private establecerAccionTabla(estado){
     else{
       this.autocompletado.disable();
     }
+    this.obtenerSiguienteId();
     this.buscarTipoFormulario.setValue(undefined);
     this.formulario.reset();
     setTimeout(function() {
@@ -426,6 +415,24 @@ private establecerAccionTabla(estado){
   }
   //Manejo de cambio de autocompletado de tipo formulario
   public cambioAutocompletadoListaPrecioCompra(elemento) {
+    var bandera=false;
+    for(let i=0; i<this.listaAgregar.length;i++){
+      if(this.listaAgregar[i].tipoFormulario.id==elemento.id){
+        bandera= true;
+        this.toastr.error("El Tipo de Formulario elegido ya fue seleccionado anteriormente");
+      }
+      else{
+        bandera=false;
+      }
+    if(bandera== true){
+      (<HTMLInputElement>document.getElementById("idBoton")).disabled=true;
+      setTimeout(function() {
+        document.getElementById('idTipoFormulario').focus();
+        }, 20);
+      }
+    if(bandera== false)
+      (<HTMLInputElement>document.getElementById("idBoton")).disabled=false;
+    }
     this.formulario.get('listaPrecio').setValue(this.autocompletado.value);
     this.formulario.get('tipoFormulario').setValue(elemento);
   }
@@ -434,10 +441,8 @@ private establecerAccionTabla(estado){
     this.tiposFormularios.listar().subscribe(
       res => {
         this.listaTiposFormularios=res.json();
-        console.log(this.listaTiposFormularios);
       },
       err => {
-        console.log(err);
       }
     );
   }

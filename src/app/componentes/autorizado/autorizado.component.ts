@@ -93,6 +93,7 @@ export class AutorizadoComponent implements OnInit {
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
+    this.autocompletado.reset();
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -109,10 +110,10 @@ export class AutorizadoComponent implements OnInit {
     this.resultados = [];
   }
   switch (id) {
-    case 1:
-      this.obtenerSiguienteId();
-      this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
-      break;
+    // case 1:
+    //   this.obtenerSiguienteId();
+    //   this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+    //   break;
     case 2:
       this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
       break;
@@ -128,10 +129,11 @@ export class AutorizadoComponent implements OnInit {
 }
 //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
 public accion(indice) {
+  console.log(this.indiceSeleccionado);
   switch (indice) {
-    case 1:
-      this.agregar();
-      break;
+    // case 1:
+    //   this.agregar();
+    //   break;
     case 3:
       this.actualizar();
       break;
@@ -191,6 +193,7 @@ public accion(indice) {
   }
   //Actualiza un registro
   private actualizar(){
+    console.log("entra");
     this.autorizadoService.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -215,7 +218,7 @@ public accion(indice) {
   }
   //Elimina un registro
   private eliminar(){
-    this.autorizadoService.agregar(this.formulario.get('id').value).subscribe(
+    this.autorizadoService.eliminar(this.formulario.get('id').value).subscribe(
       res => {
         console.log(res);
       },
@@ -239,13 +242,13 @@ public accion(indice) {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].pestania.nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[0].pestania.nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].pestania.nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[1].pestania.nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
