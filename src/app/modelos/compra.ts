@@ -9,12 +9,13 @@ export class Compra {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             id: new FormControl(),
-            version: new FormControl(),
-            numeracionDesde: new FormControl('', Validators.required),
-            numeracionHasta: new FormControl('', Validators.required),
-            montoTotal: new FormControl('', Validators.required),
-            tipoFormulario: new FormControl('', Validators.required),
-            facturaCompra: new FormControl('', Validators.required)
+            fecha: new FormControl('', Validators.required),
+            numero: new FormControl('', Validators.required),
+            monto: new FormControl('', Validators.required),
+            increDesc: new FormControl('', Validators.required),
+            modalidadPago: new FormControl('', Validators.required),
+            proveedor: new FormControl('', Validators.required),
+            formulariosCompra: new FormControl('', Validators.required),
         })
         
     }

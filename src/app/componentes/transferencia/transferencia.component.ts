@@ -119,9 +119,8 @@ export class TransferenciaComponent implements OnInit {
     this.listaAgregar.splice(indice, 1); 
   }
   //Manejo de cambio de autocompletado de tipo formulario
-  public cambioAutocompletadoTipoFormulario(elemento) {
-    this.formulariosTransferencia.get('tipoFormulario').setValue(elemento);
-    console.log(this.formulariosTransferencia);
+  public cambioAutocompletadoTipoFormulario() {
+    this.formulariosTransferencia.get('tipoFormulario').setValue(this.buscarTipoFormulario);
   }
   //calcula el importe recibiendo como parametro el tipo, si es 0 estamos en la pestaña "Transf de alm a mostrador"
   public calcularImporte(tipoPestaña){

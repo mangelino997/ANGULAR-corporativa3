@@ -128,7 +128,6 @@ export class CompraComponent implements OnInit {
         if(typeof data == 'string') {
           this.modalidadPagoService.listarPorAlias(data).subscribe(response =>{
             this.resultadosModalidadPago = response.json();
-            console.log(this.resultadosModalidadPago);
           })
         }
     })
@@ -138,7 +137,6 @@ export class CompraComponent implements OnInit {
         if(typeof data == 'string') {
           this.proveedorService.listarPorAlias(data).subscribe(response =>{
             this.resultadosProveedor = response.json();
-            console.log(this.resultadosProveedor);
           })
         }
     })
@@ -147,7 +145,6 @@ export class CompraComponent implements OnInit {
       if(typeof data == 'string') {
         this.tiposFormularios.listarPorNombre(data).subscribe(response =>{
           this.resultadosTiposFormularios = response.json();
-          console.log(response.json());
         })
       }
   })
@@ -216,6 +213,18 @@ private crearformulariosCompra(): FormGroup {
     })
   })
 }
+//verifica si el numero ingresado ya existe en la base de datos.
+public verificar(){
+  this.facturaCompraService.verificarFacturaExistentePorNumero(this.formulario.get('numero').value).subscribe(res=>{
+    if(res.json()==true){
+      this.toastr.error("El N° de Factura ingresado ya existe. Ingrese uno nuevo!");
+      this.formulario.get('numero').setValue("");
+      setTimeout(function() {
+        document.getElementById('idNumeroFactura').focus();
+      }, 20);
+    }
+  });
+}
 //Formatea el valor del autocompletado
 public displayFn(elemento) {
   if(elemento != undefined) {
@@ -230,8 +239,6 @@ public cambioAutocompletadoProveedor(elemento) {
   this.formulario.patchValue(elemento);
   this.formulario.get('proveedor.id').setValue(elemento.id);
   this.idListaPrecio=elemento.listaPrecio.id; 
-  console.log("id lista porecio del proveedor "+this.idListaPrecio);
-  console.log(this.formulario.get('proveedor.id').value);
 }
 //Establece el valor del titulo en el campo "Incremento/Descuento ($)"
 public cambioIncrementoDescuento(elemento){
@@ -243,7 +250,6 @@ public cambioIncrementoDescuento(elemento){
     this.tipoModalidadPago= "Incremento";
   }
   this.formulario.get('modalidadPago.id').setValue(elemento.id);
-  console.log(this.formulario.get('modalidadPago.id').value);
 }
 //Agrega una fila a la segunda tabla
 public agregarElemento() {
@@ -256,27 +262,22 @@ public eliminarElemento(indice) {
   this.listaAgregar.removeAt(indice);
 }
 //Manejo de cambio de autocompletado de tipo formulario
-public cambioAutocompletadoTipoFormulario(elemento, indice) {
-  this.formulario.get('tipoFormulario').setValue(elemento);
-  (<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('tipoFormulario.id').setValue(elemento.id);
+public cambioAutocompletadoTipoFormulario(indice) {
+  this.formulario.get('tipoFormulario').setValue(this.buscarTipoFormulario.value.id);
+  (<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('tipoFormulario.id').setValue(this.buscarTipoFormulario.value.id);
   //obtenemos el precio de ListaPrecioCompra al tener los id (idListaPrecio, idTipoDeFormulario) necesarios para la consulta
-  this.listaPrecioCompraService.obtenerPorListaPrecioYTipoFormulario(this.idListaPrecio, elemento.id).subscribe(response =>{
+  this.listaPrecioCompraService.obtenerPorListaPrecioYTipoFormulario(this.idListaPrecio, this.buscarTipoFormulario.value.id).subscribe(response =>{
     (<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('precioUnitario').setValue(response.json().precio);
-    console.log((<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('precioUnitario').value);
-    // this.precioUnitario.setValue(response.json().precio);
   })
 }
 //Evento que calcula la "cantidad" como diferencia entre N° Hasta y N° Desde mas uno
 public calcularCantidad(indice){
-  console.log(this.formulario.value);
   let calculoCantidad: number= (<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('numeracionHasta').value-(<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('numeracionDesde').value+1;
   (<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('cantidad').setValue(calculoCantidad);
   let calculoMontoTotal=calculoCantidad*(<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('precioUnitario').value;
   (<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('montoTotal').setValue(calculoMontoTotal);
   this.montoPrecioFactura=this.montoPrecioFactura+calculoMontoTotal;
   this.formulario.get('monto').setValue(this.montoPrecioFactura);
-  console.log(this.montoPrecioFactura);
-  console.log(this.formulario.value);
 }
 //Aplica descuento o incremento dependiendo el tipo de modalidad de Pago seleccionado
 public aplicarDescuentoIncremento(){
@@ -287,7 +288,6 @@ public aplicarDescuentoIncremento(){
   else{
     this.formulario.get('monto').setValue(this.formulario.get('monto').value+this.formulario.get('increDesc').value);
   }
-  console.log(this.formulario.value)
 }
 //Agrega un registro 
 public agregar(){
@@ -296,7 +296,6 @@ public agregar(){
   if(this.formulario.get('increDesc').value==null){
     this.formulario.get('increDesc').setValue(0);
   }
-  console.log(this.formulario.value);
   this.facturaCompraService.agregar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
@@ -325,26 +324,32 @@ public buscar(){
   }else{
     this.formularioConsulta.get('proveedor').setValue(this.idProveedorConsultar.value);
   }
-
   if(this.idModalidadPagoConsultar.value==""){
     this.formularioConsulta.get('modalidadPago').setValue(null);
   }else{
     this.formularioConsulta.get('modalidadPago').setValue(this.idModalidadPagoConsultar.value);
   }
-  // this.formularioConsulta.get('proveedor').setValue(this.idProveedorConsultar.value);
-  // this.formularioConsulta.get('modalidadPago').setValue(this.idModalidadPagoConsultar.value);
-  console.log(this.formularioConsulta.value);
   this.facturaCompraService.listarPorFiltros(this.formularioConsulta.value).subscribe(res =>{
     this.listaCompleta= res.json();
-    console.log(this.listaCompleta);
   });
 }
 //Reestablece los campos formularios
 private reestablecerFormulario(id) {
   this.formulario.reset();
-  // this.formulario.get('id').setValue(id);
+  this.formularioConsulta.reset();
+  var dateDay = new Date().toISOString().substring(0,10);
+  this.formulario.get('fecha').setValue(dateDay);
+  this.formularioConsulta.get('fecha').setValue(dateDay);
+  setTimeout(function() {
+    document.getElementById('idFecha').focus();
+  }, 20);
+  this.idModalidadPago.setValue(null);
+  this.idProveedor.setValue(null);
+  this.tipoFactura.setValue(null);
+  this.buscarTipoFormulario.setValue(null);
   this.autocompletado.setValue(undefined);
   this.resultados = [];
+  this.tipoModalidadPago=null;
   }
 }
 
@@ -359,7 +364,6 @@ export class FacturasModal{
   constructor(public dialogRef: MatDialogRef<FacturasModal>, @Inject(MAT_DIALOG_DATA) public data) {}
   ngOnInit() {
     this.listaCompletaDeFormularios=this.data.formularios;
-    console.log(this.listaCompletaDeFormularios);
   }
   onNoClick(): void {
     this.dialogRef.close();

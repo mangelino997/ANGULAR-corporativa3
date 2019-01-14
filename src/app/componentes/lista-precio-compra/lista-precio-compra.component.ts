@@ -166,6 +166,9 @@ export class ListaPrecioCompraComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.listar();
+    this.reestablecerFormulario(undefined);
+    
+
     /*
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
@@ -334,12 +337,15 @@ private establecerAccionTabla(estado){
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.autocompletado.enable();
+    this.autocompletadoPorId.enable();
     this.autocompletado.setValue(undefined);
     this.autocompletadoPorId.setValue(undefined);
     this.buscarTipoFormulario.setValue(undefined);
     this.resultados = [];
-    this.autocompletado.enable();
-    this.autocompletadoPorId.enable();
+    this.autocompletado.reset();
+    this.autocompletadoPorId.reset();
+    this.buscarTipoFormulario.reset();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -410,27 +416,31 @@ private establecerAccionTabla(estado){
     this.buscarTipoFormulario.setValue(undefined);
     this.formulario.reset();
     setTimeout(function() {
-      document.getElementById('idTipoFormulario').focus();
+      document.getElementById('idListaPrecio').focus();
     }, 20);
   }
   //Manejo de cambio de autocompletado de tipo formulario
   public cambioAutocompletadoListaPrecioCompra(elemento) {
     var bandera=false;
     for(let i=0; i<this.listaAgregar.length;i++){
-      if(this.listaAgregar[i].tipoFormulario.id==elemento.id){
-        bandera= true;
-        this.toastr.error("El Tipo de Formulario elegido ya fue seleccionado anteriormente");
+        if(this.listaAgregar[i].tipoFormulario.id==elemento.id){
+          bandera= true;
+          this.toastr.error("El Tipo de Formulario elegido ya fue seleccionado anteriormente");
+          break;
+        }
+        else{
+          bandera=false;
+        }
       }
-      else{
-        bandera=false;
-      }
+    
     if(bandera== true){
       (<HTMLInputElement>document.getElementById("idBoton")).disabled=true;
       setTimeout(function() {
         document.getElementById('idTipoFormulario').focus();
         }, 20);
+        this.buscarTipoFormulario.setValue(null);
       }
-    if(bandera== false)
+    else{
       (<HTMLInputElement>document.getElementById("idBoton")).disabled=false;
     }
     this.formulario.get('listaPrecio').setValue(this.autocompletado.value);

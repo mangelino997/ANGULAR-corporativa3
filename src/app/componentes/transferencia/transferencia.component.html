@@ -20,9 +20,9 @@
               <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="tipo"
               type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
               autocomplete="off" >
-              <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario)" (blur)="calcularImporte(0)">
-                  {{tipoFormulario.alias}}
+              <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletadoTipoFormulario()">
+                <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario"  (blur)="calcularImporte(0)">
+                  {{tipoFormulario.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>
