@@ -275,8 +275,6 @@ public calcularCantidad(indice){
   (<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('montoTotal').setValue(calculoMontoTotal);
   this.montoPrecioFactura=this.montoPrecioFactura+calculoMontoTotal;
   this.formulario.get('monto').setValue(this.montoPrecioFactura);
-  console.log(this.montoPrecioFactura);
-  console.log(this.formulario.value);
 }
 //Aplica descuento o incremento dependiendo el tipo de modalidad de Pago seleccionado
 public aplicarDescuentoIncremento(){
@@ -287,7 +285,6 @@ public aplicarDescuentoIncremento(){
   else{
     this.formulario.get('monto').setValue(this.formulario.get('monto').value+this.formulario.get('increDesc').value);
   }
-  console.log(this.formulario.value)
 }
 //Agrega un registro 
 public agregar(){
@@ -296,7 +293,6 @@ public agregar(){
   if(this.formulario.get('increDesc').value==null){
     this.formulario.get('increDesc').setValue(0);
   }
-  console.log(this.formulario.value);
   this.facturaCompraService.agregar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
@@ -331,12 +327,8 @@ public buscar(){
   }else{
     this.formularioConsulta.get('modalidadPago').setValue(this.idModalidadPagoConsultar.value);
   }
-  // this.formularioConsulta.get('proveedor').setValue(this.idProveedorConsultar.value);
-  // this.formularioConsulta.get('modalidadPago').setValue(this.idModalidadPagoConsultar.value);
-  console.log(this.formularioConsulta.value);
   this.facturaCompraService.listarPorFiltros(this.formularioConsulta.value).subscribe(res =>{
     this.listaCompleta= res.json();
-    console.log(this.listaCompleta);
   });
 }
 //Reestablece los campos formularios
