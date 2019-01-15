@@ -372,10 +372,16 @@ public cambioAutocompletadoTipoFormulario(indice) {
   (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('listaPrecio.id').setValue(this.idListaPrecio);
   (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue(this.buscarTipoFormulario.value.id);
   //obtenemos el precio de ListaPrecioVenta al tener los id (idListaPrecio, idTipoDeFormulario) necesarios para la consulta
-  this.listaPrecioVentaService.obtenerPorListaPrecioYTipoFormulario(this.idListaPrecio, this.buscarTipoFormulario.value.id).subscribe(response =>{
-    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(response.json().precio);
-    console.log((<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').value);
-  })
+  this.listaPrecioVentaService.obtenerPorListaPrecioYTipoFormulario(this.idListaPrecio, this.buscarTipoFormulario.value.id).subscribe(
+    response =>{
+      try{
+      (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(response.json().precio);
+  }
+  catch(e){
+    document.getElementById("idTipoFormulario").focus();
+    this.toastr.error("No hay asignado un precio para el Tipo de Formulario");
+    }
+  });
 }
 //Evento que calcula la "cantidad" como diferencia entre N° Hasta y N° Desde mas uno
 public calcularCantidad(indice){
@@ -414,13 +420,16 @@ public calcularCantidad(indice){
       }catch(e){
         this.toastr.error("No existe este tipo de Formulario Venta");
         (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('listaPrecio.id').setValue(null);
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue("");
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue("");
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue(null);
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(null);
         (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').enable();
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').setValue(0);
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(0);
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('montoTotal').setValue(0);
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').setValue(null);
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(null);
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('montoTotal').setValue(null);
         (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('autoTipoFormulario').enable();
+        setTimeout(function() {
+          document.getElementById('idTipoFormulario').focus();
+        }, 20);
       }
   })
 }

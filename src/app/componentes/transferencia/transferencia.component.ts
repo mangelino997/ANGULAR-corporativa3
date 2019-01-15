@@ -120,17 +120,43 @@ export class TransferenciaComponent implements OnInit {
   }
   //Manejo de cambio de autocompletado de tipo formulario
   public cambioAutocompletadoTipoFormulario() {
-    this.formulariosTransferencia.get('tipoFormulario').setValue(this.buscarTipoFormulario);
+    console.log(this.listaAgregar);
+    console.log(this.listaAgregar[0].tipoFormulario.id);
+
+    for(let i=0; i<this.listaAgregar.length; i++){ // controlo que el formulario seleccionado no haya sido cargado anteriormente
+      if(this.buscarTipoFormulario.value.id==this.listaAgregar[i].tipoFormulario.id){
+        (<HTMLInputElement>document.getElementById("idBotonAgregar")).disabled=true;
+        this.cantidad.disable();
+        this.importe.disable();
+        this.toastr.error("Seleccione otro Tipo de Formulario, el seleccionado ya fue cargado anteriormente");
+      }else{
+        (<HTMLInputElement>document.getElementById("idBotonAgregar")).disabled=false;
+        this.cantidad.enable();
+        this.importe.enable();
+      }
+    }
   }
   //calcula el importe recibiendo como parametro el tipo, si es 0 estamos en la pestaña "Transf de alm a mostrador"
   public calcularImporte(tipoPestaña){
+    console.log(this.buscarTipoFormulario.value);
+    this.formulariosTransferencia.get('tipoFormulario').setValue(this.buscarTipoFormulario.value);
+    console.log(this.formulariosTransferencia.value);
+    console.log(this.cantidad.value);
+
     if(this.formulariosTransferencia.get('tipoFormulario.id').value!=null&& this.cantidad.value!=null){
       this.formulariosTransferencia.get('cantidad').setValue(this.cantidad.value);
       //obtenemos el importe (lo calcula el servidor al pasarle como parametros el idTipoFormulario, cantidad y tipo)
       this.listaPrecioCompraService.obtenerPorTipoFormularioYCantidadYTipo(this.formulariosTransferencia.get('tipoFormulario.id').value, this.cantidad.value, tipoPestaña).subscribe(response =>{
+        try{
         this.importe.setValue(response.json());
         this.formulariosTransferencia.get('monto').setValue(this.importe.value);
         console.log(this.formulariosTransferencia.value);
+        }catch(e){
+          this.buscarTipoFormulario.reset();
+          this.cantidad.reset();
+          document.getElementById("idTipoFormulario").focus();
+          this.toastr.error("Seleccione otro Tipo de Formulario");
+        }
       });
       if(tipoPestaña==0){
         this.formularioAlmacenService.listarNumeracionDesdeHasta(this.formulariosTransferencia.get('tipoFormulario.id').value, this.cantidad.value).subscribe(
@@ -201,9 +227,7 @@ export class TransferenciaComponent implements OnInit {
     else{
       this.importe.setValue(0);
       (<HTMLInputElement>document.getElementById("idBotonAgregar")).disabled=true;
-      
     }
-    
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -218,37 +242,60 @@ public agregar(tipo){
   this.formulario.get('tipo').setValue(tipo); //el 0 corresponde al tipo de Numeracion de "almacen a mostrador", el 1 de "mostrador a almacen"
   this.formulario.get('formulariosTransferencia').setValue(this.listaAgregar);// Agrego el array de formularios a transferir agregados
   console.log(this.formulario.value);
-  this.transferenciaService.agregar(this.formulario.value).subscribe(
-    res => {
-      var respuesta = res.json();
-      if(respuesta.codigo == 201) {
-        this.buscarTipoFormulario.reset();
-        this.cantidad.reset();
-        this.importe.reset();
-        this.formulario.reset();
-        this.reestablecerFormulario();
-        setTimeout(function() {
-          document.getElementById('idTipoFormulario').focus();
-        }, 20);
+  if(tipo==0){
+    this.transferenciaService.almacenarAMostrador(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        // if(respuesta.codigo == 201) {
+          this.reestablecerFormulario();
         this.toastr.success(respuesta.mensaje);
+        // }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("idTipoFormulario").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
       }
-    },
-    err => {
-      var respuesta = err.json();
-      if(respuesta.codigo == 11002) {
-        document.getElementById("idTipoFormulario").focus();
-        this.toastr.error(respuesta.mensaje);
+    );
+  }else{
+    this.transferenciaService.mostradorAAlmacen(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        // if(respuesta.codigo == 201) {
+          this.reestablecerFormulario();
+          this.toastr.success(respuesta.mensaje);
+        // }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("idTipoFormulario").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
       }
-    }
-  );
+    );
+  }
+  
 }
 //Reestablece los campos formularios
-private reestablecerFormulario() {
+public reestablecerFormulario() {
   this.formulario.reset();
-  // this.formulario.get('id').setValue(id);
   this.autocompletado.setValue(undefined);
   this.listaAgregar = [];
+  this.buscarTipoFormulario.reset();
+  this.cantidad.reset();
+  this.importe.reset();
+  setTimeout(function() {
+    document.getElementById('idTipoFormulario').focus();
+  }, 20);
 }
-
+//Establece valores al seleccionar una pestania
+public seleccionarPestania(id, nombre) {
+  this.indiceSeleccionado = id;
+  this.activeLink = nombre;
+  this.reestablecerFormulario();
+}
 
 }
