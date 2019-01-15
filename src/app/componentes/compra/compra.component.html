@@ -20,7 +20,7 @@
             <div class="col-md-3">
                 <div class="form-group has-float-label">
                 <label for="idFecha" class="labelFecha">Fecha</label>
-                <input id="idFecha" type="date" formControlName="fecha" class="form-control form-control-sm" #fecha>
+                <input id="idFecha" type="date" formControlName="fecha" class="form-control form-control-sm" >
                 </div>
             </div>
         </div>
@@ -28,16 +28,16 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNumeroFactura" class="labelNumeroFactura">N° de Factura</label>
-              <input id="idNumeroFactura" type="number" formControlName="numero" autocomplete="off" class="form-control form-control-sm">
+              <input id="idNumeroFactura" type="number" formControlName="numero" autocomplete="off" class="form-control form-control-sm" (blur)="verificar()">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label ">
-                <label for="idModalidadPago" class="labelModalidadPago">modalidad de Pago</label>
+                <label for="idModalidadPago" class="labelModalidadPago">Modalidad de Pago</label>
                 <input id="idModalidadPago" class="form-control form-control-sm color-busqueda"
                   type="text" matInput [formControl]="idModalidadPago" [matAutocomplete]="auto" autocomplete="off" >
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad" (click)="cambioIncrementoDescuento(modalidad)">
+                  <mat-option *ngFor="let modalidad of resultadosModalidadPago" [value]="modalidad" (onSelectionChange)="cambioIncrementoDescuento(modalidad)">
                     {{modalidad.alias}}
                   </mat-option>
                 </mat-autocomplete>
@@ -90,8 +90,8 @@
                           <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="tipoFormulario"
                             type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
                             autocomplete="off" >
-                          <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                            <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)">
+                          <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletadoTipoFormulario(i)">
+                            <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" >
                               {{tipoFormulario.nombre}}
                             </mat-option>
                           </mat-autocomplete>

@@ -39,8 +39,6 @@ export class ListaPrecioVentaComponent implements OnInit {
   public mostrarAutocompletadoPorId:boolean = null;
   //Define si el campo es de solo lectura
   public soloLectura:boolean = false;
-  //Define si el campo listaPrecio se deshabilita o no
-  public listaPrecioDisable:boolean = true;
   
   //Define si la tabla de datos se muestra o no
   public mostrarTabla:boolean = true;
@@ -151,6 +149,7 @@ export class ListaPrecioVentaComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.listar();
+    this.reestablecerFormulario(undefined);
     /*
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
@@ -323,12 +322,15 @@ private establecerAccionTabla(estado){
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.autocompletado.enable();
+    this.autocompletadoPorId.enable();
     this.autocompletado.setValue(undefined);
     this.autocompletadoPorId.setValue(undefined);
     this.buscarTipoFormulario.setValue(undefined);
     this.resultados = [];
-    this.autocompletado.enable();
-    this.autocompletadoPorId.enable();
+    this.autocompletado.reset();
+    this.autocompletadoPorId.reset();
+    this.buscarTipoFormulario.reset();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -391,11 +393,16 @@ private establecerAccionTabla(estado){
   public eliminarElemento(indice) {
     this.listaAgregar.splice(indice, 1); //splice(indice, indice+1)
     if(this.listaAgregar.length<1){
-      this.listaPrecioDisable= true;
+      this.autocompletado.enable();
     }
     else{
-      this.listaPrecioDisable= false;
+      this.autocompletado.disable();
     }
+    this.buscarTipoFormulario.setValue(undefined);
+    this.formulario.reset();
+    setTimeout(function() {
+      document.getElementById('idListaPrecio').focus();
+    }, 20);
   }
   //Manejo de cambio de autocompletado de tipo formulario
   public cambioAutocompletadoListaPrecioVenta(elemento) {
@@ -404,17 +411,20 @@ private establecerAccionTabla(estado){
       if(this.listaAgregar[i].tipoFormulario.id==elemento.id){
         bandera= true;
         this.toastr.error("El Tipo de Formulario elegido ya fue seleccionado anteriormente");
+        break;
       }
       else{
         bandera=false;
       }
-      if(bandera== true){
-        (<HTMLInputElement>document.getElementById("idBoton")).disabled=true;
-        setTimeout(function() {
-          document.getElementById('idTipoFormulario').focus();
-        }, 20);
-      }
-      if(bandera== false)
+    }
+    if(bandera== true){
+      (<HTMLInputElement>document.getElementById("idBoton")).disabled=true;
+      setTimeout(function() {
+       document.getElementById('idTipoFormulario').focus();
+      }, 20);
+      this.buscarTipoFormulario.setValue(null);
+    }
+    if(bandera== false){
       (<HTMLInputElement>document.getElementById("idBoton")).disabled=false;
     }
     this.formulario.get('listaPrecio').setValue(this.autocompletado.value);

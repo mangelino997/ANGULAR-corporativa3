@@ -162,6 +162,9 @@ export class VentaComponent implements OnInit {
     });
     this.formulario.get('fecha').setValue(dateDay);
     this.formularioConsulta.get('fecha').setValue(dateDay);
+    setTimeout(function() {
+      document.getElementById('idFecha').focus();
+    }, 20);
     this.formulario.get('increDesc').setValue(0);
     //cargamos numero de recibo
     this.facturaVentaService.obtenerSiguienteNumero().subscribe(res=>{
@@ -201,7 +204,6 @@ export class VentaComponent implements OnInit {
       .subscribe(data => {
         if(typeof data == 'string') {
           this.modalidadPagoService.listarPorAlias(data).subscribe(response =>{
-            console.log(this.formulario.get('clientePropio').value);
             if(this.formulario.get('clientePropio').value==null){
               this.resultadosModalidadPago=[];
               this.resultadosModalidadPago = response.json();
@@ -364,17 +366,22 @@ public eliminarElemento(indice) {
   (<FormArray>this.formulario.get('formulariosVenta')).removeAt(indice);
 }
 //Manejo de cambio de autocompletado de tipo formulario
-public cambioAutocompletadoTipoFormulario(elemento, indice) {
-  console.log(elemento);
-  this.idTipoFormulario = elemento.id;
+public cambioAutocompletadoTipoFormulario(indice) {
+  this.idTipoFormulario = this.buscarTipoFormulario.value.id;
   console.log("id del tipo de formulario seleccionado: "+this.idTipoFormulario);
   (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('listaPrecio.id').setValue(this.idListaPrecio);
-  (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue(elemento.id);
+  (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue(this.buscarTipoFormulario.value.id);
   //obtenemos el precio de ListaPrecioVenta al tener los id (idListaPrecio, idTipoDeFormulario) necesarios para la consulta
-  this.listaPrecioVentaService.obtenerPorListaPrecioYTipoFormulario(this.idListaPrecio, elemento.id).subscribe(response =>{
-    (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(response.json().precio);
-    console.log((<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').value);
-  })
+  this.listaPrecioVentaService.obtenerPorListaPrecioYTipoFormulario(this.idListaPrecio, this.buscarTipoFormulario.value.id).subscribe(
+    response =>{
+      try{
+      (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(response.json().precio);
+  }
+  catch(e){
+    document.getElementById("idTipoFormulario").focus();
+    this.toastr.error("No hay asignado un precio para el Tipo de Formulario");
+    }
+  });
 }
 //Evento que calcula la "cantidad" como diferencia entre N° Hasta y N° Desde mas uno
 public calcularCantidad(indice){
@@ -413,13 +420,16 @@ public calcularCantidad(indice){
       }catch(e){
         this.toastr.error("No existe este tipo de Formulario Venta");
         (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('listaPrecio.id').setValue(null);
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue("");
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue("");
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('tipoFormulario.id').setValue(null);
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(null);
         (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').enable();
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').setValue(0);
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(0);
-        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('montoTotal').setValue(0);
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('cantidad').setValue(null);
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('precioUnitario').setValue(null);
+        (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('montoTotal').setValue(null);
         (<FormArray>this.formulario.get('formulariosVenta')).at(indice).get('autoTipoFormulario').enable();
+        setTimeout(function() {
+          document.getElementById('idTipoFormulario').focus();
+        }, 20);
       }
   })
 }
@@ -495,6 +505,21 @@ private reestablecerFormulario(id) {
   this.formulario.reset();
   this.autocompletado.setValue(undefined);
   this.resultados = [];
+  var dateDay = new Date().toISOString().substring(0,10);
+  this.formulario.get('fecha').setValue(dateDay);
+    this.formularioConsulta.get('fecha').setValue(dateDay);
+    setTimeout(function() {
+      document.getElementById('idFecha').focus();
+    }, 20);
+    this.formulario.get('increDesc').setValue(0);
+  this.listaPrecio.setValue(null);
+  this.buscarTipoFormulario.setValue(null);
+//cargamos numero de recibo
+  this.facturaVentaService.obtenerSiguienteNumero().subscribe(res=>{
+    this.formulario.get('numero').setValue(res.json().numeroCompleto);
+    this.formulario.get('numeroA').setValue(res.json().numeroCompleto.split('-')[0]);
+    this.formulario.get('numeroB').setValue(res.json().numeroCompleto.split('-')[1]);
+  });
   }
 //declaramos los metodos para utilizar el Modal/Dialog "ventana-pdf.html"
 public openDialogPdf(formulario, clientePropio, clienteEventual, nombreModalidadPago): void {
@@ -769,8 +794,6 @@ export class PdfModal{
       this.mostrarSaldoCuentaCorriente=false;
     }
     this.formulariosFila= this.formularioEnviado.formulariosVenta;
-    console.log(this.idModalidadPago);
-    console.log(this.formulariosFila.length);
     for(let i=0; i< this.formulariosFila.length; i++){
       this.formulariosFila[i].modalidadPago=modalidadPago; //creo el atributo "modalidadPago" 
     }

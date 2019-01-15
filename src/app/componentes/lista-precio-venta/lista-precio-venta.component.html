@@ -21,23 +21,23 @@
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletado">
                 <label for="idListaPrecio" class="labelListaPrecio">Lista de Precio</label>
                 <input id="idListaPrecio" class="form-control form-control-sm color-busqueda"
-                  type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" *ngIf="listaPrecioDisable">
+                  type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" >
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                   <mat-option *ngFor="let item of resultados" [value]="item"
                     (onSelectionChange)="cambioAutocompletado(item.alias)">
-                    {{item.nombre}}
+                    {{item.alias}}
                   </mat-option>
                 </mat-autocomplete>
             </div>
             <!--el siguiente bloque se activa solo en consultar, actualizar, eliminar y listar-->
             <div class="form-group has-float-label " *ngIf="mostrarAutocompletadoPorId">
-              <label for="idListaPrecioId" class="labelListaPrecio">Lista de Precio Por Id</label>
+              <label for="idListaPrecioId" class="labelListaPrecio">Lista de Precio </label>
               <input id="idListaPrecioId" class="form-control form-control-sm color-busqueda"
                 type="text" matInput [formControl]="autocompletadoPorId" [matAutocomplete]="auto" autocomplete="off">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="cambioAutocompletadoPorId(item)">
-                  {{item.nombre}}
+                  {{item.alias}}
                 </mat-option>
               </mat-autocomplete>
           </div>
@@ -113,7 +113,7 @@
         <div class="row">
           <div class="col-md-4">
               <div class="form-group has-float-label " *ngIf="mostrarAutocompletadoPorId">
-                  <label for="idListaPrecio" class="labelListaPrecio">Lista de Precio Por Id</label>
+                  <label for="idListaPrecio" class="labelListaPrecio">Lista de Precio </label>
                   <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
                     type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
                   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">

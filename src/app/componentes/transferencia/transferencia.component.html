@@ -3,8 +3,8 @@
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>Transferencia</a>
-        <a mat-tab-link (click)="indiceSeleccionado=1&&activeLink= 1" [active]="activeLink== 1" >Almacén a Mostrador</a>
-        <a mat-tab-link (click)="indiceSeleccionado=2&&activeLink= 2" [active]="activeLink== 2" >Mostrador a Almacén</a>
+        <a mat-tab-link (click)="seleccionarPestania(1, 1)" [active]="activeLink== 1" >Almacén a Mostrador</a>
+        <a mat-tab-link (click)="seleccionarPestania(2, 2)" [active]="activeLink== 2" >Mostrador a Almacén</a>
       </nav>
     </div>
   </div>
@@ -20,9 +20,9 @@
               <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="tipo"
               type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
               autocomplete="off" >
-              <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario)" (blur)="calcularImporte(0)">
-                  {{tipoFormulario.alias}}
+              <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletadoTipoFormulario()">
+                <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario"  (blur)="calcularImporte(0)">
+                  {{tipoFormulario.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>
@@ -117,9 +117,9 @@
                 <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="tipo"
                 type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
                 autocomplete="off" >
-                <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (onSelectionChange)="cambioAutocompletadoTipoFormulario(tipoFormulario, i)" (blur)="calcularImporte(1)">
-                    {{tipoFormulario.alias}}
+                <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletadoTipoFormulario(i)">
+                  <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" (blur)="calcularImporte(1)" > 
+                    {{tipoFormulario.nombre}}
                   </mat-option>
                 </mat-autocomplete>
               </div>
