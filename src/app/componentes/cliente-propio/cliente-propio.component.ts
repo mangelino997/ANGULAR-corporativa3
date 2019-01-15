@@ -47,6 +47,8 @@ public pestanias: Array<any>;
 public activeLink: any;
 // define el autocompletado como un formControl
 public autocompletado: FormControl=new FormControl();
+// define el id como un formControl
+public id: FormControl=new FormControl();
 // define el autocompletado como un formControl
 public autocompletadoAutorizados: FormControl=new FormControl();
 //Define la pestania actual seleccionada
@@ -105,9 +107,6 @@ constructor(private appService: AppService ,private renderer: Renderer2, public 
       })
     }
   });
-  
-  console.log(this.muestraImagenPc);
-
 }
 //declaramos los metodos para utilizar el Modal/Dialog
 openDialog(): void {
@@ -116,7 +115,6 @@ openDialog(): void {
   });
 
   dialogRef.afterClosed().subscribe(result => {
-    console.log('The dialog was closed');
   });
 }
 ngOnInit() {
@@ -138,30 +136,23 @@ ngOnInit() {
   //Cargamos la URL BASE para mostrar las imagenes
   this.urlBase=this.appService.URL_BASE;
 }
-
-public mostrar(){
-  console.log(this.listaAutorizadosAgregados);
-}
-
 //Pasa el foco a cargar foto al apretar tab en "nuevo autorizado"
 public focoImagen(e) { 
   setTimeout(function () {
     document.getElementById('file-input').focus();
   }, 20);
 }
-
 //Pasa el foco a la tabla de autorizados agregados
 public focoBtnAgregar() { 
-  console.log("tabb");
   document.getElementById("idBoton").focus();
   setTimeout(function () {
     document.getElementById("idBoton").focus();
   }, 20);
 }
-
 //Establece el formulario al seleccionar elemento del autocompletado
 public cambioAutocompletado(elemento) {
   this.formulario.patchValue(elemento);
+  this.id.setValue(elemento.id);
   this.borrarAgregados();
   this.listarAutorizado(elemento);
   this.mostrarFotoCliente(elemento);
@@ -183,7 +174,7 @@ this.mostrarBoton = boton;
 setTimeout(function () {
   document.getElementById(componente).focus();
 }, 20);
-};
+}
 //Establece valores al seleccionar una pestania
 public seleccionarPestania(id, nombre, opcion) {
 this.formulario.reset();
@@ -206,26 +197,26 @@ this.listaAutorizados = [];
 }
 switch (id) {
 case 1:
-  this.obtenerSiguienteId();
   this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
   this.reestablecerFormulario(undefined);
+  this.obtenerSiguienteId();
   break;
 case 2:
   this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
-  this.mostrarFotoCliente(this.idFoto);
   this.reestablecerFormulario(undefined);
+  this.mostrarFotoCliente(this.idFoto);
   this.muestraImagenPc=false;
   break;
 case 3:
   this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
-  this.mostrarFotoCliente(this.idFoto);
   this.reestablecerFormulario(undefined);
+  this.mostrarFotoCliente(this.idFoto);
   this.muestraImagenPc=false;
   break;
 case 4:
   this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+   this.reestablecerFormulario(undefined);
   this.mostrarFotoCliente(this.idFoto);
-  this.reestablecerFormulario(undefined);
   this.muestraImagenPc=false;
   break;
 case 5:
@@ -256,11 +247,10 @@ default:
 private obtenerSiguienteId(){
 this.clientePropioService.obtenerSiguienteId().subscribe(
   res => {
-    console.log(res);
-    this.formulario.get('id').setValue(res.json());
+    this.id.setValue(res.json());
   },
   err => {
-    console.log(err);
+    this.toastr.error(err.mensaje);
   }
 );
 }
@@ -272,7 +262,7 @@ this.clientePropioService.listar().subscribe(
     this.listaCompleta=res.json();
   },
   err => {
-    console.log(err);
+    this.toastr.error(err.mensaje);
   }
 );
 }
@@ -289,7 +279,6 @@ public  deleteAutorizados(a) {
          if(a==this.listaAutorizadosAgregados[i]){
           this.listaAutorizadosAgregados.splice(i, 1);
        }
-    
   }
 }
 //Agrega un registro 
@@ -499,23 +488,19 @@ public keyDownFunction(event, a) {
     this.addAutorizados(a);
   }
 }
-
 //Reestablece los campos formularios
 private reestablecerFormulario(id) {
-this.formulario.reset();
-this.obtenerSiguienteId();
-this.autocompletado.setValue(undefined);
-this.autocompletadoAutorizados.setValue(undefined);
-this.resultados = [];
-this.listaAutorizados = [];
-this.borrarAgregados();
-this.formularioFoto.reset();
-this.formularioFoto.get('foto').setValue(null);
-this.formulario.get('foto').setValue(null);
-this.muestraImagenPc=true;
-console.log(this.idFoto);
-//this.idFoto=51;
-// this.listarAutorizado(id);
+  this.formulario.reset();
+  this.autocompletado.setValue(undefined);
+  this.autocompletadoAutorizados.setValue(undefined);
+  this.resultados = [];
+  this.listaAutorizados = [];
+  this.borrarAgregados();
+  this.formularioFoto.reset();
+  this.formularioFoto.get('foto').setValue(null);
+  this.formulario.get('foto').setValue(null);
+  this.muestraImagenPc=true;
+  this.id.setValue('');
 }
 //Manejo de colores de campos y labels
 public cambioCampo(id, label) {
@@ -527,6 +512,7 @@ public activarConsultar(elemento) {
   this.seleccionarPestania(2, this.pestanias[1].pestania.nombre, 1);
   this.autocompletado.setValue(elemento);
   this.formulario.patchValue(elemento);
+  this.id.setValue(elemento.id);
   //borro todo lo que tenga cargada la lista
   this.borrarAgregados();
   //agrego los autorizados del Cliente seleccionado
@@ -547,10 +533,10 @@ public mostrarFotoCliente(elemento){
 }
 //Muestra en la pestania actualizar el elemento seleccionado de listar
 public activarActualizar(elemento) {
-  console.log(elemento);
   this.seleccionarPestania(3, this.pestanias[2].pestania.nombre, 1);
   this.autocompletado.setValue(elemento);
   this.formulario.patchValue(elemento);
+  this.id.setValue(elemento.id);
   this.borrarAgregados();
   this.listarAutorizado(elemento);
   this.mostrarFotoCliente(elemento);

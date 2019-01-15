@@ -25,7 +25,7 @@
                   type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" >
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                   <mat-option *ngFor="let item of resultados" [value]="item"
-                    (onSelectionChange)="cambioAutocompletado(item.alias)">
+                    (onSelectionChange)="cambioAutocompletado(item)">
                     {{item.alias}}
                   </mat-option>
                 </mat-autocomplete>
