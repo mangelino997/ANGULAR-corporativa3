@@ -64,7 +64,7 @@
           </div>
       </div>
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-3">
           <div class="form-group has-float-label">
             <label id="" for="apellido" class="tamanio-label">Cod. Area*</label>
             <input id="apellido" type="text" formControlName="codigoArea" autocomplete="off"
@@ -79,7 +79,7 @@
           </div>
           </div>
       </div>
-      <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" [disabled]="!formulario.valid" 
+      <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" 
         formnovalidate (click)="accion(indiceSeleccionado)" >
         {{pestaniaActual}}
       </button>
