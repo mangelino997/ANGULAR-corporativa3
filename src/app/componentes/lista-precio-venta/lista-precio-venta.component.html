@@ -22,9 +22,9 @@
                 <label for="idListaPrecio" class="labelListaPrecio">Lista de Precio</label>
                 <input id="idListaPrecio" class="form-control form-control-sm color-busqueda"
                   type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" >
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFnAlias.bind(this)">
                   <mat-option *ngFor="let item of resultados" [value]="item"
-                    (onSelectionChange)="cambioAutocompletado(item.alias)">
+                    (onSelectionChange)="cambioAutocompletado(item)">
                     {{item.alias}}
                   </mat-option>
                 </mat-autocomplete>
@@ -34,7 +34,7 @@
               <label for="idListaPrecioId" class="labelListaPrecio">Lista de Precio </label>
               <input id="idListaPrecioId" class="form-control form-control-sm color-busqueda"
                 type="text" matInput [formControl]="autocompletadoPorId" [matAutocomplete]="auto" autocomplete="off">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFnAlias.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="cambioAutocompletadoPorId(item)">
                   {{item.alias}}

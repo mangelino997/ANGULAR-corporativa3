@@ -3,8 +3,8 @@
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>VENTA</a>
-        <a mat-tab-link (click)="indiceSeleccionado=1 && activeLink= 1" [active]="activeLink== 1" >Nueva</a>
-        <a mat-tab-link (click)="indiceSeleccionado=2 && activeLink= 2" [active]="activeLink== 2" >Consultar</a>
+        <a mat-tab-link (click)="seleccionarPestania(1, 1)" [active]="activeLink== 1" >Nueva</a>
+        <a mat-tab-link (click)="seleccionarPestania(2, 2)" [active]="activeLink== 2" >Consultar</a>
       </nav>
     </div>
   </div>
@@ -121,7 +121,7 @@
                           <input id="idTipoFormulario" class="form-control form-control-sm" formControlName="autoTipoFormulario"
                             type="text" matInput [formControl]="buscarTipoFormulario" [matAutocomplete]="autoFormulario" 
                             autocomplete="off" >
-                          <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletadoTipoFormulario(i)">
+                          <mat-autocomplete #autoFormulario="matAutocomplete" [displayWith]="displayFnFormulario.bind(this)" (optionSelected)="cambioAutocompletadoTipoFormulario(i)">
                             <mat-option *ngFor="let tipoFormulario of resultadosTiposFormularios" [value]="tipoFormulario" >
                               {{tipoFormulario.nombre}}
                             </mat-option>
@@ -202,8 +202,8 @@
                 <div class="row">
                         <div class="col-md-2">
                           <div class="form-group has-float-label">
-                            <label for="idFechaConsultar" class="labelNumeroFactura">Fecha</label>
-                            <input id="idFechaConsultar" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+                            <label for="idFecha" class="labelNumeroFactura">Fecha</label>
+                            <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
                               >
                           </div>
                         </div>

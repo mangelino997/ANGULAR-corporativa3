@@ -163,6 +163,14 @@ export class ListaPrecioCompraComponent implements OnInit {
       return elemento;
     }
   }
+  //Formatea el valor del autocompletado
+  public displayFnAlias(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, mostrarTipoFormulario, autocompletadoPorId, componente) {
     this.pestaniaActual = nombrePestania;

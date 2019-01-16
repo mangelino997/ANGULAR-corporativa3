@@ -111,7 +111,19 @@ export class ListaPrecioVentaComponent implements OnInit {
   }
   //Establece el formulario al seleccionar elemento del autocompletado (se ejecuta en la pestaña agregar)
   public cambioAutocompletado(elemento) {
-    this.formulario.patchValue(elemento);
+    //Primero controlo que esa lista de precio no haya sido cargada
+    console.log(elemento);
+    this.listaPrecioVentaService.verificarListaPrecioExistente(elemento.id).subscribe(
+      res=>{
+        var respuesta= res.json();
+        if(respuesta== true){
+          this.autocompletado.setValue(null);
+          document.getElementById("idListaPrecio").focus();
+          this.toastr.error("La Lista de Precio seleccionada ya fue cargada. Seleccione otra");
+        }else{
+          this.formulario.patchValue(elemento);
+        }
+      })
   }
   //Establece el formulario al seleccionar elemento del autocompletado por Id listaPrecio (se ejecuta en las demás pestañas menos en "Agregar")
   public cambioAutocompletadoPorId(elemento) {
@@ -130,6 +142,14 @@ export class ListaPrecioVentaComponent implements OnInit {
   public displayFn(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Formatea el valor del autocompletado
+  public displayFnAlias(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
     }

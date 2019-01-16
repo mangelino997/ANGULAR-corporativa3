@@ -244,22 +244,27 @@ public cambioAutocompletadoProveedor(elemento) {
 public cambioIncrementoDescuento(elemento){
   this.tipoModalidadPago="";
   if(elemento.tipo==0){
-    this.tipoModalidadPago= "Descuento";
+    this.tipoModalidadPago= "Incremento";
   }
   else{
-    this.tipoModalidadPago= "Incremento";
+    this.tipoModalidadPago= "Descuento";
   }
   this.formulario.get('modalidadPago.id').setValue(elemento.id);
 }
 //Agrega una fila a la segunda tabla
 public agregarElemento() {
-  // this.listaAgregar.push(this.formulario.value);
   this.listaAgregar = this.formulario.get('formulariosCompra') as FormArray;
   this.listaAgregar.push(this.crearformulariosCompra());
 }
 //Elimina una fila de la segunda tabla
 public eliminarElemento(indice) {
+  //restar el montoTotal de la fila que se elimina 
+  let calculoMontoTotal=(<FormArray>this.formulario.get('formulariosCompra')).at(indice).get('montoTotal').value;
+  this.montoPrecioFactura=this.montoPrecioFactura-calculoMontoTotal;
+  this.formulario.get('monto').setValue(this.formulario.get('monto').value-calculoMontoTotal);
+  //  //luego eliminamos la fila
   this.listaAgregar.removeAt(indice);
+  (<FormArray>this.formulario.get('formulariosCompra')).removeAt(indice);
 }
 //Manejo de cambio de autocompletado de tipo formulario
 public cambioAutocompletadoTipoFormulario(indice) {
@@ -350,6 +355,12 @@ private reestablecerFormulario(id) {
   this.autocompletado.setValue(undefined);
   this.resultados = [];
   this.tipoModalidadPago=null;
+  }
+//Establece valores al seleccionar una pestania
+public seleccionarPestania(id, nombre) {
+  this.indiceSeleccionado = id;
+  this.activeLink = nombre;
+  this.reestablecerFormulario(undefined);
   }
 }
 

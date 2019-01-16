@@ -82,6 +82,7 @@ export class ModalidadPagoComponent implements OnInit {
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
     this.formulario.patchValue(elemento);
+    this.id.setValue(elemento.id);
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -100,6 +101,7 @@ export class ModalidadPagoComponent implements OnInit {
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
+    this.id.setValue(null);
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -117,9 +119,9 @@ export class ModalidadPagoComponent implements OnInit {
   }
   switch (id) {
     case 1:
-      this.obtenerSiguienteId();
       this.establecerSoloLectura(true);
       this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+      this.obtenerSiguienteId();
       break;
     case 2:
       this.establecerSoloLectura(false);
@@ -157,11 +159,9 @@ public accion(indice) {
   private obtenerSiguienteId(){
     this.modalidadPagoService.obtenerSiguienteId().subscribe(
       res => {
-        console.log(res);
         this.id.setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -172,7 +172,6 @@ public accion(indice) {
         this.listaCompleta=res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -184,6 +183,7 @@ public accion(indice) {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.obtenerSiguienteId();
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -237,7 +237,6 @@ public accion(indice) {
       }
     );
   }
-  
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
@@ -263,7 +262,6 @@ public accion(indice) {
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
     this.id.setValue(elemento.id);
-
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -276,7 +274,6 @@ public accion(indice) {
       }
     }
   }
-
   //establece solo lectura en Combo box
   private establecerSoloLectura(estado){
     if(estado){
@@ -293,5 +290,4 @@ public accion(indice) {
       return a.id === b.id;
     }
   }
-
 }
